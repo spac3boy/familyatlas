@@ -1,0 +1,349 @@
+{
+  "schemaVersion": 1,
+  "archiveId": "family-history-research",
+  "generatedDate": "2026-09-04",
+  "root": "research/",
+  "status": {
+    "researchSequence": "A0-A11 complete",
+    "handoff": "ready-for-normalization-with-unresolved-claims-preserved",
+    "proofStandard": "first-pass-research-handoff",
+    "totalFilesUnderResearch": 18,
+    "researchDocumentsIncludingManifest": 14,
+    "legacyDirectoryPlaceholders": 4,
+    "applicationDataCreated": false,
+    "websiteCodeCreated": false
+  },
+  "boundaries": {
+    "research": "Human-readable research archive and evidence trail.",
+    "applicationData": "src/data/ or equivalent; normalized data consumed by the website and not yet created.",
+    "runtimeRule": "The application must never scrape or parse research prose at runtime."
+  },
+  "methodology": {
+    "confidenceStates": [
+      "verified",
+      "probable",
+      "unresolved"
+    ],
+    "missingGenealogyRule": "Never infer missing genealogy merely to complete the tree.",
+    "personIdAlias": {
+      "person-philomene-comeaux-1916": "person-philomene-comeaux"
+    },
+    "personIdAliasReason": "The earlier detailed-packet ID is retained under the A0 immutability rule; the later branch-audit ID is a compatibility alias.",
+    "sourceAuthority": "sources/source-inventory.md",
+    "placeAuthority": "places/family-geography.md",
+    "completenessAuthority": "open-questions.md",
+    "chatRetrievalAuthority": "chat-inventory.md"
+  },
+  "coverage": {
+    "people": {
+      "genealogicallyRelevantIdentities": 104,
+      "preAliasPersonIds": 105,
+      "canonicalPersonIdsAfterAlias": 104,
+      "namedResearchOnlyCandidateIdentities": 36,
+      "unnamedCandidatePlaceholders": 1,
+      "completeRegister": "open-questions.md#named-person-register",
+      "primaryPackets": {
+        "immediateFamily": {
+          "file": "people/00-immediate-family.md",
+          "personIds": [
+            "person-michael-buquet",
+            "person-aubin-buquet",
+            "person-paulette-comeaux",
+            "person-edmond-p-buquet-1919",
+            "person-verna-arlene-bakke",
+            "person-rita-leblanc-1928",
+            "person-allen-comeaux-1925"
+          ]
+        },
+        "ritaLeBlanc": {
+          "file": "people/rita-leblanc.md",
+          "personId": "person-rita-leblanc-1928"
+        },
+        "allenComeaux": {
+          "file": "people/allen-comeaux.md",
+          "personId": "person-allen-comeaux-1925"
+        },
+        "edmondPBuquet": {
+          "file": "people/edmond-p-buquet.md",
+          "personId": "person-edmond-p-buquet-1919"
+        },
+        "vernaArleneBakkeBuquet": {
+          "file": "people/verna-arlene-bakke-buquet.md",
+          "personId": "person-verna-arlene-bakke"
+        }
+      }
+    },
+    "branches": [
+      {
+        "id": "maternal",
+        "file": "branches/maternal-ancestors.md",
+        "status": "reviewed",
+        "families": [
+          "LeBlanc",
+          "Comeaux",
+          "Dugas",
+          "Miller",
+          "Boudreaux",
+          "Plaisance",
+          "Granger",
+          "Hebert",
+          "Bourg",
+          "Doucet",
+          "Dupuis",
+          "Savoie"
+        ],
+        "coverage": "All named direct maternal ancestors plus preserved collateral relatives, descendants, partners, rejected identities, and unattached candidates."
+      },
+      {
+        "id": "paternal",
+        "file": "branches/paternal-ancestors.md",
+        "status": "reviewed",
+        "families": [
+          "Buquet/Bouquet",
+          "Maronge",
+          "Savoie",
+          "LeBlanc",
+          "Bergeron",
+          "Bakke",
+          "Dukleth",
+          "Doely",
+          "Roble",
+          "Blexrud",
+          "Skore",
+          "Melhus"
+        ],
+        "coverage": "All named direct paternal ancestors plus preserved collateral relatives, descendants, historical contacts, rejected identities, and unattached candidates."
+      }
+    ],
+    "places": {
+      "file": "places/family-geography.md",
+      "status": "reviewed",
+      "acceptedProbableContextualOrUnresolvedPlaceIds": 53,
+      "excludedOrUnattachedPlaceIds": 9,
+      "movementEntries": 12,
+      "regions": [
+        "Louisiana and Gulf context",
+        "Minnesota and Wisconsin",
+        "Norway",
+        "France",
+        "Acadia",
+        "international context"
+      ]
+    },
+    "sources": {
+      "file": "sources/source-inventory.md",
+      "status": "reviewed",
+      "proposedStableSourcesOrSourceSets": 87,
+      "includesAliasRegister": true,
+      "includesInspectionAudit": true,
+      "includesBibliographicGaps": true
+    },
+    "completeness": {
+      "file": "open-questions.md",
+      "status": "reviewed",
+      "classifiedOpenQuestions": 97,
+      "exhaustedSearchOrHypothesisTopics": 13,
+      "unresolvedIdentityConflicts": 25,
+      "packetContradictionsOrDriftItems": 20,
+      "includesPeopleRegister": true,
+      "includesRelationshipRegisters": true,
+      "includesPlaceRegister": true,
+      "includesSourceRegister": true,
+      "includesEvidenceOnlyPeopleAndGroups": true
+    }
+  },
+  "files": [
+    {
+      "path": "README.md",
+      "kind": "archive-guide",
+      "status": "complete",
+      "covers": [
+        "purpose",
+        "methodology",
+        "repository boundary",
+        "normalization handoff"
+      ]
+    },
+    {
+      "path": "packet-template.md",
+      "kind": "research-packet-template",
+      "status": "complete",
+      "covers": [
+        "person packet structure",
+        "evidence handling",
+        "confidence states"
+      ]
+    },
+    {
+      "path": "chat-inventory.md",
+      "kind": "source-chat-inventory",
+      "status": "reviewed",
+      "covers": [
+        "Family History project chats",
+        "source-chat retrieval guidance"
+      ]
+    },
+    {
+      "path": "people/.gitkeep",
+      "kind": "legacy-directory-placeholder",
+      "status": "non-authoritative-directory-now-populated",
+      "researchContent": false
+    },
+    {
+      "path": "branches/.gitkeep",
+      "kind": "legacy-directory-placeholder",
+      "status": "non-authoritative-directory-now-populated",
+      "researchContent": false
+    },
+    {
+      "path": "places/.gitkeep",
+      "kind": "legacy-directory-placeholder",
+      "status": "non-authoritative-directory-now-populated",
+      "researchContent": false
+    },
+    {
+      "path": "sources/.gitkeep",
+      "kind": "legacy-directory-placeholder",
+      "status": "non-authoritative-directory-now-populated",
+      "researchContent": false
+    },
+    {
+      "path": "people/00-immediate-family.md",
+      "kind": "immediate-family-packet",
+      "status": "reviewed",
+      "peopleCovered": [
+        "Michael Buquet",
+        "Aubin Buquet",
+        "Paulette Comeaux",
+        "Edmond P. Buquet",
+        "Verna Arlene Bakke Buquet",
+        "Rita LeBlanc",
+        "Allen Paul Comeaux Sr."
+      ]
+    },
+    {
+      "path": "people/rita-leblanc.md",
+      "kind": "person-research-packet",
+      "status": "research-exhausted-open-web-first-pass",
+      "peopleCovered": [
+        "Rita LeBlanc and her immediate, ancestral, descendant, and rejected-identity evidence"
+      ],
+      "branchesCovered": [
+        "LeBlanc",
+        "Dugas",
+        "Miller/Boudreaux"
+      ]
+    },
+    {
+      "path": "people/allen-comeaux.md",
+      "kind": "person-research-packet",
+      "status": "research-exhausted-open-web-first-pass",
+      "peopleCovered": [
+        "Allen Paul Comeaux Sr. and his immediate, parental, sibling, descendant, and rejected-identity evidence"
+      ],
+      "branchesCovered": [
+        "Comeaux"
+      ]
+    },
+    {
+      "path": "people/edmond-p-buquet.md",
+      "kind": "person-research-packet",
+      "status": "research-exhausted-open-web-first-pass",
+      "peopleCovered": [
+        "Edmond P. Buquet and his immediate, ancestral, collateral, descendant, and rejected-origin evidence"
+      ],
+      "branchesCovered": [
+        "Buquet/Bouquet",
+        "Maronge",
+        "Savoie/LeBlanc/Bergeron"
+      ]
+    },
+    {
+      "path": "people/verna-arlene-bakke-buquet.md",
+      "kind": "person-research-packet",
+      "status": "research-exhausted-open-web-first-pass",
+      "peopleCovered": [
+        "Verna Arlene Bakke Buquet and her immediate, ancestral, collateral, descendant, migration, and military evidence"
+      ],
+      "branchesCovered": [
+        "Bakke/Skore",
+        "Dukleth/Melhus",
+        "Doely/Roble/Blexrud"
+      ]
+    },
+    {
+      "path": "branches/maternal-ancestors.md",
+      "kind": "branch-completeness-audit",
+      "status": "reviewed",
+      "branchesCovered": [
+        "maternal"
+      ],
+      "peopleCovered": [
+        "Every named maternal ancestor and genealogically relevant maternal relative in the archive"
+      ]
+    },
+    {
+      "path": "branches/paternal-ancestors.md",
+      "kind": "branch-completeness-audit",
+      "status": "reviewed",
+      "branchesCovered": [
+        "paternal"
+      ],
+      "peopleCovered": [
+        "Every named paternal ancestor and genealogically relevant paternal relative in the archive"
+      ]
+    },
+    {
+      "path": "places/family-geography.md",
+      "kind": "place-and-movement-archive",
+      "status": "reviewed",
+      "placesCovered": [
+        "Every accepted, probable, contextual, unresolved, excluded, or unattached place in the archive"
+      ],
+      "branchesCovered": [
+        "maternal",
+        "paternal"
+      ]
+    },
+    {
+      "path": "sources/source-inventory.md",
+      "kind": "consolidated-source-inventory",
+      "status": "reviewed",
+      "sourceInventories": [
+        "All sources and source sets used by A1-A8",
+        "source ID aliases",
+        "inspection status",
+        "bibliographic gaps"
+      ]
+    },
+    {
+      "path": "open-questions.md",
+      "kind": "completeness-and-open-question-audit",
+      "status": "reviewed",
+      "completenessDocuments": [
+        "classified open questions",
+        "exhausted searches",
+        "all named people",
+        "relationships",
+        "places",
+        "sources",
+        "identity conflicts",
+        "packet contradictions",
+        "evidence-only people and groups"
+      ]
+    },
+    {
+      "path": "manifest.json",
+      "kind": "research-archive-manifest",
+      "status": "complete",
+      "covers": [
+        "file inventory",
+        "people coverage",
+        "branch coverage",
+        "place coverage",
+        "source inventory",
+        "completeness status"
+      ]
+    }
+  ]
+}
