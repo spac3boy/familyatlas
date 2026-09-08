@@ -43,3 +43,9 @@ Research syntheses explain reasoning and stopping points but are not independent
 ## Application handoff
 
 Normalization is an explicit offline development step from research evidence into typed application data. It must preserve stable IDs, confidence, uncertainty, precision, sources, conflicts, aliases, and exclusion safeguards. The C3 contracts in `src/types/genealogy.ts` encode those distinctions, and `src/lib/genealogy/validation.ts` checks structural integrity and blocks accepted lineage edges to non-accepted people. These files define and validate the handoff shape; they do not replace historical review or contain family records. Application tasks must not edit completed research packets unless the user specifically authorizes research work.
+
+## Product evidence presentation
+
+The C20 Research page is an application-facing window into normalized evidence, not the research archive itself. It derives accepted conclusion and source registers from the canonical graph and uses a reviewed set of methodology statements, archive totals, and open questions under `src/data/`. The page must name the difference between archive coverage and accepted application coverage.
+
+Global Evidence Mode changes presentation only. Probable and unresolved states remain visible during normal browsing because hiding them would misrepresent the research. Evidence Mode adds verified markers and supporting confidence context using the quiet `● Verified`, `◐ Probable`, and `○ Unresolved` vocabulary; it cannot upgrade, suppress, or resolve a claim.

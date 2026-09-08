@@ -6,6 +6,7 @@ import { zoom, zoomIdentity, type ZoomBehavior, type ZoomTransform } from "d3-zo
 import { ChevronRight, FoldHorizontal, RotateCcw, UnfoldHorizontal, ZoomIn, ZoomOut } from "lucide-react"
 
 import { PersonDetailPanel } from "@/components/people/person-detail-panel"
+import { ConfidenceMark } from "@/components/research/confidence-mark"
 import { Button } from "@/components/ui/button"
 import { ExploreViewToggle } from "@/components/visualizations/explore-view-toggle"
 import { familyGraph } from "@/data"
@@ -89,11 +90,12 @@ interface TreeNodeProps {
   readonly nodeWidth: number
   readonly nodeHeight: number
   readonly selected: boolean
+  readonly showConfidence: boolean
   readonly onSelect: (personId: PersonId) => void
   readonly onToggle: (personId: PersonId) => void
 }
 
-function TreeNode({ node, nodeWidth, nodeHeight, selected, onSelect, onToggle }: TreeNodeProps) {
+function TreeNode({ node, nodeWidth, nodeHeight, selected, showConfidence, onSelect, onToggle }: TreeNodeProps) {
   const activate = () => onSelect(node.personId)
   const toggle = () => node.hasParents && onToggle(node.personId)
 
@@ -160,15 +162,16 @@ function TreeNode({ node, nodeWidth, nodeHeight, selected, onSelect, onToggle }:
           </tspan>
         ))}
       </text>
-      <text
-        x={12}
-        y={node.nameLines.length === 1 ? 49 : 57}
-        fill="var(--muted-foreground)"
-        className="text-[0.625rem] tracking-[0.04em] uppercase"
-      >
-        {node.dateLabel ? `${node.dateLabel} · ` : ""}
-        {node.confidence}
-      </text>
+      {(node.dateLabel || showConfidence) && (
+        <text
+          x={12}
+          y={node.nameLines.length === 1 ? 49 : 57}
+          fill="var(--muted-foreground)"
+          className="text-[0.625rem] tracking-[0.04em] uppercase"
+        >
+          {[node.dateLabel, showConfidence ? node.confidence : undefined].filter(Boolean).join(" · ")}
+        </text>
+      )}
 
       {node.hasParents && (
         <g
@@ -196,7 +199,7 @@ function TreeNode({ node, nodeWidth, nodeHeight, selected, onSelect, onToggle }:
 }
 
 export function FamilyTree() {
-  const { selectedPerson, selectedBranch } = useExploreState()
+  const { selectedPerson, selectedBranch, evidenceMode } = useExploreState()
   const { selectBranch, selectPerson, setActiveView } = useExploreActions()
   const [personPanelOpen, setPersonPanelOpen] = React.useState(false)
   const [scope, setScope] = React.useState<FamilyTreeScope>(() => {
@@ -481,6 +484,7 @@ export function FamilyTree() {
                   nodeWidth={treeLayout.nodeWidth}
                   nodeHeight={treeLayout.nodeHeight}
                   selected={selectedPerson === node.personId}
+                  showConfidence={evidenceMode === "evidence" || node.confidence !== "verified"}
                   onSelect={handleSelectPerson}
                   onToggle={togglePerson}
                 />
@@ -532,6 +536,7 @@ export function FamilyTree() {
                         {person.dateLabel}
                       </span>
                     )}
+                    <ConfidenceMark confidence={person.confidence} className="mt-1" />
                   </span>
                   <span className="shrink-0 text-[0.625rem] font-semibold tracking-[0.08em] text-muted-foreground uppercase">
                     Gen {person.generation}

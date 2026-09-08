@@ -144,12 +144,12 @@ C8 establishes the persistent shell in the root layout:
 - `Family Atlas` is the brand/home link.
 - Primary destinations are `Explore`, `People`, `Places`, `Stories`, and `Research`.
 - The current destination uses both a visual rule/background treatment and `aria-current="page"`.
-- At `lg` and wider, navigation is an inline editorial row with the search affordance at the right edge.
-- Below `lg`, tablet and phone widths use compact search and menu controls. The menu opens a Base UI-backed modal sheet with focus management, Escape dismissal, backdrop dismissal, and an explicit close control.
+- At `lg` and wider, navigation is an inline editorial row with Evidence Mode and search controls at the right edge.
+- Below `lg`, tablet and phone widths use compact evidence, search, and menu controls. The menu opens a Base UI-backed modal sheet with focus management, Escape dismissal, backdrop dismissal, and an explicit close control.
 - Global search opens from either header mode or Command/Control+K. A shadcn Command list sits in a compact Base UI dialog, groups results as People, Places, Surnames, and Sources, and supports arrow-key selection, Enter navigation, and Escape dismissal.
 - The shell uses a solid background rather than blur or glass effects.
 
-The `lg` transition is intentional: five destinations should not be compressed into a tablet header. At 320px the brand and two compact controls remain on one line; navigation labels move to the sheet where each receives a full touch-friendly row.
+The `lg` transition is intentional: five destinations should not be compressed into a tablet header. At 320px the brand and three compact controls remain on one line; navigation labels move to the sheet where each receives a full touch-friendly row.
 
 ## Home page composition
 
@@ -184,3 +184,9 @@ Five compact, labeled native selects provide branch, recorded surname, generatio
 C18 treats geography as an editorial catalog rather than a grid of destination cards. The index groups ruled typographic rows by represented country/state or historical region; each row leads with the canonical place name and follows with supported administrative context, precision, record span, association counts, movement count, and confidence. On narrow screens these fields stack in reading order without collapsing parish/county detail into a town label.
 
 Place profiles reuse the quiet long-form rhythm of person profiles while keeping geography-specific distinctions close to the claim. The header pairs the stable place ID with precision and confidence; overview fields expose only stored administrative levels; broader-place events say “within this geography” and name their canonical child place. People, events, movements, and sources use linked ruled lists, and unknown-route language is textual as well as visual. The sole interactive action sends the canonical place ID to shared Journeys state and uses the conventional compact button foundation.
+
+## Research and Evidence Mode
+
+C20 presents Research as a museum-like reference index: generous section rhythm, numbered rails, ruled disclosure registers, and compact source metadata instead of analytics cards or a dense dashboard. Coverage figures distinguish the accepted graph from the larger human archive and remain explanatory rather than promotional.
+
+Confidence uses the non-color-only vocabulary `● Verified`, `◐ Probable`, and `○ Unresolved`. Probable and unresolved treatments remain visible beside affected claims in overview browsing. Verified badges are normally omitted to reduce noise and appear when the global Evidence Mode control is active. Evidence Mode is a presentation layer only; it never changes the underlying claim, and evidence-specific pages may keep provenance metadata visible regardless of mode.

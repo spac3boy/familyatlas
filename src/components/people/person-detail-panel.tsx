@@ -12,6 +12,7 @@ import {
 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
+import { ConfidenceMark } from "@/components/research/confidence-mark"
 import { Button } from "@/components/ui/button"
 import { buttonVariants } from "@/components/ui/button-variants"
 import {
@@ -117,7 +118,7 @@ function PersonDetailContent({
         </div>
 
         <div className="mt-5 flex flex-wrap gap-2">
-          <Badge variant={model.confidence}>{confidenceLabel(model.confidence)} confidence</Badge>
+          <ConfidenceMark confidence={model.confidence} suffix="confidence" />
           <Badge variant="outline">
             {model.sourceCount} {model.sourceCount === 1 ? "source" : "sources"}
           </Badge>
@@ -150,7 +151,10 @@ function PersonDetailContent({
                       </React.Fragment>
                     ))}
                   </ol>
-                  <p className="mt-1 text-[0.6875rem] font-medium tracking-[0.04em] text-muted-foreground uppercase">
+                  <p
+                    data-evidence-detail={path.confidence === "verified" ? "verified" : undefined}
+                    className="mt-1 text-[0.6875rem] font-medium tracking-[0.04em] text-muted-foreground uppercase"
+                  >
                     {confidenceLabel(path.confidence)} path
                   </p>
                 </div>

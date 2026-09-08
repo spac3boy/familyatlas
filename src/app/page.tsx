@@ -164,7 +164,8 @@ export default function Home() {
                       </p>
                       <p className="mt-2 text-sm font-medium">{person.canonicalName}</p>
                       <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                        Birth{place ? ` · ${place.modernName}` : ""} · Verified
+                        Birth{place ? ` · ${place.modernName}` : ""}
+                        <span data-evidence-detail="verified"> · ● Verified</span>
                       </p>
                     </li>
                   )

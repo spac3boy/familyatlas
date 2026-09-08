@@ -5,7 +5,7 @@ import Link from "next/link"
 import { ArrowRight, RotateCcw } from "lucide-react"
 import { useSearchParams } from "next/navigation"
 
-import { Badge } from "@/components/ui/badge"
+import { ConfidenceMark } from "@/components/research/confidence-mark"
 import { Button } from "@/components/ui/button"
 import {
   buildPeopleDirectoryOptions,
@@ -244,7 +244,11 @@ export function PeopleDirectory({ records }: Readonly<{ records: readonly People
                     {matchedSurname && (
                       <span className="mt-1 block text-[0.6875rem] leading-5 text-muted-foreground">
                         Recorded surname form: {formatRecordedSurnameLabel(matchedSurname)}
-                        {surnameConfidence ? ` · name evidence: ${surnameConfidence}` : ""}
+                        {surnameConfidence && (
+                          <span data-evidence-detail={surnameConfidence === "verified" ? "verified" : undefined}>
+                            {` · name evidence: ${surnameConfidence}`}
+                          </span>
+                        )}
                       </span>
                     )}
                   </span>
@@ -264,7 +268,11 @@ export function PeopleDirectory({ records }: Readonly<{ records: readonly People
                         return (
                           <span key={birthplace.placeId} className="block">
                             <span className="text-foreground">{birthplace.label}</span>
-                            {confidence ? ` · location evidence: ${confidence}` : ""}
+                            {confidence && (
+                              <span data-evidence-detail={confidence === "verified" ? "verified" : undefined}>
+                                {` · location evidence: ${confidence}`}
+                              </span>
+                            )}
                           </span>
                         )
                       })}
@@ -274,7 +282,7 @@ export function PeopleDirectory({ records }: Readonly<{ records: readonly People
                   )}
 
                   <span className="flex items-center justify-between gap-3 lg:justify-end">
-                    <Badge variant={record.person.confidence}>{record.person.confidence}</Badge>
+                    <ConfidenceMark confidence={record.person.confidence} />
                     <ArrowRight aria-hidden="true" className="size-4 text-primary" />
                   </span>
                 </Link>

@@ -1,7 +1,7 @@
 # Project status
 
 **Last updated:** 2026-09-08
-**Current milestone:** C19 — Global Command search
+**Current milestone:** C20 — Research section and Evidence Mode
 
 ## Complete
 
@@ -81,18 +81,22 @@
 - C19 global Command search projects accepted canonical people, places, recorded surname forms, and normalized sources through a framework-independent index and ranking utility. Search includes supported alternate names, historical place names, source metadata, citation handles, and stable IDs without reading research prose.
 - C19 routes person and place results to their stable profiles, surname results to a shareable People-directory filter, and source results to 53 statically generated normalized source-record routes. The persistent header opens search by button or Command/Control+K; shadcn Command provides arrow-key selection and Enter navigation inside an accessible Base UI dialog.
 - C19 validation: 92 passing tests plus successful lint, type-check, and production build of 153 static pages. Live checks covered alternate-surname search, a surname deep link, keyboard-opened source search, source navigation, place search at 320px, and zero page-level horizontal overflow.
+- C20 Research section exposes the archive methodology, accepted normalized source inventory, complete verified/probable canonical conclusion registers, explicit unresolved claims and reviewed open questions, plus archive-versus-application coverage boundaries.
+- C20 global Evidence Mode uses the existing centralized Explore state across routes. Probable and unresolved confidence remains visible in normal browsing; enabling Evidence Mode adds restrained `● Verified` marks and supporting confidence context across people, places, profiles, tree, timeline, journeys, and research surfaces.
+- C20 keeps the archive boundary intact: `src/data/research.ts` is a reviewed application-facing question/methodology projection, `src/lib/genealogy/research-overview.ts` derives claim and source registers from the canonical graph, and no runtime code reads research Markdown.
+- C20 validation: 96 passing tests plus successful lint, type-check, and production build of 154 static pages. Live browser checks covered global mode persistence, quiet/default versus enabled verified marks, the Research information hierarchy at 1366px and 320px, keyboard-accessible controls, and zero page-level horizontal overflow.
 
 ## Deliberately not started
 
 - Collateral, descendant, contextual, unattached, research-only candidate, or rejected identities beyond the accepted direct ancestral graph.
 - Additional normalization not authorized by the branch coverage audits or later evidence review.
-- Standalone Family or Research destination features beyond the completed People and Places sections.
+- Standalone Family and Stories destination features.
 - Secondary product routes plus the patterns visualization UI/view model.
 - Hosting, authentication, analytics, editing, collaboration, or synchronization.
 
 ## Current repository boundary
 
-The site contains a validated application shell, global canonical-data search, an editorial home/Explore route with Family Tree V1, Timeline V1, Journeys Map V1, their shared Time Navigator, and responsive person details, plus filterable People and evidence-bounded Places sections with stable-ID profiles. C4 added the source-traceable seven-person foundation; C5 extended that graph with accepted direct maternal and paternal ancestry; C6 added read-only graph utilities; C7 added visual tokens and primitives; C8 added persistent navigation; C9 added shared Explore state; C10 added the canonical-data-backed home page; C11 added the first derived visualization; C12 added person-centered disclosure over that visualization; C13 added person profiles; C14 added the uncertainty-preserving cross-person timeline; C15 made year context operational across temporal views; C16 added the evidence-limited Journeys map; C17 made the People index an evidence-bounded directory; C18 added the canonical Places index and detail views; C19 added global search and stable normalized-source routes. No patterns view or standalone Stories/Research destination is implemented. `research/manifest.json` records the state at the end of A11, so its `websiteCodeCreated: false` field is historically correct for that research handoff even though C0 subsequently created application code.
+The site contains a validated application shell, global canonical-data search, an editorial home/Explore route with Family Tree V1, Timeline V1, Journeys Map V1, their shared Time Navigator, and responsive person details, plus filterable People, evidence-bounded Places, and Research sections with stable-ID profiles and records. C4 added the source-traceable seven-person foundation; C5 extended that graph with accepted direct maternal and paternal ancestry; C6 added read-only graph utilities; C7 added visual tokens and primitives; C8 added persistent navigation; C9 added shared Explore state; C10 added the canonical-data-backed home page; C11 added the first derived visualization; C12 added person-centered disclosure over that visualization; C13 added person profiles; C14 added the uncertainty-preserving cross-person timeline; C15 made year context operational across temporal views; C16 added the evidence-limited Journeys map; C17 made the People index an evidence-bounded directory; C18 added the canonical Places index and detail views; C19 added global search and stable normalized-source routes; C20 added the evidence-focused Research route and global Evidence Mode. No patterns view or standalone Stories destination is implemented. `research/manifest.json` records the state at the end of A11, so its `websiteCodeCreated: false` field is historically correct for that research handoff even though C0 subsequently created application code.
 
 No application code may parse `research/` at runtime. The ingestion audit is recorded in `docs/research-ingestion-report.md`; it found 13 reused claim IDs, including 8 semantic collisions. Normalized data uses globally unique application IDs and preserves packet IDs only as file-scoped research provenance. The C5 integrity results are recorded in `docs/data-quality-report.md`; the C6 public query contract is recorded in `docs/genealogy-queries.md`. Further genealogy expansion must remain explicit and reviewed; unresolved claims may not be resolved merely to make the product complete.
 

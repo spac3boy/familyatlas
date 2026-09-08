@@ -208,6 +208,10 @@
   details[open] > summary svg {
     transform: rotate(90deg);
   }
+
+  [data-evidence-mode="overview"] [data-evidence-detail="verified"] {
+    display: none !important;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
