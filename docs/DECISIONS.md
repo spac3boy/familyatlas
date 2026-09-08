@@ -133,3 +133,9 @@ Durable decisions live here. New entries should state the consequence; supersede
 - **Status:** accepted
 - **Decision:** Derive Journeys from accepted canonical events and display-only place anchors over vendored Natural Earth boundaries. Render documented and strongly inferred movement as differently styled schematic curves; render separate known locations with an unknown route as endpoint rings without any connecting path. Coordinates position claims for display and never upgrade canonical place precision.
 - **Consequence:** Map code may group claims at the same honest anchor, but it cannot offset them into invented sites or reconstruct travel paths. Historical places without a defensible modern anchor remain explicit in the structured result and unplotted. React owns scope and shared selections; D3 Geo, Shape, and Zoom remain calculation/behavior helpers.
+
+## D-023 — Directory filters are evidence-bounded graph projections
+
+- **Status:** accepted
+- **Decision:** Derive the People directory from accepted people in the canonical graph. Generation counts supported parent-child edges outward from Michael; branch uses the canonical ancestry query; surname options use only the final surname form in canonical and alternate recorded names; birthplace requires an accepted birth event with an explicit place reference; and confidence filters the person record itself.
+- **Consequence:** Directory filtering cannot infer a birth surname, birthplace, generation, or branch from context. Alternate and uncertain recorded names remain attributable to their own confidence, multiple birthplace claims remain visible, and options with no represented canonical value are omitted. The server prepares the serializable directory model while the client owns only transient filter controls.

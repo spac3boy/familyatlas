@@ -1,0 +1,103 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+
+import { familyGraph, familyGraphQueries } from "@/data";
+import {
+  buildPeopleDirectory,
+  buildPeopleDirectoryOptions,
+  filterPeopleDirectory,
+  type PeopleDirectoryFilters,
+} from "@/lib/genealogy/people-directory";
+import type { PersonId } from "@/types";
+
+const records = buildPeopleDirectory(familyGraph, familyGraphQueries);
+const byId = new Map<PersonId, (typeof records)[number]>(
+  records.map((record) => [record.person.id, record]),
+);
+
+const allFilters: PeopleDirectoryFilters = {
+  branch: "all",
+  surname: "",
+  generation: null,
+  birthplace: null,
+  confidence: "all",
+};
+
+test("the directory contains every accepted canonical person exactly once", () => {
+  assert.equal(records.length, familyGraph.people.length);
+  assert.equal(new Set(records.map(({ person }) => person.id)).size, records.length);
+  assert.ok(records.every(({ person }) => person.researchStatus === "accepted"));
+});
+
+test("generation counts only supported parent-child steps from Michael", () => {
+  assert.equal(byId.get("person-michael-buquet")?.generation, 0);
+  assert.equal(byId.get("person-paulette-comeaux")?.generation, 1);
+  assert.equal(byId.get("person-rita-leblanc-1928")?.generation, 2);
+  assert.equal(byId.get("person-euchariste-dugas")?.generation, 3);
+  assert.equal(byId.get("person-abraham-dugas-1616")?.generation, 12);
+});
+
+test("branch classification comes from canonical ancestry paths", () => {
+  assert.equal(byId.get("person-rita-leblanc-1928")?.branch, "maternal");
+  assert.equal(byId.get("person-verna-arlene-bakke")?.branch, "paternal");
+  assert.equal(byId.get("person-michael-buquet")?.branch, "self");
+});
+
+test("surname indexing uses supported canonical and alternate recorded names", () => {
+  const vernaSurnames = byId.get("person-verna-arlene-bakke")?.surnames.map(({ value }) => value);
+  const pauletteSurnames = byId.get("person-paulette-comeaux")?.surnames.map(({ value }) => value);
+  const allenSurnames = byId.get("person-allen-comeaux-1925")?.surnames.map(({ value }) => value);
+
+  assert.deepEqual(vernaSurnames, ["bakke", "buquet"]);
+  assert.deepEqual(pauletteSurnames, ["buquet", "comeaux", "wheeler"]);
+  assert.deepEqual(allenSurnames, ["comeaux"]);
+});
+
+test("birthplace includes only explicit birth events with canonical place references", () => {
+  assert.deepEqual(
+    byId.get("person-rita-leblanc-1928")?.birthplaces.map(({ placeId }) => placeId),
+    ["place-us-la-cankton"],
+  );
+  assert.deepEqual(byId.get("person-edmond-p-buquet-1919")?.birthplaces, []);
+  assert.deepEqual(byId.get("person-michael-buquet")?.birthplaces, []);
+
+  const martinWisconsin = byId.get("person-martin-h-bakke")?.birthplaces[0];
+  assert.equal(martinWisconsin?.placeId, "place-us-wi-wisconsin");
+  assert.deepEqual(martinWisconsin?.confidenceStates, ["verified", "probable", "unresolved"]);
+  assert.equal(martinWisconsin?.eventIds.length, 3);
+});
+
+test("filters compose without promoting absent or uncertain values", () => {
+  const matches = filterPeopleDirectory(records, {
+    ...allFilters,
+    branch: "paternal",
+    surname: "bakke",
+    generation: 4,
+    confidence: "verified",
+  });
+  const ids = matches.map(({ person }) => person.id);
+
+  assert.deepEqual(ids, ["person-martin-h-bakke"]);
+  assert.equal(
+    filterPeopleDirectory(records, {
+      ...allFilters,
+      birthplace: "place-us-la-cankton",
+    })[0]?.person.id,
+    "person-rita-leblanc-1928",
+  );
+  assert.ok(
+    filterPeopleDirectory(records, { ...allFilters, birthplace: "place-us-la-cankton" })
+      .every(({ birthplaces }) => birthplaces.length > 0),
+  );
+});
+
+test("filter options expose only values represented in canonical records", () => {
+  const options = buildPeopleDirectoryOptions(records);
+
+  assert.deepEqual(options.confidences.map(({ value }) => value), ["verified", "probable"]);
+  assert.ok(options.surnames.some(({ value, label }) => value === "leblanc" && label === "LeBlanc"));
+  assert.ok(!options.surnames.some(({ value }) => value === "i"));
+  assert.ok(options.generations.some(({ value, count }) => value === 0 && count === 1));
+  assert.ok(options.birthplaces.some(({ value }) => value === "place-no-norway"));
+  assert.ok(!options.birthplaces.some(({ label }) => /unknown/iu.test(label)));
+});

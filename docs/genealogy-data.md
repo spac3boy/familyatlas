@@ -92,3 +92,7 @@ Validation is deliberately lightweight and dependency-free. It protects structur
 ## Graph queries
 
 C6 adds a framework-independent, graph-injected query factory in `src/lib/genealogy/queries.ts`. The application-facing `familyGraphQueries` instance is bound to the single canonical graph in `src/data/queries.ts`. Queries return supporting relationship paths, confidence, source-reference routes, date-overlap states, and indeterminate temporal results rather than flattening uncertainty into bare booleans. The complete public contract is documented in `docs/genealogy-queries.md`.
+
+## People directory projection
+
+C17 derives its directory records in `src/lib/genealogy/people-directory.ts`; no separate people dataset exists. Generation is the number of accepted parent-child edges from Michael, not an estimate from dates. Branch comes from accepted ancestry paths. Surname indexing uses only final surname forms already present in a person's canonical or alternate names and therefore must be described as a recorded-name filter, not a birth-surname assertion. Birthplace indexing accepts only birth events with explicit canonical place references and preserves all confidence states when multiple claims point to the same place. The person-confidence filter qualifies the person identity record, not every claim shown in its row.

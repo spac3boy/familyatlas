@@ -172,3 +172,9 @@ The composition prioritizes name and graph-derived relationship, followed by con
 C13 extends person disclosure into long-form editorial profiles. A quiet identity header is followed by a wrapping in-page section index and six ruled sections: Story, Family, Life in places, Timeline, Records & evidence, and Open research questions. On wide screens, compact section numbers and titles form a stable left rail; content remains in a readable right column. On narrow screens, the rail collapses above the content without horizontal navigation overflow.
 
 Profiles use links rather than card chrome to express connected people, places, events, relationships, and sources. Stable IDs remain visible where they aid provenance. Confidence badges sit next to the entity or claim they qualify; person confidence and relationship-path confidence remain distinct. Sparse profiles keep the same navigable structure but use concise data-boundary statements instead of blank panels or generated narrative.
+
+## People directory
+
+C17 presents people as one ruled editorial list rather than a card grid. Each row is a full profile link with a typographic name lead, quiet relationship and generation context, only explicitly supported birthplace evidence, a person-confidence badge, and a directional cue. Missing dates and birthplaces leave no synthetic placeholder in the reading flow.
+
+Five compact, labeled native selects provide branch, recorded surname, generation, birthplace, and person-confidence filtering. Controls wrap into two columns and then one column as space narrows; the directory rows likewise move from a four-column reading line to a stacked mobile composition. Result counts announce changes, clear state remains keyboard accessible, focus uses the shared ring treatment, and no filtering state creates page-level horizontal overflow.
