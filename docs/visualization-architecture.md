@@ -83,6 +83,31 @@ The control supports pointer and touch brushing plus a keyboard slider contract.
 
 Framework-independent effects partition accepted events into supported, possible, indeterminate, and excluded sets; provide active and indeterminate place/movement IDs for Journeys; and classify person emphasis through `peopleAliveInYear`. Only conclusively excluded people may be dimmed. Timeline consumes these effects now; Journeys must reuse them rather than creating another year filter. The complete public contract is in `docs/time-navigation.md`.
 
+## Journeys V1
+
+Journeys V1 follows the same ownership flow:
+
+```text
+canonical GenealogyGraph + display-only place anchors
+  → scoped place/movement model (`buildFamilyJourneyModel`)
+  → D3 geographic projection + D3 shape paths (`layoutFamilyJourneyMap`)
+  → React-rendered SVG and structured HTML lists
+```
+
+The canonical `Place` and `Event` records remain authoritative. The supplemental anchor catalog references only canonical place IDs and supplies approximate display coordinates plus an explicit anchor precision note; it is not genealogy evidence and cannot upgrade a place claim. Named facilities without inspected coordinates are placed at their supported settlement or administrative-area anchor. Historical Acadia and Port Royal remain in the structured result but are not plotted because the normalized archive deliberately lacks a defensible modern equivalent.
+
+Published Natural Earth 1:110m Admin 0 country and Admin 1 state/province GeoJSON, version 5.1.x, is vendored under `public/data/` for portable boundary context. D3 Geo owns projection and boundary path calculations. D3 Shape calculates schematic movement curves. D3 Zoom is isolated around the SVG ref and reports its transform to React; it does not own marks, filters, or selections.
+
+Scopes are `all`, `maternal`, `paternal`, and `selected`. Branch membership comes from the graph query API, selected-person scope is the shared `selectedPerson`, and year filtering reuses the C15 time-effects map projection. Map marker selection can update shared `selectedPlace`; accessible person controls update shared `selectedPerson`.
+
+Movement encoding is evidence-limited:
+
+- `documented-migration-move` receives a solid schematic curve between the most precise represented origin and destination anchors.
+- `strongly-inferred-move` receives a dashed schematic curve.
+- `separate-known-locations-route-unknown` receives paired endpoint rings and **never** a connecting path.
+
+Multiple canonical places may share one honest cartographic anchor rather than being offset into invented coordinates. The marker discloses the grouped place count and the adjacent detail area lists each canonical claim with its original confidence and precision. Zoom/pan is local map state and uses immediate transforms, satisfying reduced-motion behavior.
+
 ## Genealogy-safe encodings
 
 - Read relationships from the canonical graph; never manufacture placeholder ancestors to balance a layout.
@@ -107,4 +132,4 @@ Honor `prefers-reduced-motion`. Layout changes should remain understandable with
 
 Test calculation helpers with deterministic fixtures, including empty data, one-person graphs, uncertain dates, disconnected branches, ambiguous places, and reduced-motion modes. Test rendered semantics and keyboard behavior separately from geometry. Avoid brittle pixel snapshots as the only evidence of correctness.
 
-Family Tree V1, Timeline V1, and their shared Time Navigator are implemented through C15. Journeys and patterns remain unimplemented.
+Family Tree V1, Timeline V1, Journeys V1, and their shared Time Navigator are implemented through C16. Patterns remains unimplemented.

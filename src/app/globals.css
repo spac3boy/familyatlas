@@ -183,6 +183,11 @@
     stroke-width: 2px;
   }
 
+  [data-map-mark]:focus-visible circle:last-of-type {
+    stroke: var(--ring);
+    stroke-width: 3px;
+  }
+
   .time-navigator-brush .overlay {
     cursor: crosshair;
     fill: transparent;

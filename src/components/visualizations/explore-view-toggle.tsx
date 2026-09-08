@@ -1,12 +1,13 @@
 "use client"
 
-import { Network, Rows3 } from "lucide-react"
+import { Map, Network, Rows3 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { useExploreActions, useExploreState } from "@/state"
 
 const availableViews = [
   { value: "tree", label: "Tree", icon: Network },
+  { value: "journeys", label: "Journeys", icon: Map },
   { value: "timeline", label: "Timeline", icon: Rows3 },
 ] as const
 
