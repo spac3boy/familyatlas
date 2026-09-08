@@ -1,7 +1,7 @@
 # Project status
 
-**Last updated:** 2026-09-05  
-**Current milestone:** C14 — Timeline V1
+**Last updated:** 2026-09-07
+**Current milestone:** C15 — Shared Time Navigator
 
 ## Complete
 
@@ -59,7 +59,12 @@
 - C14 preserves date semantics: exact dates are points; years and ranges retain bounded extents; circa dates use dashed tolerance intervals; before/after values remain open-ended; unknown dates are excluded from the axis and disclosed separately.
 - C14 lifespan rows require both bounded birth and death evidence. Conflicting alternatives expand the possible extent and retain the narrower common supported interval rather than selecting an invented date.
 - C14 connects Tree and Timeline through shared Explore state, provides a horizontally scrollable readable canvas on narrow screens, keyboard-selectable person rows, and an equivalent structured record list.
-- C14 validation: 55 passing tests plus successful type-check and lint. Production build and responsive live browser checks are recorded after final validation below.
+- C14 validation: 55 passing tests plus successful type-check, lint, and production build. Live browser checks at 320px and 1366px covered view switching, all/maternal/selected scopes, keyboard person selection, cross-view person/branch persistence, local horizontal timeline scrolling without page overflow, and a clean runtime console.
+- C15 shared Time Navigator reads and writes the centralized Explore `selectedYear`; Timeline and the future Journeys view have no local duplicate time state.
+- C15 uses D3 scale calculations and an isolated `d3-brush` binding for responsive pointer/touch selection. Keyboard arrows, Page Up/Page Down, Home/End, Escape/Delete, and the explicit Clear year action operate the same shared value without animation.
+- C15 adds framework-independent event filtering plus map and person-emphasis projections. Supported, possible, indeterminate, excluded, and unfiltered states remain distinct; only conclusively out-of-year people are dimmed.
+- C15 Timeline integration renders a bounded calendar-year band, de-emphasizes out-of-year events, preserves incomplete life histories, and retains the year when switching between Tree and Timeline.
+- C15 validation: 61 passing tests plus successful lint, type-check, and production build. Live checks at 320px and 1366px covered keyboard and pointer selection, cross-view year persistence, keyboard/button clearing, responsive sizing without page overflow, and a clean runtime console.
 
 ## Deliberately not started
 
@@ -71,7 +76,7 @@
 
 ## Current repository boundary
 
-The site contains a validated application shell, an editorial home/Explore route with Family Tree V1, Timeline V1, and responsive person details, and a complete accepted-person profile route set. C4 added the source-traceable seven-person foundation; C5 extended that graph with accepted direct maternal and paternal ancestry; C6 added read-only graph utilities; C7 added visual tokens and primitives; C8 added persistent navigation; C9 added shared Explore state; C10 added the canonical-data-backed home page; C11 added the first derived visualization; C12 added person-centered disclosure over that visualization; C13 added the People index and full profiles; C14 added the uncertainty-preserving cross-person timeline. No search behavior, journey map, patterns view, or standalone Place/Research destination is implemented. `research/manifest.json` records the state at the end of A11, so its `websiteCodeCreated: false` field is historically correct for that research handoff even though C0 subsequently created application code.
+The site contains a validated application shell, an editorial home/Explore route with Family Tree V1, Timeline V1, their shared Time Navigator, and responsive person details, plus a complete accepted-person profile route set. C4 added the source-traceable seven-person foundation; C5 extended that graph with accepted direct maternal and paternal ancestry; C6 added read-only graph utilities; C7 added visual tokens and primitives; C8 added persistent navigation; C9 added shared Explore state; C10 added the canonical-data-backed home page; C11 added the first derived visualization; C12 added person-centered disclosure over that visualization; C13 added the People index and full profiles; C14 added the uncertainty-preserving cross-person timeline; C15 made year context operational across temporal views. No search behavior, journey map, patterns view, or standalone Place/Research destination is implemented. `research/manifest.json` records the state at the end of A11, so its `websiteCodeCreated: false` field is historically correct for that research handoff even though C0 subsequently created application code.
 
 No application code may parse `research/` at runtime. The ingestion audit is recorded in `docs/research-ingestion-report.md`; it found 13 reused claim IDs, including 8 semantic collisions. Normalized data uses globally unique application IDs and preserves packet IDs only as file-scoped research provenance. The C5 integrity results are recorded in `docs/data-quality-report.md`; the C6 public query contract is recorded in `docs/genealogy-queries.md`. Further genealogy expansion must remain explicit and reviewed; unresolved claims may not be resolved merely to make the product complete.
 
@@ -79,4 +84,4 @@ No application code may parse `research/` at runtime. The ingestion audit is rec
 
 - `npm run build` uses Next.js's supported Webpack builder because Turbopack's CSS worker cannot bind its internal port in the managed Codex environment.
 - npm reports two warnings from unrelated user-level configuration keys; project install and validation are unaffected.
-- The pre-existing research archive and current application files are untracked. Nothing has been staged or committed.
+- The repository is connected to `https://github.com/spac3boy/familyatlas.git`; task changes remain unstaged unless the user commits them.

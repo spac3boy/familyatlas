@@ -183,6 +183,23 @@
     stroke-width: 2px;
   }
 
+  .time-navigator-brush .overlay {
+    cursor: crosshair;
+    fill: transparent;
+  }
+
+  .time-navigator-brush .selection {
+    fill: color-mix(in oklab, var(--primary) 18%, transparent);
+    stroke: var(--primary);
+    stroke-width: 1px;
+  }
+
+  .time-navigator-brush .handle {
+    fill: var(--card);
+    stroke: var(--primary);
+    stroke-width: 1px;
+  }
+
   details[open] > summary svg {
     transform: rotate(90deg);
   }

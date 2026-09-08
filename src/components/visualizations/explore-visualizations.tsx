@@ -6,5 +6,9 @@ import { useExploreState } from "@/state"
 
 export function ExploreVisualizations() {
   const { activeView } = useExploreState()
-  return activeView === "timeline" ? <FamilyTimeline /> : <FamilyTree />
+  return (
+    <div id="family-explore">
+      {activeView === "timeline" ? <FamilyTimeline /> : <FamilyTree />}
+    </div>
+  )
 }

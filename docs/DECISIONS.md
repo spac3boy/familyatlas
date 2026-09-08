@@ -121,3 +121,9 @@ Durable decisions live here. New entries should state the consequence; supersede
 - **Status:** accepted
 - **Decision:** Derive Timeline V1 from accepted canonical events into explicit temporal extents. Use D3 UTC scales, intervals, axis configuration, and formatting only for calculations; React renders and owns interaction. Exact dates are points, year/range/circa values remain intervals, before/after values remain open, and unknown dates receive no coordinate. A lifespan requires bounded birth and death evidence at both ends.
 - **Consequence:** Timeline code cannot coerce uncertainty into a representative point or infer a life span from incomplete evidence. Conflicting alternatives contribute an outer possible extent and an inner common supported extent. Unknown records remain accessible outside the plotted axis, and person/branch selections continue through shared Explore state.
+
+## D-021 — One selected year drives every temporal view
+
+- **Status:** accepted
+- **Decision:** Timeline and Journeys consume the centralized Explore `selectedYear`; no visualization keeps a competing selected-year value. The shared navigator uses D3 scales for coordinate calculation and an isolated D3 brush for pointer/touch gestures, then dispatches through the React-owned Explore action.
+- **Consequence:** Event filters, map state, and person emphasis derive from one uncertainty-preserving time-effects API. Unknown dates remain indeterminate, overlapping intervals remain possible, and only people conclusively born later or dead earlier may be dimmed. Clearing selects no year, and programmatic brush synchronization uses no animated transition.

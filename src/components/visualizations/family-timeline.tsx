@@ -5,9 +5,11 @@ import { ChevronRight } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { ExploreViewToggle } from "@/components/visualizations/explore-view-toggle"
-import { familyGraph } from "@/data"
+import { TimeNavigator } from "@/components/visualizations/time-navigator"
+import { familyGraph, familyGraphQueries } from "@/data"
 import {
   buildFamilyTimelineModel,
+  buildTimeSelectionEffects,
   formatTimelineDate,
   layoutFamilyTimeline,
   type FamilyTimelineLayoutEvent,
@@ -63,7 +65,11 @@ function confidenceLabel(value: Event["confidence"]) {
   return value.charAt(0).toUpperCase() + value.slice(1)
 }
 
-function TimelineEventMark({ item, y }: Readonly<{ item: FamilyTimelineLayoutEvent; y: number }>) {
+function TimelineEventMark({
+  item,
+  y,
+  opacity,
+}: Readonly<{ item: FamilyTimelineLayoutEvent; y: number; opacity: number }>) {
   const isPoint = item.extent.kind === "exact"
   const isCirca = item.extent.kind === "circa"
   const title = `${eventName(item.event)} — ${item.extent.label}. ${confidenceLabel(item.event.confidence)} confidence.`
@@ -77,6 +83,7 @@ function TimelineEventMark({ item, y }: Readonly<{ item: FamilyTimelineLayoutEve
         fill="var(--background)"
         stroke="var(--primary)"
         strokeWidth={2}
+        opacity={opacity}
         vectorEffect="non-scaling-stroke"
       >
         <title>{title}</title>
@@ -85,7 +92,7 @@ function TimelineEventMark({ item, y }: Readonly<{ item: FamilyTimelineLayoutEve
   }
 
   return (
-    <g>
+    <g opacity={opacity}>
       <title>{title}</title>
       <line
         x1={item.x1}
@@ -139,7 +146,7 @@ function TimelineEventMark({ item, y }: Readonly<{ item: FamilyTimelineLayoutEve
 }
 
 export function FamilyTimeline() {
-  const { selectedPerson, selectedBranch } = useExploreState()
+  const { selectedPerson, selectedBranch, selectedYear } = useExploreState()
   const { selectBranch, selectPerson } = useExploreActions()
   const [scope, setScope] = React.useState<FamilyTimelineScope>(() => {
     if (selectedBranch === "maternal" || selectedBranch === "paternal") return selectedBranch
@@ -157,7 +164,22 @@ export function FamilyTimeline() {
       }),
     [scope, selectedPerson],
   )
-  const layout = React.useMemo(() => layoutFamilyTimeline(model, viewportWidth), [model, viewportWidth])
+  const layout = React.useMemo(
+    () => layoutFamilyTimeline(model, viewportWidth, selectedYear),
+    [model, selectedYear, viewportWidth],
+  )
+  const timeEffects = React.useMemo(
+    () => buildTimeSelectionEffects(familyGraph, selectedYear, familyGraphQueries),
+    [selectedYear],
+  )
+  const personTimeStates = React.useMemo(
+    () => new Map(timeEffects.people.map((item) => [item.personId, item])),
+    [timeEffects.people],
+  )
+  const eventTimeStates = React.useMemo(
+    () => new Map(timeEffects.eventFilter.events.map((item) => [item.event.id, item.state])),
+    [timeEffects.eventFilter.events],
+  )
 
   const selectScope = (nextScope: FamilyTimelineScope) => {
     if (nextScope === "selected" && !selectedPerson) return
@@ -220,6 +242,8 @@ export function FamilyTimeline() {
           </div>
         </div>
 
+        <TimeNavigator label="Family timeline year" />
+
         {selectedName && (
           <p className="mt-4 text-xs leading-5 text-muted-foreground" aria-live="polite">
             Selected person: <span className="font-semibold text-foreground">{selectedName}</span>
@@ -243,6 +267,26 @@ export function FamilyTimeline() {
               className="block max-w-none"
             >
               <rect width={layout.width} height={layout.height} fill="var(--background)" />
+              {layout.selectedYearBand && (
+                <g aria-hidden="true">
+                  <rect
+                    x={layout.selectedYearBand.x1}
+                    y={layout.axisY}
+                    width={Math.max(2, layout.selectedYearBand.x2 - layout.selectedYearBand.x1)}
+                    height={layout.height - layout.axisY - 18}
+                    fill="var(--accent)"
+                  />
+                  <line
+                    x1={layout.selectedYearBand.x1}
+                    x2={layout.selectedYearBand.x1}
+                    y1={layout.axisY - 5}
+                    y2={layout.height - 18}
+                    stroke="var(--primary)"
+                    strokeWidth={1.5}
+                    vectorEffect="non-scaling-stroke"
+                  />
+                </g>
+              )}
               <g aria-hidden="true">
                 {layout.ticks.map((tick) => (
                   <g key={tick.date.toISOString()}>
@@ -277,14 +321,17 @@ export function FamilyTimeline() {
 
               {layout.rows.map((row) => {
                 const isSelected = selectedPerson === row.person.id
+                const temporalState = personTimeStates.get(row.person.id)
                 return (
                   <g
                     key={row.person.id}
                     role="button"
                     tabIndex={0}
                     aria-pressed={isSelected}
-                    aria-label={`${row.person.canonicalName}. ${row.events.length} dated ${row.events.length === 1 ? "event" : "events"}${row.lifespan ? `. Supported lifespan: ${row.lifespan.label}` : ". No complete supported lifespan"}.`}
+                    data-time-state={temporalState?.state ?? "unfiltered"}
+                    aria-label={`${row.person.canonicalName}. ${row.events.length} dated ${row.events.length === 1 ? "event" : "events"}${row.lifespan ? `. Supported lifespan: ${row.lifespan.label}` : ". No complete supported lifespan"}.${temporalState?.dim && selectedYear !== null ? ` Conclusively outside ${selectedYear}.` : ""}`}
                     className="cursor-pointer outline-none"
+                    opacity={temporalState?.dim ? 0.28 : 1}
                     onClick={() => choosePerson(row.person.id)}
                     onKeyDown={(event) => {
                       if (event.key === "Enter" || event.key === " ") {
@@ -349,9 +396,23 @@ export function FamilyTimeline() {
                       </g>
                     )}
                     <g aria-hidden="true">
-                      {row.events.map((item) => (
-                        <TimelineEventMark key={item.event.id} item={item} y={row.y} />
-                      ))}
+                      {row.events.map((item) => {
+                        const eventState = eventTimeStates.get(item.event.id)
+                        const opacity =
+                          selectedYear === null || eventState === "supported" || eventState === "possible"
+                            ? 1
+                            : eventState === "indeterminate"
+                              ? 0.5
+                              : 0.16
+                        return (
+                          <TimelineEventMark
+                            key={item.event.id}
+                            item={item}
+                            y={row.y}
+                            opacity={opacity}
+                          />
+                        )
+                      })}
                     </g>
                   </g>
                 )
@@ -413,6 +474,11 @@ export function FamilyTimeline() {
                 {row.lifespan && (
                   <p className="mt-2 text-xs leading-5 text-muted-foreground">
                     Supported lifespan: {row.lifespan.label}
+                  </p>
+                )}
+                {personTimeStates.get(row.person.id)?.dim && selectedYear !== null && (
+                  <p className="mt-2 text-xs font-medium text-muted-foreground">
+                    Conclusively outside {selectedYear} based on known life dates
                   </p>
                 )}
                 <ul className="mt-3 space-y-2 border-t pt-3">
