@@ -6,6 +6,7 @@ import {
 } from "@/lib/genealogy/queries";
 import { buildPersonDetailModel } from "@/lib/genealogy/person-detail";
 import type {
+  AlternateNameType,
   Confidence,
   EventId,
   GenealogyGraph,
@@ -19,6 +20,8 @@ export interface DirectorySurname {
   readonly label: string;
   readonly supportedNames: readonly string[];
   readonly confidenceStates: readonly Confidence[];
+  readonly isCanonical: boolean;
+  readonly alternateNameTypes: readonly AlternateNameType[];
 }
 
 export interface DirectoryBirthplace {
@@ -61,6 +64,14 @@ export interface PeopleDirectoryOptions {
 }
 
 const confidenceOrder: readonly Confidence[] = ["verified", "probable", "unresolved"];
+const alternateNameTypeOrder: readonly AlternateNameType[] = [
+  "maiden",
+  "married",
+  "nickname",
+  "spelling",
+  "source-form",
+  "other",
+];
 
 function normalizeSurname(value: string): string {
   return value.normalize("NFKD").replace(/\p{Diacritic}/gu, "").toLocaleLowerCase("en-US");
@@ -75,16 +86,32 @@ function surnameFromName(name: string): string | undefined {
   return surname || undefined;
 }
 
-function directorySurnames(person: Person): readonly DirectorySurname[] {
+export function recordedSurnamesForPerson(person: Person): readonly DirectorySurname[] {
   const grouped = new Map<
     string,
-    { label: string; supportedNames: Set<string>; confidenceStates: Set<Confidence> }
+    {
+      label: string;
+      supportedNames: Set<string>;
+      confidenceStates: Set<Confidence>;
+      isCanonical: boolean;
+      alternateNameTypes: Set<AlternateNameType>;
+    }
   >();
-  const names = [
-    { name: person.canonicalName, confidence: person.confidence },
-    ...person.alternateNames.map(({ name, confidence }) => ({ name, confidence })),
+  const names: {
+    name: string;
+    confidence: Confidence;
+    isCanonical: boolean;
+    type?: AlternateNameType;
+  }[] = [
+    { name: person.canonicalName, confidence: person.confidence, isCanonical: true },
+    ...person.alternateNames.map(({ name, confidence, type }) => ({
+      name,
+      confidence,
+      isCanonical: false,
+      type,
+    })),
   ];
-  for (const { name, confidence } of names) {
+  for (const { name, confidence, isCanonical, type } of names) {
     const surname = surnameFromName(name);
     if (!surname) continue;
     const value = normalizeSurname(surname);
@@ -92,19 +119,54 @@ function directorySurnames(person: Person): readonly DirectorySurname[] {
       label: surname,
       supportedNames: new Set(),
       confidenceStates: new Set(),
+      isCanonical: false,
+      alternateNameTypes: new Set(),
     };
     entry.supportedNames.add(name);
     entry.confidenceStates.add(confidence);
+    entry.isCanonical ||= isCanonical;
+    if (type) entry.alternateNameTypes.add(type);
     grouped.set(value, entry);
   }
   return [...grouped.entries()]
-    .map(([value, { label, supportedNames, confidenceStates }]) => ({
+    .map(([value, { label, supportedNames, confidenceStates, isCanonical, alternateNameTypes }]) => ({
       value,
       label,
       supportedNames: [...supportedNames],
       confidenceStates: weakestFirst(confidenceStates),
+      isCanonical,
+      alternateNameTypes: alternateNameTypeOrder.filter((type) => alternateNameTypes.has(type)),
     }))
     .sort((first, second) => first.label.localeCompare(second.label));
+}
+
+export function recordedSurnameQualifier(
+  surname: Pick<DirectorySurname, "isCanonical" | "alternateNameTypes">,
+): string | undefined {
+  if (surname.isCanonical) return undefined;
+  if (surname.alternateNameTypes.length !== 1) return "alternate name form";
+
+  switch (surname.alternateNameTypes[0]) {
+    case "maiden":
+      return "maiden name";
+    case "married":
+      return "married name";
+    case "spelling":
+      return "alternate spelling";
+    case "source-form":
+      return "source-recorded form";
+    case "nickname":
+      return "nickname form";
+    case "other":
+      return "alternate name form";
+  }
+}
+
+export function formatRecordedSurnameLabel(
+  surname: Pick<DirectorySurname, "label" | "isCanonical" | "alternateNameTypes">,
+): string {
+  const qualifier = recordedSurnameQualifier(surname);
+  return qualifier ? `${surname.label} — ${qualifier}` : surname.label;
 }
 
 function birthplaceLabel(
@@ -177,7 +239,7 @@ export function buildPeopleDirectory(
         lifespan: detail.lifespan,
         branch: queries.branchForPerson(person.id)?.classification ?? "unclassified",
         generation,
-        surnames: directorySurnames(person),
+        surnames: recordedSurnamesForPerson(person),
         birthplaces: directoryBirthplaces(graph, queries, person.id),
       }];
     })
@@ -187,7 +249,15 @@ export function buildPeopleDirectory(
 export function buildPeopleDirectoryOptions(
   records: readonly PeopleDirectoryRecord[],
 ): PeopleDirectoryOptions {
-  const surnameCounts = new Map<string, { label: string; count: number }>();
+  const surnameCounts = new Map<
+    string,
+    {
+      label: string;
+      count: number;
+      isCanonical: boolean;
+      alternateNameTypes: Set<AlternateNameType>;
+    }
+  >();
   const generationCounts = new Map<number, number>();
   const birthplaceCounts = new Map<PlaceId, { label: string; count: number }>();
   const confidenceCounts = new Map<Confidence, number>();
@@ -196,8 +266,15 @@ export function buildPeopleDirectoryOptions(
     generationCounts.set(record.generation, (generationCounts.get(record.generation) ?? 0) + 1);
     confidenceCounts.set(record.person.confidence, (confidenceCounts.get(record.person.confidence) ?? 0) + 1);
     for (const surname of record.surnames) {
-      const entry = surnameCounts.get(surname.value) ?? { label: surname.label, count: 0 };
+      const entry = surnameCounts.get(surname.value) ?? {
+        label: surname.label,
+        count: 0,
+        isCanonical: false,
+        alternateNameTypes: new Set<AlternateNameType>(),
+      };
       entry.count += 1;
+      entry.isCanonical ||= surname.isCanonical;
+      surname.alternateNameTypes.forEach((type) => entry.alternateNameTypes.add(type));
       surnameCounts.set(surname.value, entry);
     }
     for (const birthplace of record.birthplaces) {
@@ -209,7 +286,15 @@ export function buildPeopleDirectoryOptions(
 
   return {
     surnames: [...surnameCounts.entries()]
-      .map(([value, { label, count }]) => ({ value, label, count }))
+      .map(([value, { label, count, isCanonical, alternateNameTypes }]) => ({
+        value,
+        label: formatRecordedSurnameLabel({
+          label,
+          isCanonical,
+          alternateNameTypes: [...alternateNameTypes],
+        }),
+        count,
+      }))
       .sort((first, second) => first.label.localeCompare(second.label)),
     generations: [...generationCounts.entries()]
       .map(([value, count]) => ({

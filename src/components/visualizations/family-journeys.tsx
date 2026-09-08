@@ -3,7 +3,8 @@
 import * as React from "react"
 import { select } from "d3-selection"
 import { zoom, zoomIdentity, type ZoomBehavior, type ZoomTransform } from "d3-zoom"
-import { ChevronRight, LocateFixed, RotateCcw, ZoomIn, ZoomOut } from "lucide-react"
+import { ArrowUpRight, ChevronRight, LocateFixed, RotateCcw, ZoomIn, ZoomOut } from "lucide-react"
+import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
 import { ExploreViewToggle } from "@/components/visualizations/explore-view-toggle"
@@ -503,6 +504,13 @@ export function FamilyJourneys() {
                       <p className="mt-1 text-[0.6875rem] leading-4 text-muted-foreground">
                         {place.precision.replaceAll("-", " ")} · {place.confidence}
                       </p>
+                      <Link
+                        href={`/places/${place.id}`}
+                        className="mt-2 inline-flex items-center gap-1 text-[0.6875rem] font-medium text-primary hover:underline"
+                      >
+                        View place
+                        <ArrowUpRight aria-hidden="true" className="size-3" />
+                      </Link>
                     </li>
                   ))}
                 </ul>

@@ -6,6 +6,7 @@ import {
   buildPeopleDirectory,
   buildPeopleDirectoryOptions,
   filterPeopleDirectory,
+  formatRecordedSurnameLabel,
   type PeopleDirectoryFilters,
 } from "@/lib/genealogy/people-directory";
 import type { PersonId } from "@/types";
@@ -47,10 +48,16 @@ test("surname indexing uses supported canonical and alternate recorded names", (
   const vernaSurnames = byId.get("person-verna-arlene-bakke")?.surnames.map(({ value }) => value);
   const pauletteSurnames = byId.get("person-paulette-comeaux")?.surnames.map(({ value }) => value);
   const allenSurnames = byId.get("person-allen-comeaux-1925")?.surnames.map(({ value }) => value);
+  const bouquet = byId
+    .get("person-francois-michel-jacques-buquet")
+    ?.surnames.find(({ value }) => value === "bouquet");
 
   assert.deepEqual(vernaSurnames, ["bakke", "buquet"]);
   assert.deepEqual(pauletteSurnames, ["buquet", "comeaux", "wheeler"]);
   assert.deepEqual(allenSurnames, ["comeaux"]);
+  assert.equal(bouquet?.isCanonical, false);
+  assert.deepEqual(bouquet?.alternateNameTypes, ["spelling"]);
+  assert.equal(bouquet && formatRecordedSurnameLabel(bouquet), "Bouquet — alternate spelling");
 });
 
 test("birthplace includes only explicit birth events with canonical place references", () => {
@@ -96,6 +103,9 @@ test("filter options expose only values represented in canonical records", () =>
 
   assert.deepEqual(options.confidences.map(({ value }) => value), ["verified", "probable"]);
   assert.ok(options.surnames.some(({ value, label }) => value === "leblanc" && label === "LeBlanc"));
+  assert.ok(options.surnames.some(
+    ({ value, label }) => value === "bouquet" && label === "Bouquet — alternate spelling",
+  ));
   assert.ok(!options.surnames.some(({ value }) => value === "i"));
   assert.ok(options.generations.some(({ value, count }) => value === 0 && count === 1));
   assert.ok(options.birthplaces.some(({ value }) => value === "place-no-norway"));

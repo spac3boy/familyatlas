@@ -128,7 +128,7 @@ function TimelinePlaceLinks({ entry }: Readonly<{ entry: PersonProfileTimelineEn
   return (
     <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs leading-5 text-muted-foreground">
       {entry.places.map(({ place, role }) => (
-        <Link key={`${place.id}-${role}`} href={`#${place.id}`} className="inline-flex items-center gap-1.5 hover:text-primary">
+        <Link key={`${place.id}-${role}`} href={`/places/${place.id}#${entry.event.id}`} className="inline-flex items-center gap-1.5 hover:text-primary">
           <MapPin aria-hidden="true" className="size-3" />
           {place.modernName}
           {role !== "event-location" ? ` · ${sentenceCase(role)}` : ""}
@@ -145,7 +145,11 @@ function PlaceEntry({ profilePlace }: Readonly<{ profilePlace: PersonProfilePlac
     <li id={place.id} className="scroll-mt-24 py-6 first:pt-0">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h3 className="text-lg font-[560] tracking-[-0.02em]">{place.modernName}</h3>
+          <h3 className="text-lg font-[560] tracking-[-0.02em]">
+            <Link href={`/places/${place.id}`} className="underline-offset-4 hover:text-primary hover:underline">
+              {place.modernName}
+            </Link>
+          </h3>
           {context && <p className="mt-1 text-sm leading-6 text-muted-foreground">{context}</p>}
         </div>
         <div className="flex flex-wrap gap-2">
