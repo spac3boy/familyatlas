@@ -127,3 +127,9 @@ Durable decisions live here. New entries should state the consequence; supersede
 - **Status:** accepted
 - **Decision:** Timeline and Journeys consume the centralized Explore `selectedYear`; no visualization keeps a competing selected-year value. The shared navigator uses D3 scales for coordinate calculation and an isolated D3 brush for pointer/touch gestures, then dispatches through the React-owned Explore action.
 - **Consequence:** Event filters, map state, and person emphasis derive from one uncertainty-preserving time-effects API. Unknown dates remain indeterminate, overlapping intervals remain possible, and only people conclusively born later or dead earlier may be dimmed. Clearing selects no year, and programmatic brush synchronization uses no animated transition.
+
+## D-022 — Journey geometry cannot exceed movement evidence
+
+- **Status:** accepted
+- **Decision:** Derive Journeys from accepted canonical events and display-only place anchors over vendored Natural Earth boundaries. Render documented and strongly inferred movement as differently styled schematic curves; render separate known locations with an unknown route as endpoint rings without any connecting path. Coordinates position claims for display and never upgrade canonical place precision.
+- **Consequence:** Map code may group claims at the same honest anchor, but it cannot offset them into invented sites or reconstruct travel paths. Historical places without a defensible modern anchor remain explicit in the structured result and unplotted. React owns scope and shared selections; D3 Geo, Shape, and Zoom remain calculation/behavior helpers.

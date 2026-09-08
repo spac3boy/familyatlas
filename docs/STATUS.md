@@ -1,7 +1,7 @@
 # Project status
 
 **Last updated:** 2026-09-07
-**Current milestone:** C15 — Shared Time Navigator
+**Current milestone:** C16 — Journeys map V1
 
 ## Complete
 
@@ -65,18 +65,24 @@
 - C15 adds framework-independent event filtering plus map and person-emphasis projections. Supported, possible, indeterminate, excluded, and unfiltered states remain distinct; only conclusively out-of-year people are dimmed.
 - C15 Timeline integration renders a bounded calendar-year band, de-emphasizes out-of-year events, preserves incomplete life histories, and retains the year when switching between Tree and Timeline.
 - C15 validation: 61 passing tests plus successful lint, type-check, and production build. Live checks at 320px and 1366px covered keyboard and pointer selection, cross-view year persistence, keyboard/button clearing, responsive sizing without page overflow, and a clean runtime console.
+- C16 Journeys Map V1 derives supported locations and movements from accepted canonical events for all-family, maternal, paternal, and selected-person scopes. Shared `selectedPerson`, `selectedBranch`, `selectedYear`, and `selectedPlace` remain React-owned Explore context.
+- C16 uses `d3-geo` for a Natural Earth projection and boundary paths, `d3-shape` for explicitly schematic movement curves, and isolated `d3-zoom` behavior for pan/zoom. React renders every SVG/HTML mark and accessible control.
+- C16 distinguishes documented, probable, and mixed-location anchors without inventing coordinates. Named sites lacking inspected coordinates use disclosed town/county anchors; historical Acadia and Port Royal remain explicit but unplotted because no modern equivalent was normalized.
+- C16 encodes documented movements with solid schematic curves and strongly inferred movements with dashed curves. Separate known locations with unknown routes use paired endpoint rings and are structurally prohibited from producing a connecting path.
+- C16 vendors published Natural Earth 1:110m Admin 0 and Admin 1 GeoJSON boundary context under `public/data/`, with source and version disclosed in the interface and visualization documentation.
+- C16 validation: 68 passing tests plus successful lint, type-check, and production build. Live browser checks at 320px and 1366px covered published-boundary loading, pointer and keyboard marker selection, collision-safe responsive clusters, zoom detail, branch/year filtering, selected-person handoff, and zero page-level horizontal overflow.
 
 ## Deliberately not started
 
 - Collateral, descendant, contextual, unattached, research-only candidate, or rejected identities beyond the accepted direct ancestral graph.
 - Additional normalization not authorized by the branch coverage audits or later evidence review.
 - Standalone Family, Research, or Place destination features beyond the completed People index and profiles.
-- Secondary product routes plus journeys and patterns visualization UI/view models.
+- Secondary product routes plus the patterns visualization UI/view model.
 - Hosting, authentication, analytics, editing, collaboration, or synchronization.
 
 ## Current repository boundary
 
-The site contains a validated application shell, an editorial home/Explore route with Family Tree V1, Timeline V1, their shared Time Navigator, and responsive person details, plus a complete accepted-person profile route set. C4 added the source-traceable seven-person foundation; C5 extended that graph with accepted direct maternal and paternal ancestry; C6 added read-only graph utilities; C7 added visual tokens and primitives; C8 added persistent navigation; C9 added shared Explore state; C10 added the canonical-data-backed home page; C11 added the first derived visualization; C12 added person-centered disclosure over that visualization; C13 added the People index and full profiles; C14 added the uncertainty-preserving cross-person timeline; C15 made year context operational across temporal views. No search behavior, journey map, patterns view, or standalone Place/Research destination is implemented. `research/manifest.json` records the state at the end of A11, so its `websiteCodeCreated: false` field is historically correct for that research handoff even though C0 subsequently created application code.
+The site contains a validated application shell, an editorial home/Explore route with Family Tree V1, Timeline V1, Journeys Map V1, their shared Time Navigator, and responsive person details, plus a complete accepted-person profile route set. C4 added the source-traceable seven-person foundation; C5 extended that graph with accepted direct maternal and paternal ancestry; C6 added read-only graph utilities; C7 added visual tokens and primitives; C8 added persistent navigation; C9 added shared Explore state; C10 added the canonical-data-backed home page; C11 added the first derived visualization; C12 added person-centered disclosure over that visualization; C13 added the People index and full profiles; C14 added the uncertainty-preserving cross-person timeline; C15 made year context operational across temporal views; C16 added evidence-limited geographic projection and movement presentation. No search behavior, patterns view, or standalone Place/Research destination is implemented. `research/manifest.json` records the state at the end of A11, so its `websiteCodeCreated: false` field is historically correct for that research handoff even though C0 subsequently created application code.
 
 No application code may parse `research/` at runtime. The ingestion audit is recorded in `docs/research-ingestion-report.md`; it found 13 reused claim IDs, including 8 semantic collisions. Normalized data uses globally unique application IDs and preserves packet IDs only as file-scoped research provenance. The C5 integrity results are recorded in `docs/data-quality-report.md`; the C6 public query contract is recorded in `docs/genealogy-queries.md`. Further genealogy expansion must remain explicit and reviewed; unresolved claims may not be resolved merely to make the product complete.
 
