@@ -17,7 +17,10 @@ export default function PeoplePage() {
         </p>
       </div>
 
-      <PeopleDirectory records={people} />
+      <Suspense fallback={<p className="mt-14 border-y py-8 text-sm text-muted-foreground">Loading directory filters…</p>}>
+        <PeopleDirectory records={people} />
+      </Suspense>
     </div>
   )
 }
+import { Suspense } from "react"

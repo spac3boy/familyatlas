@@ -3,6 +3,7 @@
 import * as React from "react"
 import Link from "next/link"
 import { ArrowRight, RotateCcw } from "lucide-react"
+import { useSearchParams } from "next/navigation"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -66,8 +67,31 @@ function FilterSelect({
 }
 
 export function PeopleDirectory({ records }: Readonly<{ records: readonly PeopleDirectoryRecord[] }>) {
-  const [filters, setFilters] = React.useState<PeopleDirectoryFilters>(initialFilters)
+  const searchParams = useSearchParams()
+  const [localFilters, setFilters] = React.useState<PeopleDirectoryFilters>(initialFilters)
   const options = React.useMemo(() => buildPeopleDirectoryOptions(records), [records])
+  const requestedSurname = searchParams.get("surname") ?? ""
+  const surname = options.surnames.some(({ value }) => value === requestedSurname)
+    ? requestedSurname
+    : ""
+  const filters = React.useMemo(
+    () => ({ ...localFilters, surname }),
+    [localFilters, surname],
+  )
+
+  const setSurname = (surname: string) => {
+    const url = new URL(window.location.href)
+    if (surname) url.searchParams.set("surname", surname)
+    else url.searchParams.delete("surname")
+    window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`)
+  }
+
+  const clearFilters = () => {
+    setFilters(initialFilters)
+    const url = new URL(window.location.href)
+    url.searchParams.delete("surname")
+    window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`)
+  }
   const filteredRecords = React.useMemo(
     () => filterPeopleDirectory(records, filters),
     [filters, records],
@@ -95,7 +119,7 @@ export function PeopleDirectory({ records }: Readonly<{ records: readonly People
             variant="ghost"
             size="sm"
             disabled={activeFilterCount === 0}
-            onClick={() => setFilters(initialFilters)}
+            onClick={clearFilters}
           >
             <RotateCcw aria-hidden="true" />
             Clear filters{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
@@ -121,7 +145,7 @@ export function PeopleDirectory({ records }: Readonly<{ records: readonly People
             id="people-surname-filter"
             label="Surname"
             value={filters.surname}
-            onChange={(surname) => setFilters((current) => ({ ...current, surname }))}
+            onChange={setSurname}
           >
             <option value="">All recorded surnames</option>
             {options.surnames.map((option) => (

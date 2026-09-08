@@ -100,3 +100,9 @@ C17 derives its directory records in `src/lib/genealogy/people-directory.ts`; no
 ## Place profile projection
 
 C18 derives the Places index and stable-ID place profiles in `src/lib/genealogy/place-profile.ts`. Direct associations retain their event-location, migration-origin, or migration-destination role. Parish/county and regional profiles may include associations from canonical descendants only when explicit `parentPlaceId` edges establish that hierarchy; those entries remain marked as child-place observations. Associated people, recorded surname forms, dated-event spans, undated-event counts, place/event source support, and movement endpoints all resolve from the canonical graph. No map coordinate or research prose participates in this profile projection.
+
+## Global search projection
+
+C19 builds a serializable global index in `src/lib/genealogy/global-search.ts`, bound to the canonical graph by `src/data/search.ts`. It includes accepted people, accepted places, recorded surname forms, and accepted normalized sources. Supported alternate person names, historical/alternate place names, source metadata, citation handles, aliases, and stable IDs are keywords; they remain search terms rather than new claims. Text matching is case- and accent-insensitive, deterministic, and independent of React.
+
+Person and place results use their stable-ID routes. Recorded surnames are not canonical entities, so surname results use `/people?surname=…` and the directory validates the value against its graph-derived options. Source results use `/sources/[sourceId]`; those pages show only normalized source metadata and explicit normalized references. Neither indexing nor source presentation reads research Markdown at runtime.

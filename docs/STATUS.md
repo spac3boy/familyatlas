@@ -1,7 +1,7 @@
 # Project status
 
 **Last updated:** 2026-09-08
-**Current milestone:** C18 — Places section
+**Current milestone:** C19 — Global Command search
 
 ## Complete
 
@@ -78,6 +78,9 @@
 - C18 place profiles derive associated people, recorded surname forms, events, historical-date spans, supporting sources, canonical place hierarchy, and all three movement classifications. Broader parish, county, and region profiles include only normalized child-place associations and label them as occurring within that geography.
 - C18 connects place profiles to person profiles, supporting event/source anchors, and shared Journeys state. Person profiles, the home-page place preview, and Journeys map details now link back to canonical place routes.
 - C18 validation: 83 passing tests plus successful lint, type-check, and production build. Live browser checks at 320px and 1366px covered all 38 place links, parish-level precision, historical geography without a manufactured modern country, Places-to-Journeys selection, stable cross-links, and zero page-level horizontal overflow.
+- C19 global Command search projects accepted canonical people, places, recorded surname forms, and normalized sources through a framework-independent index and ranking utility. Search includes supported alternate names, historical place names, source metadata, citation handles, and stable IDs without reading research prose.
+- C19 routes person and place results to their stable profiles, surname results to a shareable People-directory filter, and source results to 53 statically generated normalized source-record routes. The persistent header opens search by button or Command/Control+K; shadcn Command provides arrow-key selection and Enter navigation inside an accessible Base UI dialog.
+- C19 validation: 92 passing tests plus successful lint, type-check, and production build of 153 static pages. Live checks covered alternate-surname search, a surname deep link, keyboard-opened source search, source navigation, place search at 320px, and zero page-level horizontal overflow.
 
 ## Deliberately not started
 
@@ -89,7 +92,7 @@
 
 ## Current repository boundary
 
-The site contains a validated application shell, an editorial home/Explore route with Family Tree V1, Timeline V1, Journeys Map V1, their shared Time Navigator, and responsive person details, plus filterable People and evidence-bounded Places sections with stable-ID profiles. C4 added the source-traceable seven-person foundation; C5 extended that graph with accepted direct maternal and paternal ancestry; C6 added read-only graph utilities; C7 added visual tokens and primitives; C8 added persistent navigation; C9 added shared Explore state; C10 added the canonical-data-backed home page; C11 added the first derived visualization; C12 added person-centered disclosure over that visualization; C13 added person profiles; C14 added the uncertainty-preserving cross-person timeline; C15 made year context operational across temporal views; C16 added evidence-limited geographic projection and movement presentation; C17 made the People index an evidence-bounded directory; C18 added the canonical Places index and detail views. No search behavior, patterns view, or standalone Research destination is implemented. `research/manifest.json` records the state at the end of A11, so its `websiteCodeCreated: false` field is historically correct for that research handoff even though C0 subsequently created application code.
+The site contains a validated application shell, global canonical-data search, an editorial home/Explore route with Family Tree V1, Timeline V1, Journeys Map V1, their shared Time Navigator, and responsive person details, plus filterable People and evidence-bounded Places sections with stable-ID profiles. C4 added the source-traceable seven-person foundation; C5 extended that graph with accepted direct maternal and paternal ancestry; C6 added read-only graph utilities; C7 added visual tokens and primitives; C8 added persistent navigation; C9 added shared Explore state; C10 added the canonical-data-backed home page; C11 added the first derived visualization; C12 added person-centered disclosure over that visualization; C13 added person profiles; C14 added the uncertainty-preserving cross-person timeline; C15 made year context operational across temporal views; C16 added the evidence-limited Journeys map; C17 made the People index an evidence-bounded directory; C18 added the canonical Places index and detail views; C19 added global search and stable normalized-source routes. No patterns view or standalone Stories/Research destination is implemented. `research/manifest.json` records the state at the end of A11, so its `websiteCodeCreated: false` field is historically correct for that research handoff even though C0 subsequently created application code.
 
 No application code may parse `research/` at runtime. The ingestion audit is recorded in `docs/research-ingestion-report.md`; it found 13 reused claim IDs, including 8 semantic collisions. Normalized data uses globally unique application IDs and preserves packet IDs only as file-scoped research provenance. The C5 integrity results are recorded in `docs/data-quality-report.md`; the C6 public query contract is recorded in `docs/genealogy-queries.md`. Further genealogy expansion must remain explicit and reviewed; unresolved claims may not be resolved merely to make the product complete.
 
