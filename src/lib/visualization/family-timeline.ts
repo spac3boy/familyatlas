@@ -74,6 +74,7 @@ export interface FamilyTimelineLayout {
   readonly plotX2: number;
   readonly axisY: number;
   readonly ticks: readonly { readonly date: Date; readonly x: number; readonly label: string }[];
+  readonly selectedYearBand?: { readonly year: number; readonly x1: number; readonly x2: number };
   readonly rows: readonly FamilyTimelineLayoutRow[];
 }
 
@@ -283,6 +284,7 @@ function tickInterval(domain: readonly [Date, Date], plotWidth: number): TimeInt
 export function layoutFamilyTimeline(
   model: FamilyTimelineModel,
   requestedWidth: number,
+  selectedYear: number | null = null,
 ): FamilyTimelineLayout | undefined {
   if (!model.domain || model.rows.length === 0) return undefined;
   const width = Math.max(760, requestedWidth);
@@ -312,6 +314,16 @@ export function layoutFamilyTimeline(
       const date = value instanceof Date ? value : new Date(Number(value));
       return { date, x: scale(date), label: tickFormat ? tickFormat(value, index) : yearFormat(date) };
     }),
+    selectedYearBand:
+      selectedYear !== null &&
+      selectedYear >= model.domain[0].getUTCFullYear() &&
+      selectedYear <= model.domain[1].getUTCFullYear()
+        ? {
+            year: selectedYear,
+            x1: scale(new Date(Date.UTC(selectedYear, 0, 1))),
+            x2: scale(new Date(Date.UTC(selectedYear, 11, 31))),
+          }
+        : undefined,
     rows: model.rows.map((row, index) => ({
       person: row.person,
       y: rowStart + index * rowHeight,

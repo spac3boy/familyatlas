@@ -79,7 +79,7 @@ export default function Home() {
               and evidence in view.
             </p>
             <Link
-              href="#family-tree"
+              href="#family-explore"
               className={cn(buttonVariants({ size: "lg" }), "mt-7")}
             >
               Explore the family

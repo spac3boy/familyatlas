@@ -35,7 +35,7 @@ The pure reducer and contracts live in `src/state/explore-state.ts`; the React p
 
 ## Dependency policy
 
-C11 adds `d3-hierarchy`, `d3-shape`, `d3-zoom`, and the `d3-selection` adapter required to bind zoom behavior to the React-owned SVG. C14 adds `d3-scale`, `d3-time`, `d3-axis`, and `d3-time-format` for timeline geometry and UTC axis calculations. The umbrella `d3` package is not installed. Continue adding individual modules only when a feature demonstrably needs them, and record durable boundary changes in `docs/DECISIONS.md`.
+C11 adds `d3-hierarchy`, `d3-shape`, `d3-zoom`, and the `d3-selection` adapter required to bind zoom behavior to the React-owned SVG. C14 adds `d3-scale`, `d3-time`, `d3-axis`, and `d3-time-format` for timeline geometry and UTC axis calculations. C15 adds `d3-brush` for the isolated shared time-control gesture. The umbrella `d3` package is not installed. Continue adding individual modules only when a feature demonstrably needs them, and record durable boundary changes in `docs/DECISIONS.md`.
 
 ## Family Tree V1
 
@@ -75,6 +75,14 @@ A lifespan is not inferred from a single life event. It requires at least one bo
 
 The SVG retains a readable minimum width and is locally horizontally scrollable on narrow screens rather than shrinking its labels beyond usability. Every populated row is keyboard-selectable, and the structured record list provides a non-spatial equivalent with exact source-backed date wording and confidence.
 
+## Shared Time Navigator
+
+C15 makes `selectedYear` an operational cross-view context while retaining the C9 ownership boundary. `TimeNavigator` reads and writes only the centralized Explore value. D3 scale helpers calculate its responsive ticks and coordinate conversions; an imperative `d3-brush` binding is isolated to one empty SVG group and synchronizes gesture results back to React state. It does not own the selected year or render the surrounding interface.
+
+The control supports pointer and touch brushing plus a keyboard slider contract. All programmatic brush movement is immediate, so reduced-motion behavior does not depend on a transition override. Clearing restores `selectedYear: null` rather than choosing a substitute year.
+
+Framework-independent effects partition accepted events into supported, possible, indeterminate, and excluded sets; provide active and indeterminate place/movement IDs for Journeys; and classify person emphasis through `peopleAliveInYear`. Only conclusively excluded people may be dimmed. Timeline consumes these effects now; Journeys must reuse them rather than creating another year filter. The complete public contract is in `docs/time-navigation.md`.
+
 ## Genealogy-safe encodings
 
 - Read relationships from the canonical graph; never manufacture placeholder ancestors to balance a layout.
@@ -99,4 +107,4 @@ Honor `prefers-reduced-motion`. Layout changes should remain understandable with
 
 Test calculation helpers with deterministic fixtures, including empty data, one-person graphs, uncertain dates, disconnected branches, ambiguous places, and reduced-motion modes. Test rendered semantics and keyboard behavior separately from geometry. Avoid brittle pixel snapshots as the only evidence of correctness.
 
-Family Tree V1 and Timeline V1 are implemented through C14. Journeys and patterns remain unimplemented.
+Family Tree V1, Timeline V1, and their shared Time Navigator are implemented through C15. Journeys and patterns remain unimplemented.
