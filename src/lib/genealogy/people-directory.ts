@@ -34,6 +34,8 @@ export interface DirectoryBirthplace {
 export interface PeopleDirectoryRecord {
   readonly person: Person;
   readonly relationshipLabel: string;
+  /** Strongest accepted shortest path to Michael; kept separate from person confidence. */
+  readonly relationshipConfidence?: Confidence;
   readonly lifespan?: string;
   readonly branch: BranchClassification;
   /** Parent-child edges from Michael. Zero is Michael. */
@@ -223,19 +225,41 @@ export function buildPeopleDirectory(
   suppliedQueries?: GenealogyQueries,
 ): readonly PeopleDirectoryRecord[] {
   const queries = suppliedQueries ?? createGenealogyQueries(graph);
-  const ancestorDepth = new Map(
-    queries.ancestors(MICHAEL_BUQUET_ID).map(({ person, depth }) => [person.id, depth]),
-  );
+  const generationDistance = new Map<PersonId, number>([[MICHAEL_BUQUET_ID, 0]]);
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (const relationship of graph.relationships) {
+      if (relationship.researchStatus !== "accepted") continue;
+      const [firstId, secondId, distance] =
+        relationship.type === "parent-child"
+          ? [relationship.parentId, relationship.childId, 1] as const
+          : [relationship.personIds[0], relationship.personIds[1], 0] as const;
+      const firstDistance = generationDistance.get(firstId);
+      const secondDistance = generationDistance.get(secondId);
+      if (firstDistance !== undefined && (secondDistance === undefined || firstDistance + distance < secondDistance)) {
+        generationDistance.set(secondId, firstDistance + distance);
+        changed = true;
+      }
+      if (secondDistance !== undefined && (firstDistance === undefined || secondDistance + distance < firstDistance)) {
+        generationDistance.set(firstId, secondDistance + distance);
+        changed = true;
+      }
+    }
+  }
 
   return graph.people
     .filter(({ researchStatus }) => researchStatus === "accepted")
     .flatMap((person): PeopleDirectoryRecord[] => {
       const detail = buildPersonDetailModel(graph, person.id, queries);
-      const generation = person.id === MICHAEL_BUQUET_ID ? 0 : ancestorDepth.get(person.id);
+      const generation = generationDistance.get(person.id);
       if (!detail || generation === undefined) return [];
       return [{
         person,
         relationshipLabel: detail.relationshipLabel,
+        relationshipConfidence: detail.relationshipPaths
+          .map(({ confidence }) => confidence)
+          .sort((first, second) => confidenceOrder.indexOf(first) - confidenceOrder.indexOf(second))[0],
         lifespan: detail.lifespan,
         branch: queries.branchForPerson(person.id)?.classification ?? "unclassified",
         generation,
@@ -299,7 +323,7 @@ export function buildPeopleDirectoryOptions(
     generations: [...generationCounts.entries()]
       .map(([value, count]) => ({
         value,
-        label: value === 0 ? "Generation 0 · Michael" : `Generation ${value}`,
+        label: value === 0 ? "Generation 0 · Michael and spouse" : `Generation ${value}`,
         count,
       }))
       .sort((first, second) => first.value - second.value),

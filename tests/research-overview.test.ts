@@ -11,20 +11,20 @@ import { buildResearchOverview } from "@/lib/genealogy/research-overview"
 
 test("research coverage is derived from the accepted canonical graph", () => {
   assert.deepEqual(familyResearchOverview.coverage.people, {
-    total: 57,
-    verified: 16,
-    probable: 41,
+    total: 83,
+    verified: 38,
+    probable: 45,
     unresolved: 0,
   })
   assert.deepEqual(familyResearchOverview.coverage.relationships, {
-    total: 82,
-    verified: 20,
-    probable: 62,
+    total: 119,
+    verified: 42,
+    probable: 77,
     unresolved: 0,
   })
   assert.deepEqual(familyResearchOverview.coverage.events, {
-    total: 120,
-    verified: 35,
+    total: 125,
+    verified: 40,
     probable: 82,
     unresolved: 3,
   })
@@ -34,7 +34,31 @@ test("research coverage is derived from the accepted canonical graph", () => {
     probable: 22,
     unresolved: 0,
   })
-  assert.equal(familyResearchOverview.coverage.sources, 53)
+  assert.equal(familyResearchOverview.coverage.sources, 59)
+})
+
+test("research conclusions preserve confidence separately from classified provenance", () => {
+  const relationshipConclusions = Object.values(familyResearchOverview.conclusions)
+    .flat()
+    .filter(({ kind }) => kind === "relationship")
+  const familyConfirmed = relationshipConclusions.filter(({ provenanceKinds }) =>
+    provenanceKinds.includes("family-confirmed"),
+  )
+
+  assert.equal(familyConfirmed.length, 16)
+  assert.ok(familyConfirmed.every(({ confidence }) => confidence === "verified"))
+  assert.deepEqual(
+    familyConfirmed
+      .filter(({ provenanceKinds }) => provenanceKinds.includes("documented"))
+      .map(({ title }) => title)
+      .sort(),
+    [
+      "Aubin Buquet → Gina Buquet",
+      "Paulette Comeaux → Gina Buquet",
+      "Rita LeBlanc → Paulette Comeaux",
+      "Verna Arlene Bakke Buquet → Aubin Buquet",
+    ],
+  )
 })
 
 test("every canonical conclusion retains confidence, source references, and a stable destination", () => {
@@ -69,6 +93,6 @@ test("normalized research questions are explicit, unique, and cover every archiv
     new Set(normalizedResearchQuestions.map(({ group }) => group)),
     new Set(researchQuestionGroups),
   )
-  assert.ok(normalizedResearchQuestions.every(({ researchFile }) => researchFile === "research/open-questions.md"))
+  assert.ok(normalizedResearchQuestions.every(({ researchFile }) => researchFile.startsWith("research/")))
   assert.ok(normalizedResearchQuestions.every(({ question, nextEvidence }) => question.length > 0 && nextEvidence.length > 0))
 })

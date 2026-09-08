@@ -1,6 +1,7 @@
 import {
   alternateNameTypeValues,
   confidenceValues,
+  evidenceProvenanceKindValues,
   eventTypeValues,
   evidenceClassValues,
   inspectionStatusValues,
@@ -242,6 +243,7 @@ function validateEvidenceFields(
   path: string,
   sourceIds: Set<string>,
   sourceAliases: Map<string, string>,
+  sourcesById: ReadonlyMap<string, UnknownRecord>,
   issues: ValidationIssue[],
 ): void {
   if (!isOneOf(item.confidence, confidenceValues)) {
@@ -251,6 +253,96 @@ function validateEvidenceFields(
     issues.push(issue("research-status", `${path}.researchStatus`, "Unknown research status."));
   }
   validateSourceRefs(item.sourceRefs, `${path}.sourceRefs`, sourceIds, sourceAliases, issues);
+  validateProvenance(item.provenance, item.sourceRefs, `${path}.provenance`, sourceIds, sourceAliases, sourcesById, issues);
+}
+
+function validateProvenance(
+  value: unknown,
+  entitySourceRefs: unknown,
+  path: string,
+  sourceIds: Set<string>,
+  sourceAliases: Map<string, string>,
+  sourcesById: ReadonlyMap<string, UnknownRecord>,
+  issues: ValidationIssue[],
+): void {
+  if (value === undefined) return;
+  if (!Array.isArray(value) || value.length === 0) {
+    issues.push(issue("provenance.required", path, "Expected at least one provenance classification."));
+    return;
+  }
+
+  const canonicalSourceId = (id: string) => sourceAliases.get(id) ?? id;
+  const entitySources = new Set(
+    Array.isArray(entitySourceRefs)
+      ? entitySourceRefs.flatMap((reference) =>
+          isRecord(reference) && isSourceId(reference.sourceId)
+            ? [canonicalSourceId(reference.sourceId)]
+            : [],
+        )
+      : [],
+  );
+  const kinds = new Set<string>();
+
+  value.forEach((entry, index) => {
+    const entryPath = `${path}[${index}]`;
+    if (!isRecord(entry)) {
+      issues.push(issue("provenance.object", entryPath, "Expected a provenance object."));
+      return;
+    }
+    if (!isOneOf(entry.kind, evidenceProvenanceKindValues)) {
+      issues.push(issue("provenance.kind", `${entryPath}.kind`, "Unknown provenance kind."));
+    } else if (kinds.has(entry.kind)) {
+      issues.push(issue("provenance.duplicate", `${entryPath}.kind`, "Provenance kinds must be unique per claim."));
+    } else {
+      kinds.add(entry.kind);
+    }
+    if (entry.note !== undefined && typeof entry.note !== "string") {
+      issues.push(issue("provenance.note", `${entryPath}.note`, "Expected a string."));
+    }
+    validateSourceRefs(entry.sourceRefs, `${entryPath}.sourceRefs`, sourceIds, sourceAliases, issues);
+    if (!Array.isArray(entry.sourceRefs)) return;
+
+    entry.sourceRefs.forEach((reference, referenceIndex) => {
+      if (!isRecord(reference) || !isSourceId(reference.sourceId)) return;
+      const canonicalId = canonicalSourceId(reference.sourceId);
+      if (!entitySources.has(canonicalId)) {
+        issues.push(
+          issue(
+            "provenance.source-subset",
+            `${entryPath}.sourceRefs[${referenceIndex}].sourceId`,
+            "Provenance may cite only sources already attached to the claim.",
+          ),
+        );
+      }
+      const source = sourcesById.get(canonicalId);
+      if (
+        entry.kind === "family-confirmed" &&
+        source &&
+        source.evidenceClass !== "family-provided"
+      ) {
+        issues.push(
+          issue(
+            "provenance.source-class",
+            `${entryPath}.sourceRefs[${referenceIndex}].sourceId`,
+            "Family-confirmed provenance requires a family-provided source.",
+          ),
+        );
+      }
+      if (
+        entry.kind === "documented" &&
+        source &&
+        (source.evidenceClass === "family-provided" || source.evidenceClass === "unknown")
+      ) {
+        issues.push(
+          issue(
+            "provenance.source-class",
+            `${entryPath}.sourceRefs[${referenceIndex}].sourceId`,
+            "Documented provenance requires an external evidentiary source.",
+          ),
+        );
+      }
+    });
+  });
 }
 
 function asArray(value: unknown, path: string, issues: ValidationIssue[]): readonly unknown[] {
@@ -295,6 +387,12 @@ export function validateGenealogyGraph(value: unknown): ValidationResult {
   registerIds(places, "graph.places", isPlaceId, placeIds, placeAliases, issues);
   registerIds(events, "graph.events", isEventId, new Set(), new Map(), issues);
 
+  const sourcesById = new Map<string, UnknownRecord>();
+  sources.forEach((source) => {
+    if (!isRecord(source) || typeof source.id !== "string") return;
+    sourcesById.set(source.id, source);
+  });
+
   sources.forEach((source, index) => {
     const path = `graph.sources[${index}]`;
     if (!isRecord(source)) return;
@@ -321,11 +419,13 @@ export function validateGenealogyGraph(value: unknown): ValidationResult {
   });
 
   const peopleById = new Map<string, UnknownRecord>();
+  people.forEach((person) => {
+    if (isRecord(person) && typeof person.id === "string") peopleById.set(person.id, person);
+  });
   people.forEach((person, index) => {
     const path = `graph.people[${index}]`;
     if (!isRecord(person)) return;
-    if (typeof person.id === "string") peopleById.set(person.id, person);
-    validateEvidenceFields(person, path, sourceIds, sourceAliases, issues);
+    validateEvidenceFields(person, path, sourceIds, sourceAliases, sourcesById, issues);
     if (!isNonEmptyString(person.canonicalName)) {
       issues.push(issue("person.name", `${path}.canonicalName`, "Required."));
     }
@@ -345,14 +445,43 @@ export function validateGenealogyGraph(value: unknown): ValidationResult {
           issues.push(issue("confidence", `${namePath}.confidence`, "Unknown confidence value."));
         }
         validateSourceRefs(name.sourceRefs, `${namePath}.sourceRefs`, sourceIds, sourceAliases, issues);
+        validateProvenance(name.provenance, name.sourceRefs, `${namePath}.provenance`, sourceIds, sourceAliases, sourcesById, issues);
       });
+    }
+    if (person.distinctFromPersonIds !== undefined) {
+      if (!Array.isArray(person.distinctFromPersonIds)) {
+        issues.push(issue("person.distinct-from", `${path}.distinctFromPersonIds`, "Expected an array."));
+      } else {
+        person.distinctFromPersonIds.forEach((id, distinctIndex) => {
+          const resolved = isPersonId(id)
+            ? peopleById.get(personAliases.get(id) ?? id)
+            : undefined;
+          if (!resolved) {
+            issues.push(
+              issue(
+                "person.distinct-from-ref",
+                `${path}.distinctFromPersonIds[${distinctIndex}]`,
+                `Unknown person: ${String(id)}.`,
+              ),
+            );
+          } else if (id === person.id) {
+            issues.push(
+              issue(
+                "person.distinct-from-self",
+                `${path}.distinctFromPersonIds[${distinctIndex}]`,
+                "A person cannot be distinct from themself.",
+              ),
+            );
+          }
+        });
+      }
     }
   });
 
   places.forEach((place, index) => {
     const path = `graph.places[${index}]`;
     if (!isRecord(place)) return;
-    validateEvidenceFields(place, path, sourceIds, sourceAliases, issues);
+    validateEvidenceFields(place, path, sourceIds, sourceAliases, sourcesById, issues);
     if (!isNonEmptyString(place.modernName)) issues.push(issue("place.name", `${path}.modernName`, "Required."));
     if (!Array.isArray(place.historicalNames)) {
       issues.push(issue("place.historical-names", `${path}.historicalNames`, "Expected an array."));
@@ -377,7 +506,7 @@ export function validateGenealogyGraph(value: unknown): ValidationResult {
   relationships.forEach((relationship, index) => {
     const path = `graph.relationships[${index}]`;
     if (!isRecord(relationship)) return;
-    validateEvidenceFields(relationship, path, sourceIds, sourceAliases, issues);
+    validateEvidenceFields(relationship, path, sourceIds, sourceAliases, sourcesById, issues);
     if (!isOneOf(relationship.type, relationshipTypeValues)) {
       issues.push(issue("relationship.type", `${path}.type`, "Unknown relationship type."));
       return;
@@ -418,7 +547,7 @@ export function validateGenealogyGraph(value: unknown): ValidationResult {
   events.forEach((event, index) => {
     const path = `graph.events[${index}]`;
     if (!isRecord(event)) return;
-    validateEvidenceFields(event, path, sourceIds, sourceAliases, issues);
+    validateEvidenceFields(event, path, sourceIds, sourceAliases, sourcesById, issues);
     if (!isOneOf(event.type, eventTypeValues)) {
       issues.push(issue("event.type", `${path}.type`, "Unknown event type."));
     }

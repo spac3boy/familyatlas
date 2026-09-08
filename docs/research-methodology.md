@@ -21,8 +21,9 @@ When a material conflict cannot be resolved from the archive, return to the rele
 ## Evidence discipline
 
 - Separate what a source literally reports from identity matching and genealogical inference.
-- Keep family-provided information labeled; credibility does not make it independently verified.
-- Use only `verified`, `probable`, or `unresolved` for genealogical confidence.
+- Keep family-provided information labeled. Firsthand confirmation by Michael can establish a close-family relationship without becoming independent documentary evidence.
+- Use only `verified`, `probable`, or `unresolved` for genealogical confidence. Use `family-confirmed` and `documented` separately for claim provenance.
+- Allow both provenance kinds on one claim when the cited family statement and external record each support it; never derive one kind from the other.
 - Preserve later corrections alongside superseded values and rejected hypotheses.
 - Treat every relationship path as no stronger than its weakest link.
 - Distinguish directly inspected originals from indexes, transcriptions, compilations, obituaries, histories, and references to inaccessible records.
@@ -44,8 +45,10 @@ Research syntheses explain reasoning and stopping points but are not independent
 
 Normalization is an explicit offline development step from research evidence into typed application data. It must preserve stable IDs, confidence, uncertainty, precision, sources, conflicts, aliases, and exclusion safeguards. The C3 contracts in `src/types/genealogy.ts` encode those distinctions, and `src/lib/genealogy/validation.ts` checks structural integrity and blocks accepted lineage edges to non-accepted people. These files define and validate the handoff shape; they do not replace historical review or contain family records. Application tasks must not edit completed research packets unless the user specifically authorizes research work.
 
+C20A adds claim-level provenance without rewriting the historical research packets. `family-confirmed` means Michael supplied a firsthand close-family fact; `documented` means the claim has external documentary or published support. These are not confidence grades. A family-confirmed close relationship may be verified as a relationship while its parentage subtype and every unconfirmed biographical detail remain unknown, probable, or separately documented on their own records.
+
 ## Product evidence presentation
 
 The C20 Research page is an application-facing window into normalized evidence, not the research archive itself. It derives accepted conclusion and source registers from the canonical graph and uses a reviewed set of methodology statements, archive totals, and open questions under `src/data/`. The page must name the difference between archive coverage and accepted application coverage.
 
-Global Evidence Mode changes presentation only. Probable and unresolved states remain visible during normal browsing because hiding them would misrepresent the research. Evidence Mode adds verified markers and supporting confidence context using the quiet `● Verified`, `◐ Probable`, and `○ Unresolved` vocabulary; it cannot upgrade, suppress, or resolve a claim.
+Global Evidence Mode changes presentation only. Probable and unresolved states remain visible during normal browsing because hiding them would misrepresent the research. Evidence Mode adds verified markers and classified `Family confirmed` / `Documented` provenance where it has been explicitly normalized, using the quiet `● Verified`, `◐ Probable`, and `○ Unresolved` confidence vocabulary. It cannot upgrade, suppress, resolve, or infer provenance for a claim.

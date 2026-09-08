@@ -1,6 +1,8 @@
 import { formatPersonDetailDate } from "@/lib/genealogy/person-detail"
+import { evidenceProvenanceKinds } from "@/lib/genealogy/evidence"
 import type {
   Confidence,
+  EvidenceProvenanceKind,
   Event,
   GenealogyGraph,
   Person,
@@ -41,6 +43,7 @@ export interface ResearchConclusion {
   readonly detail: string
   readonly href?: string
   readonly sourceIds: readonly SourceId[]
+  readonly provenanceKinds: readonly EvidenceProvenanceKind[]
 }
 
 export interface ResearchSourceGroup {
@@ -97,6 +100,7 @@ function personConclusion(person: Person): ResearchConclusion {
     detail: "Accepted identity in the canonical family graph.",
     href: `/people/${person.id}`,
     sourceIds: sourceIds(person),
+    provenanceKinds: evidenceProvenanceKinds(person),
   }
 }
 
@@ -115,6 +119,7 @@ function relationshipConclusion(
       detail: `${relationship.parentage === "unknown" ? "Parent-child" : `${relationship.parentage} parent-child`} relationship.`,
       href: `/people/${relationship.childId}#family`,
       sourceIds: sourceIds(relationship),
+      provenanceKinds: evidenceProvenanceKinds(relationship),
     }
   }
 
@@ -128,6 +133,7 @@ function relationshipConclusion(
     detail: relationship.type === "spouse" ? "Spouse relationship." : "Partner relationship.",
     href: `/people/${relationship.personIds[0]}#family`,
     sourceIds: sourceIds(relationship),
+    provenanceKinds: evidenceProvenanceKinds(relationship),
   }
 }
 
@@ -150,6 +156,7 @@ function eventConclusion(
     detail: [date, place].filter(Boolean).join(" · "),
     href: `/people/${event.personIds[0]}#${event.id}`,
     sourceIds: sourceIds(event),
+    provenanceKinds: evidenceProvenanceKinds(event),
   }
 }
 
@@ -163,6 +170,7 @@ function placeConclusion(place: Place): ResearchConclusion {
     detail: `${precision.charAt(0).toUpperCase()}${precision.slice(1)}.`,
     href: `/places/${place.id}`,
     sourceIds: sourceIds(place),
+    provenanceKinds: evidenceProvenanceKinds(place),
   }
 }
 

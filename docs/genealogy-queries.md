@@ -37,8 +37,9 @@ By default, relationship, event, and person-list queries use records whose `rese
 | `ancestors(id, options?)` | Ancestors with minimum depth and every simple parent path found within `maxDepth`. |
 | `descendants(id, options?)` | Descendants with minimum depth and every simple child path found within `maxDepth`. |
 | `siblings(id)` | People sharing at least one supported parent, plus evidence for each shared parent. No full/half label is inferred. |
+| `firstCousins(id)` | People reached only through the structural path subject → parent → shared grandparent → parent’s sibling → cousin. Every supporting parent-child path and its weakest confidence remain available. |
 | `relationshipPathToMichael(id)` | Every shortest included relationship path to the configured focal person, which defaults to Michael. |
-| `branchForPerson(id)` | `maternal`, `paternal`, `both`, `self`, or `unclassified`, plus the ancestry paths supporting each membership. |
+| `branchForPerson(id)` | `maternal`, `paternal`, `both`, `self`, or `unclassified`, plus the ancestry, focal-sibling shared-parent, or parental-collateral-descendant paths supporting each membership. |
 | `peopleBySurname(surname)` | Suffix matches against canonical and alternate source-backed name forms, with the exact matched forms returned. |
 | `peopleAssociatedWithPlace(id, options?)` | People grouped with the events that associate them with the place. |
 | `peopleAliveInYear(year)` | Temporally supported or possible matches, indeterminate people, and evidence-supported exclusions. |
@@ -52,11 +53,15 @@ By default, relationship, event, and person-list queries use records whose `rese
 
 `ancestors` and `descendants` accept `{ maxDepth }`. Their paths follow only parent-child edges; couple relationships do not create ancestry. `relationshipPathToMichael` may follow parent-child, spouse, and partner edges because it describes graph relationship rather than lineage.
 
+`firstCousins` never matches by surname, obituary list position, or a stored cousin label. It requires four accepted parent-child edges for each returned path. A probable parent assignment therefore yields a probable cousin path even when the shared grandparent and surrounding identities are verified.
+
 ## Uncertainty behavior
 
 Direct-family results return the complete `Relationship`, including confidence, research status, parentage subtype, source references, and notes. Paths carry all of their relationship records and a derived `confidence` equal to the weakest edge. An empty self/root path falls back to the person's confidence.
 
 Branch classification describes where accepted paths occur in the graph; it does not promote the confidence of those paths. Inspect each membership path before presenting the classification as certain.
+
+For a sibling of the configured focal person, branch membership uses only supported shared-parent edges. A sibling sharing the maternal root is maternal; a sibling with supported edges to both branch roots is `both`. The query does not infer a full-, half-, biological-, adoptive-, or step-sibling subtype from missing parent records.
 
 Surname matching is intentionally textual. The data contract has source-backed full name forms rather than an inferred surname field, so the query returns every matched name form and does not claim that the final token was legally or consistently used as a surname.
 

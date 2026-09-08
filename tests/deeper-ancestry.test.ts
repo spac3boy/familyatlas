@@ -27,11 +27,11 @@ const expectedPaternalIds = [
   "person-serine-roble", "person-ingvald-throndsen-doely", "person-helene-blexrud",
 ] as const satisfies readonly PersonId[];
 
-test("C5 normalizes all and only the 50 accepted deeper direct ancestors", () => {
+test("C5 retains all 50 accepted deeper direct ancestors alongside the expanded family graph", () => {
   assert.deepEqual(maternalAncestorPeople.map(({ id }) => id).sort(), [...expectedMaternalIds].sort());
   assert.deepEqual(paternalAncestorPeople.map(({ id }) => id).sort(), [...expectedPaternalIds].sort());
-  assert.equal(familyGraph.people.length, 57);
-  assert.equal(new Set(familyGraph.people.map(({ id }) => id)).size, 57);
+  assert.equal(familyGraph.people.length, 83);
+  assert.equal(new Set(familyGraph.people.map(({ id }) => id)).size, 83);
   assert.ok(familyGraph.people.every(({ id, researchStatus }) => id.startsWith("person-") && researchStatus === "accepted"));
 });
 
@@ -58,11 +58,11 @@ test("every deeper ancestor reaches Michael through accepted parent-child edges"
   }
 });
 
-test("rejected, unattached, contextual, and collateral-only identities stay outside the accepted graph", () => {
+test("rejected and still-unattached identities stay outside the accepted graph", () => {
   assert.ok(familyGraph.people.every(({ id }) => !id.startsWith("candidate-")));
   const forbidden = [
     "person-philomene-comeaux", "person-rella-leblanc", "person-alton-comeaux-1910",
-    "person-michael-buquet-edmond-child", "candidate-lucius-john-leblanc-1893",
+    "candidate-lucius-john-leblanc-1893",
     "candidate-julien-comeaux-1888", "candidate-louis-leopold-buquet-1768",
   ];
   for (const id of forbidden) assert.equal(familyGraph.people.some((person) => person.id === id), false);

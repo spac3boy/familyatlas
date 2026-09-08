@@ -20,7 +20,7 @@ test("a richly researched profile retains events, places, evidence, and explicit
     "place-us-la-evangeline-oaks-guest-house",
     "place-us-la-st-peter-catholic-cemetery-carencro",
   ]);
-  assert.equal(rita.evidence.length, 5);
+  assert.equal(rita.evidence.length, 6);
   assert.ok(
     rita.researchFlags.some(({ title }) =>
       title.includes("Spouse relationship with Allen Paul Comeaux Sr. is probable"),
@@ -48,7 +48,111 @@ test("a sparse profile remains useful without inventing events, places, or life 
     "person-paulette-comeaux",
   ]);
   assert.ok(michael.researchFlags.every(({ details }) => !details.includes("Reference person for the Family Atlas archive.")));
-  assert.ok(michael.researchFlags.every(({ title }) => title.includes("Parent relationship")));
+  assert.ok(
+    michael.detail.parents.every(({ relationship }) =>
+      relationship.provenance?.some(({ kind }) => kind === "family-confirmed"),
+    ),
+  );
+  assert.ok(michael.researchFlags.every(({ title }) => !title.includes("Parent relationship")));
+});
+
+test("living sibling profiles omit exact dates and preserve Gina's unresolved name detail", () => {
+  const edmond = buildPersonProfileModel(familyGraph, "person-edmond-paul-buquet", familyGraphQueries);
+  const gina = buildPersonProfileModel(familyGraph, "person-gina-buquet", familyGraphQueries);
+  const sidney = buildPersonProfileModel(familyGraph, "person-sidney-paul-roger", familyGraphQueries);
+  assert.ok(edmond && gina && sidney);
+
+  assert.equal(edmond.detail.lifespan, "Birth: 1987");
+  assert.ok(edmond.timeline.every(({ event }) => event.date.kind !== "exact"));
+  assert.equal(gina.detail.lifespan, "Birth: 1990");
+  assert.equal(sidney.detail.lifespan, undefined);
+  assert.ok(gina.researchFlags.some(({ title }) => title.includes("Gina Renee Buquet")));
+});
+
+test("Karla and the children receive sparse, privacy-safe graph-derived profiles", () => {
+  const karla = buildPersonProfileModel(
+    familyGraph,
+    "person-karla-vannessa-contreras-buquet",
+    familyGraphQueries,
+  );
+  const chloe = buildPersonProfileModel(familyGraph, "person-chloe-eloise-buquet", familyGraphQueries);
+  const jolie = buildPersonProfileModel(familyGraph, "person-jolie-renee-buquet", familyGraphQueries);
+  assert.ok(karla && chloe && jolie);
+
+  assert.equal(karla.detail.lifespan, "Birth: 1989");
+  assert.equal(karla.detail.spousesAndPartners[0]?.person.id, "person-michael-buquet");
+  assert.deepEqual(karla.detail.children.map(({ person }) => person.id), [
+    "person-chloe-eloise-buquet",
+    "person-jolie-renee-buquet",
+  ]);
+  assert.equal(chloe.detail.lifespan, "Birth: 2019");
+  assert.equal(jolie.detail.lifespan, "Birth: 2022");
+  assert.ok(
+    [...karla.timeline, ...chloe.timeline, ...jolie.timeline].every(
+      ({ event }) => event.date.kind !== "exact",
+    ),
+  );
+});
+
+test("lateral-family profiles preserve sparse biography and conflicting spouse reports", () => {
+  const cathy = buildPersonProfileModel(familyGraph, "person-cathy-buquet", familyGraphQueries);
+  const priscilla = buildPersonProfileModel(
+    familyGraph,
+    "person-priscilla-comeaux",
+    familyGraphQueries,
+  );
+  assert.ok(cathy && priscilla);
+
+  assert.equal(cathy.detail.lifespan, undefined);
+  assert.deepEqual(cathy.detail.parents.map(({ person }) => person.id), [
+    "person-edmond-p-buquet-1919",
+    "person-verna-arlene-bakke",
+  ]);
+  assert.deepEqual(priscilla.detail.spousesAndPartners.map(({ person }) => person.id), [
+    "person-karlon",
+    "person-tippy-leblanc",
+  ]);
+  assert.ok(priscilla.timeline.length === 0);
+  assert.equal(
+    priscilla.detail.person.alternateNames.find(({ name }) => name === "Priscilla LeBlanc")
+      ?.confidence,
+    "verified",
+  );
+  assert.ok(priscilla.detail.person.notes?.some((note) => note.includes("without inferring a chronology")));
+});
+
+test("cousin profiles stay privacy-safe and expose probable parent placement", () => {
+  const paige = buildPersonProfileModel(
+    familyGraph,
+    "person-paige-bartholomew",
+    familyGraphQueries,
+  );
+  const rhyan = buildPersonProfileModel(
+    familyGraph,
+    "person-rhyan-comeaux",
+    familyGraphQueries,
+  );
+  assert.ok(paige && rhyan);
+
+  assert.equal(paige.detail.relationshipLabel, "Paternal first cousin");
+  assert.equal(paige.detail.lifespan, undefined);
+  assert.equal(paige.timeline.length, 0);
+  assert.ok(
+    paige.researchFlags.some(({ title }) =>
+      title.includes("Parent relationship with Cathy B. McRae is probable"),
+    ),
+  );
+  assert.ok(
+    !paige.researchFlags.some(({ title }) =>
+      title.includes("Parent relationship with Richard Russell McRae is probable"),
+    ),
+  );
+  assert.equal(
+    rhyan.detail.person.alternateNames.find(({ name }) => name === "Ryan Earl Comeaux")
+      ?.confidence,
+    "unresolved",
+  );
+  assert.ok(rhyan.researchFlags.some(({ title }) => title.includes("Ryan Earl Comeaux")));
 });
 
 test("every canonical person can produce a referentially complete reusable profile", () => {

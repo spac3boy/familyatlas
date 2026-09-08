@@ -1,6 +1,12 @@
-import { createGenealogyQueries, type GenealogyQueries } from "@/lib/genealogy/queries";
+import {
+  createGenealogyQueries,
+  MICHAEL_BUQUET_ID,
+  type GenealogyQueries,
+} from "@/lib/genealogy/queries";
+import { sharedRelationshipProvenanceKinds } from "@/lib/genealogy/evidence";
 import type {
   Confidence,
+  EvidenceProvenanceKind,
   Event,
   EventType,
   GenealogyGraph,
@@ -28,6 +34,7 @@ export interface PersonDetailPath {
   readonly people: readonly Person[];
   readonly relationshipIds: readonly RelationshipId[];
   readonly confidence: Confidence;
+  readonly provenanceKinds: readonly EvidenceProvenanceKind[];
 }
 
 export interface PersonDetailEvent {
@@ -179,6 +186,34 @@ function relationshipLabel(
 ): string {
   if (!originalPaths) return "Relationship to Michael unresolved";
   if (originalPaths.distance === 0) return "Reference person";
+  const branch = queries.branchForPerson(personId)?.classification;
+  const branchLabel =
+    branch === "maternal"
+      ? "Maternal"
+      : branch === "paternal"
+        ? "Paternal"
+        : branch === "both"
+          ? "Maternal and paternal"
+          : undefined;
+  const siblingMatch = queries
+    .siblings(MICHAEL_BUQUET_ID)
+    .find(({ person }) => person.id === personId);
+  if (siblingMatch) {
+    const sharedParentNames = siblingMatch.sharedParents.map(({ parent }) => parent.canonicalName);
+    if (sharedParentNames.length === 1) {
+      return `${branchLabel ? `${branchLabel} sibling` : "Sibling"} through ${sharedParentNames[0]}`;
+    }
+    if (sharedParentNames.length === 2) return "Sibling through both recorded parents";
+    return "Sibling through shared recorded parents";
+  }
+  const isParentsSibling = queries.parents(MICHAEL_BUQUET_ID).some(({ person: parent }) =>
+    queries.siblings(parent.id).some(({ person: sibling }) => sibling.id === personId),
+  );
+  if (isParentsSibling) return branchLabel ? `${branchLabel} aunt/uncle` : "Aunt/uncle";
+  const isFirstCousin = queries
+    .firstCousins(MICHAEL_BUQUET_ID)
+    .some(({ person }) => person.id === personId);
+  if (isFirstCousin) return branchLabel ? `${branchLabel} first cousin` : "First cousin";
   const primaryPath = originalPaths.paths[0];
   const isDirectAncestor = primaryPath.relationships.every((relationship, index) => {
     if (relationship.type !== "parent-child") return false;
@@ -200,15 +235,6 @@ function relationshipLabel(
         : generation === 3
           ? "great-grandparent"
           : `${generation - 2}× great-grandparent`;
-  const branch = queries.branchForPerson(personId)?.classification;
-  const branchLabel =
-    branch === "maternal"
-      ? "Maternal"
-      : branch === "paternal"
-        ? "Paternal"
-        : branch === "both"
-          ? "Maternal and paternal"
-          : undefined;
   return branchLabel ? `${branchLabel} ${kinship}` : titleCase(kinship);
 }
 
@@ -228,6 +254,7 @@ export function buildPersonDetailModel(
       people: [...path.people].reverse(),
       relationshipIds: [...path.relationships].reverse().map(({ id }) => id),
       confidence: path.confidence,
+      provenanceKinds: sharedRelationshipProvenanceKinds(path.relationships),
     })) ?? [];
 
   const placeEvents = new Map<PlaceId, Set<EventType>>();

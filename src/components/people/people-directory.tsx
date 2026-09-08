@@ -255,6 +255,13 @@ export function PeopleDirectory({ records }: Readonly<{ records: readonly People
 
                   <span className="min-w-0 text-xs leading-5 text-muted-foreground">
                     <span className="block text-foreground">{record.relationshipLabel}</span>
+                    {record.relationshipConfidence && (
+                      <ConfidenceMark
+                        confidence={record.relationshipConfidence}
+                        suffix="relationship path"
+                        className="mt-1"
+                      />
+                    )}
                     <span className="mt-1 block">
                       Generation {record.generation}{branch ? ` · ${branch}` : ""}
                     </span>

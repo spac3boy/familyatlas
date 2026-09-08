@@ -9,7 +9,11 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 
-import { ConfidenceMark, confidencePresentation } from "@/components/research/confidence-mark"
+import {
+  ConfidenceMark,
+  ProvenanceMarks,
+  confidencePresentation,
+} from "@/components/research/confidence-mark"
 import { EvidenceModeToggle } from "@/components/research/evidence-mode"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -74,6 +78,7 @@ function ConclusionList({ conclusions }: Readonly<{ conclusions: readonly Resear
             <p className="font-mono text-[0.625rem] text-muted-foreground">
               {conclusion.sourceIds.length} {conclusion.sourceIds.length === 1 ? "source" : "sources"}
             </p>
+            <ProvenanceMarks kinds={conclusion.provenanceKinds} className="mt-2 sm:justify-end" />
           </div>
         </li>
       ))}
@@ -142,7 +147,7 @@ export function ResearchOverview({ model }: Readonly<{ model: ResearchOverviewMo
           </div>
           <div className="border-t pt-5 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-7">
             <p className="text-sm leading-6 text-muted-foreground">
-              Evidence Mode reveals verified confidence marks alongside the uncertainty that is always kept visible.
+              Evidence Mode reveals verified confidence and classified support—family confirmed, documented, or both—alongside uncertainty that always stays visible.
             </p>
             <EvidenceModeToggle className="mt-5" />
           </div>
@@ -230,7 +235,7 @@ export function ResearchOverview({ model }: Readonly<{ model: ResearchOverviewMo
           </div>
           <div>
             <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
-              Every register below is generated from accepted canonical entities. A probable claim remains usable context, but never becomes verified through repetition or visual prominence.
+              Every register below is generated from accepted canonical entities. Confidence records whether a conclusion is established; provenance records how it is supported. A probable claim never becomes verified through repetition or visual prominence.
             </p>
             <div className="mt-8">
               <ConclusionRegister confidence="verified" conclusions={model.conclusions.verified} />

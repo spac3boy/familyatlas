@@ -20,7 +20,7 @@ const source = {
   category: "other",
   urls: [],
   citationHandles: ["test-fixture"],
-  evidenceClass: "unknown",
+  evidenceClass: "secondary",
   inspectionStatus: "directly-inspected",
   researchStatus: "accepted",
   idAliases: ["SRC-TEST-ALIAS"],
@@ -135,6 +135,61 @@ test("valid graph resolves source and person aliases", () => {
   assert.equal(resolveSourceId(validGraph, "SRC-TEST-ALIAS"), "SRC-TEST-ONE");
   assert.equal(resolvePersonId(validGraph, "person-test-parent-old"), "person-test-parent");
   assert.doesNotThrow(() => assertValidGenealogyGraph(validGraph));
+});
+
+test("explicit same-name identity guards must reference another canonical person", () => {
+  const graph = structuredClone(validGraph) as unknown as GenealogyGraph;
+  (graph.people[0] as { distinctFromPersonIds?: string[] }).distinctFromPersonIds = [
+    "person-test-child",
+  ];
+  assert.deepEqual(validateGenealogyGraph(graph), { valid: true, issues: [] });
+
+  (graph.people[0] as { distinctFromPersonIds?: string[] }).distinctFromPersonIds = [
+    "person-missing",
+    "person-test-parent",
+  ];
+  const invalid = validateGenealogyGraph(graph);
+  assert.ok(invalid.issues.some(({ code }) => code === "person.distinct-from-ref"));
+  assert.ok(invalid.issues.some(({ code }) => code === "person.distinct-from-self"));
+});
+
+test("claim provenance is optional for legacy data and accepts coexisting support kinds", () => {
+  const graph = structuredClone(validGraph) as unknown as GenealogyGraph;
+  (graph.sources as unknown as Array<Source>).push({
+    id: "SRC-TEST-FAMILY",
+    title: "Firsthand family statement",
+    category: "family-provided",
+    urls: [],
+    citationHandles: ["test-family-fixture"],
+    evidenceClass: "family-provided",
+    inspectionStatus: "directly-inspected",
+    researchStatus: "accepted",
+  });
+  const relationship = graph.relationships[0] as unknown as {
+    sourceRefs: Array<{ sourceId: string }>;
+    provenance?: unknown;
+  };
+  relationship.sourceRefs.push({ sourceId: "SRC-TEST-FAMILY" });
+  relationship.provenance = [
+    { kind: "family-confirmed", sourceRefs: [{ sourceId: "SRC-TEST-FAMILY" }] },
+    { kind: "documented", sourceRefs: [{ sourceId: "SRC-TEST-ALIAS" }] },
+  ];
+
+  assert.deepEqual(validateGenealogyGraph(graph), { valid: true, issues: [] });
+});
+
+test("claim provenance rejects mismatched source classes and unattached sources", () => {
+  const graph = structuredClone(validGraph) as unknown as GenealogyGraph;
+  const relationship = graph.relationships[0] as unknown as { provenance?: unknown };
+  relationship.provenance = [
+    { kind: "family-confirmed", sourceRefs: [{ sourceId: "SRC-TEST-ONE" }] },
+    { kind: "documented", sourceRefs: [{ sourceId: "SRC-MISSING" }] },
+  ];
+  const result = validateGenealogyGraph(graph);
+
+  assert.ok(result.issues.some(({ code }) => code === "provenance.source-class"));
+  assert.ok(result.issues.some(({ code }) => code === "provenance.source-subset"));
+  assert.ok(result.issues.some(({ code }) => code === "source-ref.missing"));
 });
 
 test("graph validation rejects dangling source and person references", () => {

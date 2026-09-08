@@ -36,6 +36,14 @@ export interface NormalizedResearchQuestion {
  */
 export const normalizedResearchQuestions = [
   {
+    id: "research-question-karla-ancestry",
+    group: "Immediate family",
+    question: "Who are the supported ancestors on Karla Contreras-Buquet's paternal and maternal lines?",
+    classification: "requires-family-knowledge",
+    nextEvidence: "Family information from Karla or Michael, followed by source review under the existing research methodology.",
+    researchFile: "research/family-intake/spouse-children.md",
+  },
+  {
     id: "research-question-michael-vitals",
     group: "Immediate family",
     question: "What are Michael Buquet’s birth date and birthplace?",
@@ -204,12 +212,28 @@ export const normalizedResearchQuestions = [
     researchFile: "research/open-questions.md",
   },
   {
-    id: "research-question-gina-identity",
+    id: "research-question-gina-details",
     group: "Cross-family identity",
-    question: "Can Gina Nevils and Gina Buquet be documented as the same grandchild and as Michael’s sister?",
+    question: "Is Gina Buquet Nevils’s middle name Renee?",
     classification: "requires-family-knowledge",
-    nextEvidence: "Family knowledge or a direct record; institutional biographies make the match probable, not verified.",
-    researchFile: "research/open-questions.md",
+    nextEvidence: "Michael's confirmation, a family-held record, or another privacy-appropriate direct record.",
+    researchFile: "research/family-intake/siblings-needed.md",
+  },
+  {
+    id: "research-question-cousin-parent-mapping",
+    group: "Cross-family identity",
+    question: "Can the probable Cathy, Peggy, Russell, Priscilla, and Allen Jr. cousin-parent assignments be directly confirmed?",
+    classification: "requires-family-knowledge",
+    nextEvidence: "Michael or another close relative's confirmation, or directly inspected records that expressly name each parent-child pair.",
+    researchFile: "research/family-intake/cousins.md",
+  },
+  {
+    id: "research-question-rhyan-ryan-identity",
+    group: "Cross-family identity",
+    question: "Do Rhyan Comeaux, Ryan Comeaux, and Ryan Earl Comeaux identify the same person?",
+    classification: "requires-family-knowledge",
+    nextEvidence: "Family confirmation or direct inspection of the later Brasseaux-family obituaries and an identifying family record.",
+    researchFile: "research/family-intake/cousins.md",
   },
   {
     id: "research-question-beau-sejours",
@@ -256,11 +280,11 @@ export const normalizedResearchQuestions = [
 export const researchMethodology = [
   {
     title: "Evidence before narrative",
-    description: "Separate what a source literally reports from identity matching and genealogical inference. Family-provided information remains labeled as such.",
+    description: "Separate what a source literally reports from identity matching and genealogical inference. Firsthand family confirmation and external documentation remain distinct and may support the same claim together.",
   },
   {
     title: "Uncertainty stays attached",
-    description: "Verified, probable, and unresolved confidence travels with each person, relationship, event, place, and alternate name.",
+    description: "Verified, probable, and unresolved describe research confidence, while family-confirmed and documented describe provenance. Neither silently changes the other.",
   },
   {
     title: "Historical precision is preserved",

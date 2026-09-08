@@ -1,9 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { familyGraph, familyGraphQueries as queries } from "@/data";
-import { createGenealogyQueries } from "@/lib/genealogy";
-import type { GenealogyGraph, PersonId } from "@/types";
+import { familyGraphQueries as queries } from "@/data";
+import type { PersonId } from "@/types";
 
 const personIds = <T extends { readonly person: { readonly id: PersonId } }>(items: readonly T[]) =>
   items.map(({ person }) => person.id);
@@ -17,8 +16,20 @@ test("person and direct-family queries return evidence-bearing records", () => {
     "person-paulette-comeaux",
   ]);
   assert.deepEqual(personIds(queries.children("person-paulette-comeaux")), [
+    "person-edmond-paul-buquet",
+    "person-gina-buquet",
     "person-michael-buquet",
+    "person-sidney-paul-roger",
   ]);
+  assert.deepEqual(personIds(queries.children("person-michael-buquet")), [
+    "person-chloe-eloise-buquet",
+    "person-jolie-renee-buquet",
+  ]);
+
+  const michaelSpouse = queries.spousesAndPartners("person-michael-buquet");
+  assert.equal(michaelSpouse.length, 1);
+  assert.equal(michaelSpouse[0]?.person.id, "person-karla-vannessa-contreras-buquet");
+  assert.equal(michaelSpouse[0]?.relationship.confidence, "verified");
 
   const ritaPartner = queries.spousesAndPartners("person-rita-leblanc-1928");
   assert.equal(ritaPartner.length, 1);
@@ -44,43 +55,43 @@ test("ancestor and descendant traversal preserves depth, paths, and weakest conf
   assert.equal(michael?.depth, 12);
 });
 
-test("siblings report shared-parent evidence without inferring full or half status", () => {
-  const source = familyGraph.sources[0];
-  const siblingId = "person-test-sibling" as const;
-  const siblingGraph: GenealogyGraph = {
-    ...familyGraph,
-    people: [
-      ...familyGraph.people,
-      {
-        id: siblingId,
-        canonicalName: "Test Sibling",
-        alternateNames: [],
-        confidence: "probable",
-        researchStatus: "accepted",
-        sourceRefs: [{ sourceId: source.id }],
-      },
-    ],
-    relationships: [
-      ...familyGraph.relationships,
-      {
-        id: "relationship-paulette-parent-test-sibling",
-        type: "parent-child",
-        parentage: "unknown",
-        parentId: "person-paulette-comeaux",
-        childId: siblingId,
-        confidence: "probable",
-        researchStatus: "accepted",
-        sourceRefs: [{ sourceId: source.id }],
-      },
-    ],
-  };
-  const siblingQueries = createGenealogyQueries(siblingGraph);
-  const matches = siblingQueries.siblings("person-michael-buquet");
-  assert.equal(matches.length, 1);
-  assert.equal(matches[0].person.id, siblingId);
-  assert.deepEqual(matches[0].sharedParents.map(({ parent }) => parent.id), [
-    "person-paulette-comeaux",
+test("siblings are derived from shared-parent evidence without a direct sibling edge", () => {
+  const matches = queries.siblings("person-michael-buquet");
+  assert.deepEqual(personIds(matches), [
+    "person-edmond-paul-buquet",
+    "person-gina-buquet",
+    "person-sidney-paul-roger",
   ]);
+  assert.deepEqual(
+    matches.find(({ person }) => person.id === "person-sidney-paul-roger")?.sharedParents.map(
+      ({ parent }) => parent.id,
+    ),
+    ["person-paulette-comeaux"],
+  );
+  assert.deepEqual(
+    matches.find(({ person }) => person.id === "person-gina-buquet")?.sharedParents.map(
+      ({ parent }) => parent.id,
+    ),
+    ["person-aubin-buquet", "person-paulette-comeaux"],
+  );
+});
+
+test("parental sibling groups are derived from shared obituary-backed parents", () => {
+  const paternal = queries.siblings("person-aubin-buquet");
+  const maternal = queries.siblings("person-paulette-comeaux");
+
+  assert.deepEqual(personIds(paternal), [
+    "person-cathy-buquet",
+    "person-michael-buquet-edmond-child",
+  ]);
+  assert.deepEqual(personIds(maternal), [
+    "person-allen-paul-comeaux-jr",
+    "person-peggy-comeaux",
+    "person-priscilla-comeaux",
+    "person-russell-j-comeaux",
+  ]);
+  assert.ok(paternal.every(({ sharedParents }) => sharedParents.length === 2));
+  assert.ok(maternal.every(({ sharedParents }) => sharedParents.length === 2));
 });
 
 test("relationship paths to Michael return all shortest paths with edge confidence", () => {
@@ -94,6 +105,98 @@ test("relationship paths to Michael return all shortest paths with edge confiden
   assert.equal(self?.distance, 0);
   assert.equal(self?.paths[0].relationships.length, 0);
   assert.equal(queries.relationshipPathToMichael("person-not-present"), undefined);
+
+  const sidney = queries.relationshipPathToMichael("person-sidney-paul-roger");
+  assert.equal(sidney?.distance, 2);
+  assert.deepEqual(
+    sidney?.paths[0].people.map(({ id }) => id),
+    ["person-sidney-paul-roger", "person-paulette-comeaux", "person-michael-buquet"],
+  );
+  assert.equal(sidney?.paths[0].confidence, "verified");
+
+  const gina = queries.relationshipPathToMichael("person-gina-buquet");
+  assert.equal(gina?.distance, 2);
+  assert.equal(gina?.paths.length, 2);
+  assert.ok(gina?.paths.every(({ confidence }) => confidence === "verified"));
+
+  const karla = queries.relationshipPathToMichael("person-karla-vannessa-contreras-buquet");
+  assert.equal(karla?.distance, 1);
+  assert.equal(karla?.paths[0].relationships[0]?.type, "spouse");
+
+  const chloe = queries.relationshipPathToMichael("person-chloe-eloise-buquet");
+  assert.equal(chloe?.distance, 1);
+  assert.deepEqual(
+    chloe?.paths[0].people.map(({ id }) => id),
+    ["person-chloe-eloise-buquet", "person-michael-buquet"],
+  );
+});
+
+test("aunt and uncle paths reach Michael through a parent and shared grandparent", () => {
+  const cathy = queries.relationshipPathToMichael("person-cathy-buquet");
+  const russell = queries.relationshipPathToMichael("person-russell-j-comeaux");
+
+  assert.equal(cathy?.distance, 3);
+  assert.equal(cathy?.paths.length, 2);
+  assert.deepEqual(
+    cathy?.paths.map(({ confidence }) => confidence).sort(),
+    ["probable", "verified"],
+  );
+  assert.equal(russell?.distance, 3);
+  assert.equal(russell?.paths.length, 2);
+  assert.deepEqual(
+    russell?.paths.map(({ confidence }) => confidence).sort(),
+    ["probable", "verified"],
+  );
+});
+
+test("first cousins are derived only from four parent-child edges", () => {
+  const cousins = queries.firstCousins("person-michael-buquet");
+  assert.deepEqual(personIds(cousins), [
+    "person-brandi-comeaux",
+    "person-casey-comeaux",
+    "person-conrad-miller",
+    "person-dexter-babineaux",
+    "person-gerard-comeaux",
+    "person-paige-bartholomew",
+    "person-rhyan-comeaux",
+    "person-rustie-lynn-comeaux",
+    "person-sean-mcrae",
+  ]);
+  assert.ok(cousins.every(({ paths }) => paths.length === 2));
+  assert.ok(cousins.every(({ paths }) =>
+    paths.every(({ relationships }) =>
+      relationships.length === 4 && relationships.every(({ type }) => type === "parent-child"),
+    ),
+  ));
+  assert.ok(cousins.every(({ paths }) =>
+    paths.every(({ confidence }) => confidence === "probable"),
+  ));
+
+  const paige = cousins.find(({ person }) => person.id === "person-paige-bartholomew");
+  assert.deepEqual(
+    paige?.paths[0].people.map(({ id }) => id),
+    [
+      "person-michael-buquet",
+      "person-aubin-buquet",
+      "person-edmond-p-buquet-1919",
+      "person-cathy-buquet",
+      "person-paige-bartholomew",
+    ],
+  );
+  assert.ok(!personIds(cousins).includes("person-sidney-paul-roger"));
+  assert.deepEqual(queries.firstCousins("person-not-present"), []);
+});
+
+test("cousin relationship paths preserve probable parent assignments", () => {
+  const paige = queries.relationshipPathToMichael("person-paige-bartholomew");
+  const conrad = queries.relationshipPathToMichael("person-conrad-miller");
+
+  assert.equal(paige?.distance, 4);
+  assert.equal(paige?.paths.length, 2);
+  assert.ok(paige?.paths.every(({ confidence }) => confidence === "probable"));
+  assert.equal(conrad?.distance, 4);
+  assert.equal(conrad?.paths.length, 2);
+  assert.ok(conrad?.paths.every(({ confidence }) => confidence === "probable"));
 });
 
 test("branch queries retain the path evidence behind their classification", () => {
@@ -106,6 +209,10 @@ test("branch queries retain the path evidence behind their classification", () =
   assert.equal(paternal?.memberships[0].paths[0].people[0].id, "person-aubin-buquet");
 
   assert.equal(queries.branchForPerson("person-michael-buquet")?.classification, "self");
+  assert.equal(queries.branchForPerson("person-cathy-buquet")?.classification, "paternal");
+  assert.equal(queries.branchForPerson("person-russell-j-comeaux")?.classification, "maternal");
+  assert.equal(queries.branchForPerson("person-paige-bartholomew")?.classification, "paternal");
+  assert.equal(queries.branchForPerson("person-conrad-miller")?.classification, "maternal");
   assert.equal(queries.branchForPerson("person-not-present"), undefined);
 });
 
