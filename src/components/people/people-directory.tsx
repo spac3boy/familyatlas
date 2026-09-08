@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import {
   buildPeopleDirectoryOptions,
   filterPeopleDirectory,
+  formatRecordedSurnameLabel,
   type PeopleDirectoryFilters,
   type PeopleDirectoryRecord,
 } from "@/lib/genealogy/people-directory"
@@ -218,7 +219,7 @@ export function PeopleDirectory({ records }: Readonly<{ records: readonly People
                     )}
                     {matchedSurname && (
                       <span className="mt-1 block text-[0.6875rem] leading-5 text-muted-foreground">
-                        Recorded surname form: {matchedSurname.label}
+                        Recorded surname form: {formatRecordedSurnameLabel(matchedSurname)}
                         {surnameConfidence ? ` · name evidence: ${surnameConfidence}` : ""}
                       </span>
                     )}

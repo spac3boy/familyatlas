@@ -139,3 +139,9 @@ Durable decisions live here. New entries should state the consequence; supersede
 - **Status:** accepted
 - **Decision:** Derive the People directory from accepted people in the canonical graph. Generation counts supported parent-child edges outward from Michael; branch uses the canonical ancestry query; surname options use only the final surname form in canonical and alternate recorded names; birthplace requires an accepted birth event with an explicit place reference; and confidence filters the person record itself.
 - **Consequence:** Directory filtering cannot infer a birth surname, birthplace, generation, or branch from context. Alternate and uncertain recorded names remain attributable to their own confidence, multiple birthplace claims remain visible, and options with no represented canonical value are omitted. The server prepares the serializable directory model while the client owns only transient filter controls.
+
+## D-024 — Place profiles preserve canonical hierarchy and association scope
+
+- **Status:** accepted
+- **Decision:** Generate `/places/[placeId]` from accepted canonical places, events, people, sources, and movement endpoints. A broad place may include events attached to its explicitly normalized child places, but those events remain labeled as occurring within the child place rather than directly at the parent geography. Movement classifications and endpoints remain unchanged.
+- **Consequence:** Place pages cannot manufacture a settlement, modern equivalent, route, date, or person association. Parish/county and region rollups depend only on `parentPlaceId`; surname labels remain recorded-name forms; record spans summarize dated events while disclosing undated records. Place-to-Journeys actions update centralized Explore state before navigation, and stable place routes serve all cross-links.

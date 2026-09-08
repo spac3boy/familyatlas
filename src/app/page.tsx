@@ -135,7 +135,9 @@ export default function Home() {
               <ul className="mt-10 divide-y border-t" aria-label="Featured family places">
                 {featuredPlaces.map((place) => (
                   <li key={place.id} className="py-3">
-                    <p className="text-sm font-medium">{place.modernName}</p>
+                    <Link href={`/places/${place.id}`} className="text-sm font-medium underline-offset-4 hover:text-primary hover:underline">
+                      {place.modernName}
+                    </Link>
                     <p className="mt-1 text-xs leading-5 text-muted-foreground">
                       {placeRegion(place)}
                     </p>
