@@ -56,6 +56,14 @@ The initial view expands three generations and exposes known older parents throu
 
 D3 zoom is isolated around the SVG ref and reports transforms back to React; D3 does not create or reconcile marks. Programmatic zoom and reset are immediate, and double-click zoom animation is disabled, so reduced-motion users do not receive hidden transition behavior. On narrow screens reset preserves a readable scale and relies on panning plus the structured list rather than shrinking all labels to illegibility.
 
+## Daughter-centered Family Tree V2
+
+The default `family` scope begins with Chloé Eloise Buquet and Jolie Renee Buquet as the focal generation. It extends through their parents, Michael's supported siblings, accepted aunts/uncles and first cousins, and Michael's accepted maternal and paternal ancestry. This is a disposable view projection over the same canonical graph; the daughters do not replace Michael as the reference person used by relationship-path, branch, or generation queries.
+
+D3 hierarchy continues to calculate the ancestral backbone, D3 Shape calculates parent-child connectors, and React renders the complete SVG. The family projection then adds canonical descendant, collateral, and spouse relationships around that backbone. Every connector resolves to an accepted canonical relationship. Siblings and first cousins appear only through parent-child structure, never through invented lateral relationship types. A documented co-parent may appear beside an aunt/uncle when direct parent edges exist, but the layout does not manufacture a spouse edge. Michael and Karla receive a spouse connector because that relationship is canonical; other spouse connectors render only when the graph actually contains them.
+
+The default family view marks Chloé and Jolie with a restrained focal treatment in the center of a two-sided layout. Karla occupies the left-hand parent position and Michael occupies the right-hand parent position, both aligned to the midpoint between their daughters. Michael is interleaved vertically with his supported siblings instead of being placed below the entire sibling group. Michael's existing ancestry continues outward toward the right; when Karla's family is added from supported evidence, its layout projection automatically mirrors outward toward the left. Parent connectors are direction-aware so the mirrored projection does not change canonical relationship semantics. Michael's siblings remain visibly collateral rather than ancestors. Karla's parents are absent because they have not yet been researched or supplied. The `Michael’s paternal`, `Michael’s maternal`, and `Selected person` scopes preserve the focused ancestry behavior from V1, including expansion controls and Michael-centered branch semantics.
+
 ## Timeline V1
 
 Timeline V1 keeps the same ownership boundary:
@@ -132,4 +140,4 @@ Honor `prefers-reduced-motion`. Layout changes should remain understandable with
 
 Test calculation helpers with deterministic fixtures, including empty data, one-person graphs, uncertain dates, disconnected branches, ambiguous places, and reduced-motion modes. Test rendered semantics and keyboard behavior separately from geometry. Avoid brittle pixel snapshots as the only evidence of correctness.
 
-Family Tree V1, Timeline V1, Journeys V1, and their shared Time Navigator are implemented through C16. Patterns remains unimplemented.
+Family Tree V2, Timeline V1, Journeys V1, and their shared Time Navigator are implemented. Patterns remains unimplemented.

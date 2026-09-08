@@ -157,3 +157,45 @@ Durable decisions live here. New entries should state the consequence; supersede
 - **Status:** accepted
 - **Decision:** Keep Evidence Mode in the existing global Explore reducer and expose one control in the persistent shell. Normal browsing always shows probable and unresolved states where they qualify a claim; Evidence Mode additionally reveals restrained verified markers and supporting confidence context. Build the Research section from a framework-independent projection of accepted canonical entities plus explicitly reviewed application-facing methodology and open-question data.
 - **Consequence:** Evidence Mode cannot hide material uncertainty, alter confidence, or create a second evidence store. Research pages and cross-product confidence treatments never parse `research/` at runtime. The human archive remains fuller than the accepted graph, and coverage copy must distinguish those scopes.
+
+## D-027 — Claim provenance is independent of research confidence
+
+- **Status:** accepted
+- **Decision:** Keep `verified`, `probable`, and `unresolved` as research-confidence values, and add optional claim-level `family-confirmed` and `documented` provenance entries with their own source references. Multiple provenance kinds may coexist on one claim. Michael's explicit firsthand identification of his parents and grandparents establishes the six corresponding parent-child roles as verified and family-confirmed.
+- **Consequence:** A family-confirmed relationship is no longer displayed as merely probable because no birth record was reviewed, but the confirmation does not transfer to parentage subtype, dates, places, names, or other biographical facts. Existing documentary references remain attached; Verna→Aubin, Rita→Paulette, and Gina's two parent edges currently carry both classified provenance kinds. Unclassified legacy claims remain valid, and distant ancestry is unchanged.
+
+## D-028 — Siblings are derived and living-person data is minimized
+
+- **Status:** accepted
+- **Decision:** Represent a sibling only through supported parent-child relationships to the shared parent or parents. Do not add a direct sibling edge or a placeholder for an unidentified parent. For living close relatives, normalize only the biographical detail needed by the product: omit exact birth dates, preserve a supported year only when it is confirmed, and retain tentative name/date details as unresolved rather than canonical.
+- **Consequence:** Sidney Paul Roger is linked only through Paulette Comeaux; Edmond Paul Buquet and Gina Buquet are linked through both Aubin Buquet and Paulette. Existing sibling and relationship-path queries derive the connection. Gina's middle name remains unresolved, her confirmed 1990 birth year is retained, and no full living-person birth date appears in public canonical data.
+
+## D-029 — The immediate graph may extend to spouse and descendants without inventing in-laws
+
+- **Status:** accepted
+- **Decision:** Add Karla Vannessa Contreras-Buquet through a verified, family-confirmed spouse edge to Michael, and add Chloé Eloise Buquet and Jolie Renee Buquet through verified parent-child edges to both Michael and Karla. Treat a spouse as the same directory generation as the connected focal person, while each parent-child step changes the directory distance by one. Do not infer Karla's parents or ancestors from her surname or family role.
+- **Consequence:** All three people receive stable routes, search records, profiles, and Evidence Mode support from the canonical graph. Only birth years are public for these living people. Karla's paternal and maternal lines remain an explicit future research area rather than incomplete synthetic nodes.
+
+## D-030 — The default family tree begins with the youngest known generation
+
+- **Status:** accepted
+- **Decision:** Make Chloé Eloise Buquet and Jolie Renee Buquet the focal generation at the center of the default Family Tree V2 view. Derive a disposable two-sided projection that places Karla to their left and Michael to their right, includes Michael's supported siblings and accepted ancestry, and grows each parent's ancestry outward. Michael's line grows right; Karla's future supported line automatically mirrors left. Keep Michael as the configured reference person for relationship paths, directory generations, and maternal/paternal branch queries. Preserve the focused paternal, maternal, and selected-person ancestry scopes from V1.
+- **Consequence:** The default diagram can show descendants, collateral relatives, and a canonical spouse edge without changing the one canonical family graph. Michael is positioned within the vertical sibling group and both parents align with the daughters' midpoint, keeping the family core visually balanced. Every visible connector must resolve to an accepted relationship; siblings remain derived from shared parent-child edges, and Karla's unknown ancestry remains absent. The focal treatment is visual emphasis, not a new evidence or identity state.
+
+## D-031 — Parental siblings remain structural, documentary collateral family
+
+- **Status:** accepted
+- **Decision:** Normalize Michael's known aunts and uncles only through obituary-supported parent-child edges to their shared parents. Classify direct siblings of Paulette and Aubin as maternal or paternal collateral family from those shared-parent paths. Preserve the archive's distinction between direct obituary maternity and probable indirectly supported paternity, and keep reported spouse pairs probable unless stronger evidence is supplied.
+- **Consequence:** No aunt, uncle, or sibling edge is added. Priscilla's Karlon and Tippy LeBlanc reports remain separate people and relationships with no inferred chronology or parentage for Dexter Babineaux. The uncle Michael Buquet has an explicit `distinctFromPersonIds` guard against the reference person of the same name. Tree, directory, search, profiles, and Evidence Mode consume the new graph records automatically.
+
+## D-032 — First cousins are derived through evidence-bearing parent paths
+
+- **Status:** accepted
+- **Decision:** Normalize a first cousin only through four accepted parent-child edges: Michael → parent → shared grandparent → aunt/uncle → cousin. Add a framework-independent `firstCousins(id)` query that returns every structural path and its weakest confidence. Keep documentary-inferred parent assignments probable even when both endpoints and the grandchild generation are verified.
+- **Consequence:** Nine named cousins enter the accepted graph without a `cousin` edge. Cathy→Paige, Cathy→Sean, and the seven maternal parent assignments remain probable/documented and are eligible for later family-confirmed provenance. Richard Russell McRae's memorial supplies separate verified/documented father edges to Paige and Sean without implying a Cathy–Richard spouse relationship. Sid Roger resolves to sibling Sidney Paul Roger; Lauren Dugas and Collin Adkisson remain excluded from cousin classification. Tree, directory, search, profiles, branch filtering, and Evidence Mode derive their presentation from these same records.
+
+## D-033 — Shared-parent sibling presentation does not imply parentage subtype
+
+- **Status:** accepted
+- **Decision:** Derive Michael's sibling branch membership and public relationship wording only from supported shared-parent edges. A sibling sharing Paulette is maternal; a sibling sharing both Paulette and Aubin is `both`. Describe the actual recorded-parent context instead of inferring biological full-, half-, adoptive-, legal-, or step-sibling status from topology alone.
+- **Consequence:** Sidney is presented as Michael's maternal sibling through Paulette, while the research and source notes retain Michael's explicit different-father statement. Edmond “Bud” and Gina are presented as siblings through both recorded parents. Sidney's unnamed father remains absent, and every parent-child edge retains its existing `parentage: "unknown"` subtype.

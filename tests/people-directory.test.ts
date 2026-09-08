@@ -36,12 +36,35 @@ test("generation counts only supported parent-child steps from Michael", () => {
   assert.equal(byId.get("person-rita-leblanc-1928")?.generation, 2);
   assert.equal(byId.get("person-euchariste-dugas")?.generation, 3);
   assert.equal(byId.get("person-abraham-dugas-1616")?.generation, 12);
+  assert.equal(byId.get("person-sidney-paul-roger")?.generation, 2);
+  assert.equal(byId.get("person-edmond-paul-buquet")?.generation, 2);
+  assert.equal(byId.get("person-karla-vannessa-contreras-buquet")?.generation, 0);
+  assert.equal(byId.get("person-chloe-eloise-buquet")?.generation, 1);
+  assert.equal(byId.get("person-jolie-renee-buquet")?.generation, 1);
+  assert.equal(byId.get("person-cathy-buquet")?.generation, 3);
+  assert.equal(byId.get("person-russell-j-comeaux")?.generation, 3);
+  assert.equal(byId.get("person-monica")?.generation, 3);
+  assert.equal(byId.get("person-paige-bartholomew")?.generation, 4);
+  assert.equal(byId.get("person-conrad-miller")?.generation, 4);
+  assert.equal(byId.get("person-richard-russell-mcrae")?.generation, 5);
 });
 
 test("branch classification comes from canonical ancestry paths", () => {
   assert.equal(byId.get("person-rita-leblanc-1928")?.branch, "maternal");
   assert.equal(byId.get("person-verna-arlene-bakke")?.branch, "paternal");
   assert.equal(byId.get("person-michael-buquet")?.branch, "self");
+  assert.equal(byId.get("person-sidney-paul-roger")?.branch, "maternal");
+  assert.equal(byId.get("person-edmond-paul-buquet")?.branch, "both");
+  assert.equal(byId.get("person-gina-buquet")?.branch, "both");
+  assert.equal(byId.get("person-cathy-buquet")?.branch, "paternal");
+  assert.equal(byId.get("person-russell-j-comeaux")?.branch, "maternal");
+  assert.equal(byId.get("person-paige-bartholomew")?.branch, "paternal");
+  assert.equal(byId.get("person-conrad-miller")?.branch, "maternal");
+  assert.equal(byId.get("person-richard-russell-mcrae")?.branch, "unclassified");
+  assert.equal(byId.get("person-paige-bartholomew")?.relationshipLabel, "Paternal first cousin");
+  assert.equal(byId.get("person-conrad-miller")?.relationshipLabel, "Maternal first cousin");
+  assert.equal(byId.get("person-paige-bartholomew")?.relationshipConfidence, "probable");
+  assert.equal(byId.get("person-sidney-paul-roger")?.relationshipConfidence, "verified");
 });
 
 test("surname indexing uses supported canonical and alternate recorded names", () => {
@@ -55,6 +78,11 @@ test("surname indexing uses supported canonical and alternate recorded names", (
   assert.deepEqual(vernaSurnames, ["bakke", "buquet"]);
   assert.deepEqual(pauletteSurnames, ["buquet", "comeaux", "wheeler"]);
   assert.deepEqual(allenSurnames, ["comeaux"]);
+  assert.deepEqual(byId.get("person-sidney-paul-roger")?.surnames.map(({ value }) => value), ["roger"]);
+  assert.deepEqual(byId.get("person-gina-buquet")?.surnames.map(({ value }) => value), [
+    "buquet",
+    "nevils",
+  ]);
   assert.equal(bouquet?.isCanonical, false);
   assert.deepEqual(bouquet?.alternateNameTypes, ["spelling"]);
   assert.equal(bouquet && formatRecordedSurnameLabel(bouquet), "Bouquet — alternate spelling");
@@ -103,11 +131,17 @@ test("filter options expose only values represented in canonical records", () =>
 
   assert.deepEqual(options.confidences.map(({ value }) => value), ["verified", "probable"]);
   assert.ok(options.surnames.some(({ value, label }) => value === "leblanc" && label === "LeBlanc"));
+  assert.ok(options.surnames.some(({ value, label }) => value === "roger" && label === "Roger"));
+  assert.ok(options.surnames.some(
+    ({ value, label }) => value === "nevils" && label === "Nevils — married name",
+  ));
   assert.ok(options.surnames.some(
     ({ value, label }) => value === "bouquet" && label === "Bouquet — alternate spelling",
   ));
   assert.ok(!options.surnames.some(({ value }) => value === "i"));
-  assert.ok(options.generations.some(({ value, count }) => value === 0 && count === 1));
+  assert.ok(options.generations.some(({ value, count, label }) =>
+    value === 0 && count === 2 && label === "Generation 0 · Michael and spouse",
+  ));
   assert.ok(options.birthplaces.some(({ value }) => value === "place-no-norway"));
   assert.ok(!options.birthplaces.some(({ label }) => /unknown/iu.test(label)));
 });

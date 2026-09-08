@@ -76,6 +76,15 @@ export interface SiblingMatch {
   readonly sharedParents: readonly SharedParentEvidence[];
 }
 
+export interface FirstCousinMatch {
+  readonly person: Person;
+  /**
+   * Parent-child-only paths ordered from the query subject through a parent,
+   * shared grandparent, that parent's sibling, and the cousin.
+   */
+  readonly paths: readonly GenealogyPath[];
+}
+
 export interface RelationshipPathResult {
   readonly person: Person;
   readonly focalPerson: Person;
@@ -89,7 +98,7 @@ export type BranchClassification = FamilyBranch | "both" | "self" | "unclassifie
 
 export interface BranchMembership {
   readonly branch: FamilyBranch;
-  /** Ordered from that branch root toward the queried ancestor. */
+  /** Ordered from that branch root toward the queried ancestor or parental collateral relative. */
   readonly paths: readonly GenealogyPath[];
 }
 
@@ -195,6 +204,7 @@ export interface GenealogyQueries {
   ancestors(id: PersonId, options?: TraversalOptions): readonly TraversalMatch[];
   descendants(id: PersonId, options?: TraversalOptions): readonly TraversalMatch[];
   siblings(id: PersonId): readonly SiblingMatch[];
+  firstCousins(id: PersonId): readonly FirstCousinMatch[];
   relationshipPathToMichael(id: PersonId): RelationshipPathResult | undefined;
   branchForPerson(id: PersonId): BranchResult | undefined;
   peopleBySurname(surname: string): readonly SurnameMatch[];
@@ -467,6 +477,50 @@ export function createGenealogyQueries(
       .sort(byPersonName);
   };
 
+  const firstCousins = (id: PersonId): readonly FirstCousinMatch[] => {
+    const canonical = canonicalPersonId(id);
+    if (!peopleById.has(canonical)) return [];
+    const matches = new Map<PersonId, GenealogyPath[]>();
+    const pathKeys = new Map<PersonId, Set<string>>();
+
+    for (const subjectParent of parents(canonical)) {
+      for (const cousinParent of siblings(subjectParent.person.id)) {
+        for (const cousin of children(cousinParent.person.id)) {
+          if (cousin.person.id === canonical) continue;
+          for (const sharedParent of cousinParent.sharedParents) {
+            const relationships = [
+              subjectParent.relationship,
+              sharedParent.subjectRelationship,
+              sharedParent.siblingRelationship,
+              cousin.relationship,
+            ];
+            if (relationships.some(({ type }) => type !== "parent-child")) continue;
+            const key = relationships.map(({ id: relationshipId }) => relationshipId).join("|");
+            const seen = pathKeys.get(cousin.person.id) ?? new Set<string>();
+            if (seen.has(key)) continue;
+            seen.add(key);
+            pathKeys.set(cousin.person.id, seen);
+            const path = makePath(
+              [
+                canonical,
+                subjectParent.person.id,
+                sharedParent.parent.id,
+                cousinParent.person.id,
+                cousin.person.id,
+              ],
+              relationships,
+            );
+            matches.set(cousin.person.id, [...(matches.get(cousin.person.id) ?? []), path]);
+          }
+        }
+      }
+    }
+
+    return [...matches.entries()]
+      .map(([personId, paths]) => ({ person: peopleById.get(personId)!, paths }))
+      .sort(byPersonName);
+  };
+
   const relationshipPathToMichael = (id: PersonId): RelationshipPathResult | undefined => {
     const startId = canonicalPersonId(id);
     const targetId = canonicalPersonId(focalPersonId);
@@ -512,9 +566,11 @@ export function createGenealogyQueries(
   const branchForPerson = (id: PersonId): BranchResult | undefined => {
     const person = personById(id);
     if (!person) return undefined;
-    if (person.id === canonicalPersonId(focalPersonId)) {
+    const focalId = canonicalPersonId(focalPersonId);
+    if (person.id === focalId) {
       return { person, classification: "self", memberships: [] };
     }
+    const focalSibling = siblings(focalId).find(({ person: sibling }) => sibling.id === person.id);
     const memberships: BranchMembership[] = [];
     for (const [branch, rootId] of [
       ["maternal", maternalRootId],
@@ -526,8 +582,61 @@ export function createGenealogyQueries(
         memberships.push({ branch, paths: [makePath([root.id], [])] });
         continue;
       }
+      const sharedBranchParent = focalSibling?.sharedParents.find(
+        ({ parent }) => parent.id === root.id,
+      );
+      if (sharedBranchParent) {
+        memberships.push({
+          branch,
+          paths: [
+            makePath(
+              [root.id, person.id],
+              [sharedBranchParent.siblingRelationship],
+            ),
+          ],
+        });
+        continue;
+      }
       const match = ancestors(root.id).find(({ person: ancestor }) => ancestor.id === person.id);
-      if (match) memberships.push({ branch, paths: match.paths });
+      if (match) {
+        memberships.push({ branch, paths: match.paths });
+        continue;
+      }
+      const collateralPaths: GenealogyPath[] = [];
+      for (const siblingMatch of siblings(root.id)) {
+        if (siblingMatch.person.id === person.id) {
+          collateralPaths.push(
+            ...siblingMatch.sharedParents.map(
+              ({ parent, subjectRelationship, siblingRelationship }) =>
+                makePath(
+                  [root.id, parent.id, person.id],
+                  [subjectRelationship, siblingRelationship],
+                ),
+            ),
+          );
+          continue;
+        }
+        const descendant = descendants(siblingMatch.person.id).find(
+          ({ person: descendantPerson }) => descendantPerson.id === person.id,
+        );
+        if (!descendant) continue;
+        for (const { parent, subjectRelationship, siblingRelationship } of siblingMatch.sharedParents) {
+          for (const descendantPath of descendant.paths) {
+            collateralPaths.push(
+              makePath(
+                [root.id, parent.id, siblingMatch.person.id, ...descendantPath.people.slice(1).map(({ id: descendantId }) => descendantId)],
+                [subjectRelationship, siblingRelationship, ...descendantPath.relationships],
+              ),
+            );
+          }
+        }
+      }
+      if (collateralPaths.length > 0) {
+        memberships.push({
+          branch,
+          paths: collateralPaths,
+        });
+      }
     }
     const classification: BranchClassification =
       memberships.length === 2
@@ -826,6 +935,7 @@ export function createGenealogyQueries(
     ancestors,
     descendants,
     siblings,
+    firstCousins,
     relationshipPathToMichael,
     branchForPerson,
     peopleBySurname,

@@ -12,7 +12,7 @@ import {
 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
-import { ConfidenceMark } from "@/components/research/confidence-mark"
+import { ConfidenceMark, ProvenanceMarks } from "@/components/research/confidence-mark"
 import { Button } from "@/components/ui/button"
 import { buttonVariants } from "@/components/ui/button-variants"
 import {
@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/sheet"
 import { familyGraph, familyGraphQueries } from "@/data"
 import { buildPersonDetailModel, type PersonDetailRelative } from "@/lib/genealogy/person-detail"
+import { evidenceProvenanceKinds } from "@/lib/genealogy/evidence"
 import { cn } from "@/lib/utils"
 import { useExploreActions } from "@/state"
 import type { Confidence, PersonId } from "@/types"
@@ -71,11 +72,14 @@ function RelativeList({
         {relatives.map(({ person, relationship }) => (
           <div key={relationship.id} className="flex items-baseline justify-between gap-3 text-sm">
             <span className="font-medium text-foreground">{person.canonicalName}</span>
-            {relationship.type !== "parent-child" && (
-              <span className="text-xs text-muted-foreground">
-                {relationship.type === "partner" ? "Partner" : "Spouse"}
-              </span>
-            )}
+            <span className="flex flex-wrap items-center justify-end gap-2">
+              {relationship.type !== "parent-child" && (
+                <span className="text-xs text-muted-foreground">
+                  {relationship.type === "partner" ? "Partner" : "Spouse"}
+                </span>
+              )}
+              <ProvenanceMarks kinds={evidenceProvenanceKinds(relationship)} />
+            </span>
           </div>
         ))}
       </dd>
@@ -157,6 +161,7 @@ function PersonDetailContent({
                   >
                     {confidenceLabel(path.confidence)} path
                   </p>
+                  <ProvenanceMarks kinds={path.provenanceKinds} className="mt-2" />
                 </div>
               ))}
               {model.relationshipPaths.length > 1 && (

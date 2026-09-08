@@ -248,6 +248,7 @@ function auditOrphans(graph: GenealogyGraph, issues: DataQualityIssue[]): void {
 }
 
 function auditLikelyDuplicates(graph: GenealogyGraph, descendants: Map<PersonId, Set<PersonId>>, issues: DataQualityIssue[]): void {
+  const peopleById = new Map(graph.people.map((person) => [person.id, person]));
   const names = new Map<string, PersonId[]>();
   for (const person of graph.people) {
     const keys = new Set([person.canonicalName, ...person.alternateNames.map(({ name }) => name)].map(normalizedName));
@@ -257,7 +258,16 @@ function auditLikelyDuplicates(graph: GenealogyGraph, descendants: Map<PersonId,
     const ids = [...new Set(rawIds)];
     if (ids.length < 2) continue;
     const allGenealogicallySeparated = ids.every((id, index) =>
-      ids.slice(index + 1).every((other) => descendants.get(id)?.has(other) || descendants.get(other)?.has(id)),
+      ids.slice(index + 1).every((other) => {
+        const explicitlyDistinct =
+          peopleById.get(id)?.distinctFromPersonIds?.includes(other) ||
+          peopleById.get(other)?.distinctFromPersonIds?.includes(id);
+        return (
+          explicitlyDistinct ||
+          descendants.get(id)?.has(other) ||
+          descendants.get(other)?.has(id)
+        );
+      }),
     );
     if (!allGenealogicallySeparated) {
       add(issues, "identity.likely-duplicate", "warning", `Multiple accepted people share the normalized name “${name}” without an ancestor/descendant disambiguation.`, ids);

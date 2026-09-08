@@ -1,4 +1,5 @@
 export * from "./audit";
+export * from "./evidence";
 export * from "./global-search";
 export * from "./person-detail";
 export * from "./person-profile";

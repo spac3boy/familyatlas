@@ -13,6 +13,7 @@ import { familyGraph } from "@/data"
 import {
   buildFamilyTreeHierarchy,
   defaultExpandedPersonIds,
+  layoutDaughterCenteredFamilyTree,
   layoutFamilyTree,
   type FamilyTreeLayout,
   type FamilyTreeLayoutNode,
@@ -23,11 +24,12 @@ import { useExploreActions, useExploreState } from "@/state"
 import type { Confidence, PersonId } from "@/types"
 
 const INITIAL_VISIBLE_GENERATIONS = 3
+const KARLA_CONTRERAS_BUQUET_ID = "person-karla-vannessa-contreras-buquet"
 
 const scopeOptions: readonly { readonly value: FamilyTreeScope; readonly label: string }[] = [
-  { value: "all", label: "All family" },
-  { value: "paternal", label: "Paternal" },
-  { value: "maternal", label: "Maternal" },
+  { value: "family", label: "Family" },
+  { value: "paternal", label: "Michael’s paternal" },
+  { value: "maternal", label: "Michael’s maternal" },
   { value: "selected", label: "Selected person" },
 ]
 
@@ -48,23 +50,34 @@ function useElementWidth<T extends HTMLElement>() {
   return [ref, width] as const
 }
 
+function defaultFamilyExpandedPersonIds(): ReadonlySet<PersonId> {
+  return new Set([
+    ...defaultExpandedPersonIds(familyGraph, { scope: "family", selectedPersonId: null }),
+    ...defaultExpandedPersonIds(familyGraph, {
+      scope: "selected",
+      selectedPersonId: KARLA_CONTRERAS_BUQUET_ID,
+    }),
+  ])
+}
+
 function fitTransform(layout: FamilyTreeLayout, viewportWidth: number, viewportHeight: number) {
-  const padding = viewportWidth < 640 ? 24 : 40
+  const horizontalPadding = viewportWidth < 640 ? 4 : 40
+  const verticalPadding = viewportWidth < 640 ? 24 : 40
   const minimumReadableScale = viewportWidth < 640 ? 0.72 : 0.35
   const scale = Math.min(
     1,
     Math.max(
       minimumReadableScale,
       Math.min(
-        (viewportWidth - padding * 2) / layout.width,
-        (viewportHeight - padding * 2) / layout.height,
+        (viewportWidth - horizontalPadding * 2) / layout.width,
+        (viewportHeight - verticalPadding * 2) / layout.height,
       ),
     ),
   )
   return zoomIdentity
     .translate(
-      Math.max(padding, (viewportWidth - layout.width * scale) / 2),
-      Math.max(padding, (viewportHeight - layout.height * scale) / 2),
+      Math.max(horizontalPadding, (viewportWidth - layout.width * scale) / 2),
+      Math.max(verticalPadding, (viewportHeight - layout.height * scale) / 2),
     )
     .scale(scale)
 }
@@ -77,10 +90,15 @@ function edgeDash(confidence: Confidence): string | undefined {
 
 function nodeAriaLabel(node: FamilyTreeLayoutNode): string {
   const date = node.dateLabel ? ` ${node.dateLabel}.` : ""
+  if (node.role === "focus") {
+    return `${node.canonicalName}.${date} Focal generation. ${node.confidence} confidence. Known parents are shown.`
+  }
   const ancestry = node.hasParents
     ? node.expanded
       ? " Known parents are shown. Press Left Arrow to collapse them."
       : " Known parents are hidden. Press Right Arrow to reveal them."
+    : node.parentsVisible
+      ? " Known parents are shown."
     : " No parents are represented beyond this person in the current tree."
   return `${node.canonicalName}.${date} ${node.confidence} confidence.${ancestry}`
 }
@@ -91,11 +109,12 @@ interface TreeNodeProps {
   readonly nodeHeight: number
   readonly selected: boolean
   readonly showConfidence: boolean
+  readonly focal: boolean
   readonly onSelect: (personId: PersonId) => void
   readonly onToggle: (personId: PersonId) => void
 }
 
-function TreeNode({ node, nodeWidth, nodeHeight, selected, showConfidence, onSelect, onToggle }: TreeNodeProps) {
+function TreeNode({ node, nodeWidth, nodeHeight, selected, showConfidence, focal, onSelect, onToggle }: TreeNodeProps) {
   const activate = () => onSelect(node.personId)
   const toggle = () => node.hasParents && onToggle(node.personId)
 
@@ -129,9 +148,21 @@ function TreeNode({ node, nodeWidth, nodeHeight, selected, showConfidence, onSel
         width={nodeWidth}
         height={nodeHeight}
         rx={4}
-        fill={selected ? "var(--accent)" : "var(--card)"}
-        stroke={selected ? "var(--primary)" : "transparent"}
+        fill={selected || focal ? "var(--accent)" : "var(--card)"}
+        stroke={selected || focal ? "var(--primary)" : "transparent"}
       />
+      {focal && (
+        <text
+          x={nodeWidth - 13}
+          y={17}
+          textAnchor="middle"
+          fill="var(--primary)"
+          className="text-[0.75rem]"
+          aria-hidden="true"
+        >
+          ★
+        </text>
+      )}
       <line
         x1={0.5}
         x2={0.5}
@@ -204,7 +235,7 @@ export function FamilyTree() {
   const [personPanelOpen, setPersonPanelOpen] = React.useState(false)
   const [scope, setScope] = React.useState<FamilyTreeScope>(() => {
     if (selectedBranch === "maternal" || selectedBranch === "paternal") return selectedBranch
-    return "all"
+    return "family"
   })
   const treeRootId = scope === "selected" ? selectedPerson : null
   const hierarchyOptions = React.useMemo(
@@ -212,7 +243,7 @@ export function FamilyTree() {
     [scope, treeRootId],
   )
   const [expandedPersonIds, setExpandedPersonIds] = React.useState<ReadonlySet<PersonId>>(() =>
-    defaultExpandedPersonIds(familyGraph, { scope: "all", selectedPersonId: null }),
+    defaultFamilyExpandedPersonIds(),
   )
   const [viewportRef, viewportWidth] = useElementWidth<HTMLDivElement>()
   const viewportHeight = viewportWidth < 640 ? 560 : 640
@@ -221,17 +252,26 @@ export function FamilyTree() {
   const [transform, setTransform] = React.useState<ZoomTransform>(zoomIdentity)
 
   const treeLayout = React.useMemo(() => {
-    const root = buildFamilyTreeHierarchy(familyGraph, {
-      ...hierarchyOptions,
-      expandedPersonIds,
-    })
-    return layoutFamilyTree(root, familyGraph.events, {
+    const layoutOptions = {
       rowGap: viewportWidth < 640 ? 80 : 84,
       generationGap: viewportWidth < 640 ? 204 : 224,
       nodeWidth: viewportWidth < 640 ? 168 : 184,
       nodeHeight: 68,
+    }
+    if (scope === "family") {
+      return layoutDaughterCenteredFamilyTree(
+        familyGraph,
+        familyGraph.events,
+        expandedPersonIds,
+        layoutOptions,
+      )
+    }
+    const root = buildFamilyTreeHierarchy(familyGraph, {
+      ...hierarchyOptions,
+      expandedPersonIds,
     })
-  }, [expandedPersonIds, hierarchyOptions, viewportWidth])
+    return layoutFamilyTree(root, familyGraph.events, layoutOptions)
+  }, [expandedPersonIds, hierarchyOptions, scope, viewportWidth])
 
   const applyTransform = React.useCallback((nextTransform: ZoomTransform) => {
     const element = svgRef.current
@@ -273,11 +313,13 @@ export function FamilyTree() {
     setScope(nextScope)
     selectBranch(nextScope === "maternal" || nextScope === "paternal" ? nextScope : null)
     setExpandedPersonIds(
-      defaultExpandedPersonIds(
-        familyGraph,
-        { scope: nextScope, selectedPersonId: nextScope === "selected" ? selectedPerson : null },
-        INITIAL_VISIBLE_GENERATIONS,
-      ),
+      nextScope === "family"
+        ? defaultFamilyExpandedPersonIds()
+        : defaultExpandedPersonIds(
+            familyGraph,
+            { scope: nextScope, selectedPersonId: nextScope === "selected" ? selectedPerson : null },
+            INITIAL_VISIBLE_GENERATIONS,
+          ),
     )
   }
 
@@ -323,7 +365,9 @@ export function FamilyTree() {
     setExpandedPersonIds(new Set(familyGraph.people.map(({ id }) => id)))
   const collapseAncestry = () =>
     setExpandedPersonIds(
-      defaultExpandedPersonIds(familyGraph, hierarchyOptions, INITIAL_VISIBLE_GENERATIONS),
+      scope === "family"
+        ? defaultFamilyExpandedPersonIds()
+        : defaultExpandedPersonIds(familyGraph, hierarchyOptions, INITIAL_VISIBLE_GENERATIONS),
     )
 
   const selectedName = selectedPerson
@@ -347,18 +391,18 @@ export function FamilyTree() {
       <div className="page-shell py-16 sm:py-20 lg:py-24">
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(19rem,0.55fr)] lg:items-end">
           <div>
-            <p className="editorial-label mb-4">Family tree / V1</p>
+            <p className="editorial-label mb-4">Family tree / V2</p>
             <h2 id="family-tree-heading" className="editorial-heading">
-              Follow the known ancestry.
+              Begin with the next generation.
             </h2>
             <p id="family-tree-description" className="editorial-copy mt-5 max-w-2xl">
-              Every line is a source-backed parent-child relationship from the canonical family
-              graph. Dashed lines indicate probable or unresolved links.
+              Chloé and Jolie anchor the family view. Every line comes from a supported canonical
+              relationship; dashed lines indicate probable or unresolved links.
             </p>
           </div>
           <p className="border-t pt-5 text-sm leading-6 text-muted-foreground lg:border-t-0 lg:border-l lg:pt-0 lg:pl-8">
             Drag empty space to pan, use the zoom controls, and select a name for shared context.
-            The plus and minus controls reveal or fold known parents.
+            The plus and minus controls reveal or fold older ancestry.
           </p>
         </div>
 
@@ -455,7 +499,7 @@ export function FamilyTree() {
           <svg
             ref={svgRef}
             role="tree"
-            aria-label="Known family ancestry"
+            aria-label="Daughter-centered family tree"
             aria-describedby="family-tree-description"
             width="100%"
             height="100%"
@@ -469,8 +513,8 @@ export function FamilyTree() {
                     key={edge.occurrenceId}
                     d={edge.path}
                     fill="none"
-                    stroke="var(--muted-foreground)"
-                    strokeWidth={1.25}
+                    stroke={edge.relationshipType === "spouse" ? "var(--primary)" : "var(--muted-foreground)"}
+                    strokeWidth={edge.relationshipType === "spouse" ? 2 : 1.25}
                     strokeDasharray={edgeDash(edge.confidence)}
                     strokeOpacity={edge.confidence === "verified" ? 0.62 : 0.72}
                     vectorEffect="non-scaling-stroke"
@@ -485,6 +529,7 @@ export function FamilyTree() {
                   nodeHeight={treeLayout.nodeHeight}
                   selected={selectedPerson === node.personId}
                   showConfidence={evidenceMode === "evidence" || node.confidence !== "verified"}
+                  focal={node.role === "focus"}
                   onSelect={handleSelectPerson}
                   onToggle={togglePerson}
                 />
@@ -506,6 +551,10 @@ export function FamilyTree() {
             <span className="w-7 border-t border-dashed border-muted-foreground" aria-hidden="true" />
             Probable or unresolved relationship
           </span>
+          <span className="inline-flex items-center gap-2">
+            <span className="h-3 w-px bg-primary" aria-hidden="true" />
+            Spouse relationship
+          </span>
         </div>
 
         <details className="mt-8 border-t pt-5">
@@ -515,7 +564,7 @@ export function FamilyTree() {
           </summary>
           <p className="mt-3 max-w-2xl text-xs leading-5 text-muted-foreground">
             This list is an equivalent non-spatial way to select anyone currently shown in the
-            tree. Generation numbers begin with the person at the tree root.
+            tree. Generation numbers begin with Chloé and Jolie in the default family view.
           </p>
           <ul className="mt-5 grid border-t sm:grid-cols-2 lg:grid-cols-3">
             {visiblePeople.map((person) => (

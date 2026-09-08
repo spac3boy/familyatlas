@@ -96,10 +96,26 @@ export interface ResearchReference {
   readonly originalId?: string;
 }
 
+/**
+ * How a claim is supported, independently of how confidently the research
+ * accepts it. A claim may carry more than one provenance kind.
+ */
+export const evidenceProvenanceKindValues = ["family-confirmed", "documented"] as const;
+export type EvidenceProvenanceKind = (typeof evidenceProvenanceKindValues)[number];
+
+export interface EvidenceProvenance {
+  readonly kind: EvidenceProvenanceKind;
+  /** The subset of the entity's sources that provides this kind of support. */
+  readonly sourceRefs: NonEmptyReadonlyArray<SourceReference>;
+  readonly note?: string;
+}
+
 export interface EvidenceBackedEntity {
   readonly confidence: Confidence;
   readonly researchStatus: ResearchStatus;
   readonly sourceRefs: NonEmptyReadonlyArray<SourceReference>;
+  /** Optional during incremental migration; absence means not yet classified. */
+  readonly provenance?: NonEmptyReadonlyArray<EvidenceProvenance>;
   readonly researchRefs?: readonly ResearchReference[];
   readonly notes?: readonly string[];
 }
@@ -119,6 +135,7 @@ export interface AlternateName {
   readonly type: AlternateNameType;
   readonly confidence: Confidence;
   readonly sourceRefs: NonEmptyReadonlyArray<SourceReference>;
+  readonly provenance?: NonEmptyReadonlyArray<EvidenceProvenance>;
   readonly note?: string;
 }
 
@@ -129,6 +146,8 @@ export interface Person extends EvidenceBackedEntity {
   readonly alternateNames: readonly AlternateName[];
   /** Superseded stable IDs that resolve to this person. */
   readonly idAliases?: readonly PersonId[];
+  /** Explicit same-name non-equivalences established by the research archive. */
+  readonly distinctFromPersonIds?: readonly PersonId[];
 }
 
 export const relationshipTypeValues = ["parent-child", "spouse", "partner"] as const;

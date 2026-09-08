@@ -8,7 +8,8 @@ import {
 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
-import { ConfidenceMark } from "@/components/research/confidence-mark"
+import { ConfidenceMark, ProvenanceMarks } from "@/components/research/confidence-mark"
+import { evidenceProvenanceKinds } from "@/lib/genealogy/evidence"
 import type {
   PersonProfileModel,
   PersonProfilePlace,
@@ -86,7 +87,10 @@ function FamilyGroup({
               >
                 {person.canonicalName}
               </Link>
-              <ConfidenceMark confidence={relationship.confidence} suffix="relationship" />
+              <span className="flex flex-wrap items-center gap-2">
+                <ConfidenceMark confidence={relationship.confidence} suffix="relationship" />
+                <ProvenanceMarks kinds={evidenceProvenanceKinds(relationship)} />
+              </span>
             </div>
             <RelationshipSources references={relationship.sourceRefs} />
           </li>
@@ -254,6 +258,7 @@ export function PersonProfile({ profile }: Readonly<{ profile: PersonProfileMode
                   >
                     {confidenceLabel(path.confidence)} path
                     </p>
+                    <ProvenanceMarks kinds={path.provenanceKinds} className="mt-2" />
                   </div>
                 ))}
               </div>
