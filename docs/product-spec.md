@@ -20,7 +20,7 @@ These are product domains, not authorization to implement them in C1:
 | Area | Purpose |
 |---|---|
 | Family | Explore parent-child, spouse/partner, and other supported relationships |
-| People | Read person-centered summaries, events, names, and confidence-aware facts |
+| People | Browse the accepted family by supported branch, recorded surname, generation, birthplace, and confidence, then read person-centered profiles |
 | Research | Understand provenance, evidence quality, conflicts, and unresolved questions |
 | Geography | Explore supported places at their documented precision |
 | Journeys | Compare documented moves, strongly inferred moves, and separate locations with unknown routes |
@@ -37,7 +37,7 @@ These are product domains, not authorization to implement them in C1:
 
 ## Current scope boundary
 
-C5 establishes the reviewed direct-ancestor graph, C6 supplies framework-independent graph queries, C7 supplies the Nordic design foundation, C8 supplies the responsive application shell and primary navigation, C9 supplies shared Explore interaction state, C10 introduces the editorial home page, C11 adds the first canonical-data-derived visualization, C12 adds responsive person details with calculated relationship paths, and C13 adds the People index plus full stable-ID profiles for every accepted person. The repository still contains no global-search behavior, journeys, cross-person timeline, patterns visualization, or standalone Places/Stories/Research pages; those features require later explicit tasks.
+C5 establishes the reviewed direct-ancestor graph, C6 supplies framework-independent graph queries, C7 supplies the Nordic design foundation, C8 supplies the responsive application shell and primary navigation, C9 supplies shared Explore interaction state, C10 introduces the editorial home page, C11 adds the family tree, C12 adds responsive person details with calculated relationship paths, C13 adds full stable-ID profiles, C14 adds the cross-person timeline, C15 adds shared time navigation, C16 adds the evidence-limited Journeys map, and C17 adds the filterable People directory. The repository still contains no global-search behavior, patterns visualization, or standalone Places/Stories/Research pages; those features require later explicit tasks.
 
 ## Not currently specified
 

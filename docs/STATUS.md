@@ -1,7 +1,7 @@
 # Project status
 
 **Last updated:** 2026-09-07
-**Current milestone:** C16 — Journeys map V1
+**Current milestone:** C17 — People directory
 
 ## Complete
 
@@ -71,6 +71,9 @@
 - C16 encodes documented movements with solid schematic curves and strongly inferred movements with dashed curves. Separate known locations with unknown routes use paired endpoint rings and are structurally prohibited from producing a connecting path.
 - C16 vendors published Natural Earth 1:110m Admin 0 and Admin 1 GeoJSON boundary context under `public/data/`, with source and version disclosed in the interface and visualization documentation.
 - C16 validation: 68 passing tests plus successful lint, type-check, and production build. Live browser checks at 320px and 1366px covered published-boundary loading, pointer and keyboard marker selection, collision-safe responsive clusters, zoom detail, branch/year filtering, selected-person handoff, and zero page-level horizontal overflow.
+- C17 People directory projects all 57 accepted canonical people into restrained, linked typographic rows and supports composable branch, recorded-surname, generation, explicit-birthplace, and person-confidence filters.
+- C17 filter semantics retain evidence boundaries: generation is parent-child depth from Michael; surname values come only from canonical or alternate recorded names; birthplace requires an accepted birth event with an explicit canonical place reference; and unavailable filter values are not manufactured.
+- C17 validation: 75 passing tests plus successful lint, type-check, and production build. Live browser checks at 320px and 1366px covered all 57 stable-ID profile links, five-filter composition, filter clearing, profile navigation, uncertainty labels, and zero page-level horizontal overflow.
 
 ## Deliberately not started
 
@@ -82,7 +85,7 @@
 
 ## Current repository boundary
 
-The site contains a validated application shell, an editorial home/Explore route with Family Tree V1, Timeline V1, Journeys Map V1, their shared Time Navigator, and responsive person details, plus a complete accepted-person profile route set. C4 added the source-traceable seven-person foundation; C5 extended that graph with accepted direct maternal and paternal ancestry; C6 added read-only graph utilities; C7 added visual tokens and primitives; C8 added persistent navigation; C9 added shared Explore state; C10 added the canonical-data-backed home page; C11 added the first derived visualization; C12 added person-centered disclosure over that visualization; C13 added the People index and full profiles; C14 added the uncertainty-preserving cross-person timeline; C15 made year context operational across temporal views; C16 added evidence-limited geographic projection and movement presentation. No search behavior, patterns view, or standalone Place/Research destination is implemented. `research/manifest.json` records the state at the end of A11, so its `websiteCodeCreated: false` field is historically correct for that research handoff even though C0 subsequently created application code.
+The site contains a validated application shell, an editorial home/Explore route with Family Tree V1, Timeline V1, Journeys Map V1, their shared Time Navigator, and responsive person details, plus a filterable People directory and complete accepted-person profile route set. C4 added the source-traceable seven-person foundation; C5 extended that graph with accepted direct maternal and paternal ancestry; C6 added read-only graph utilities; C7 added visual tokens and primitives; C8 added persistent navigation; C9 added shared Explore state; C10 added the canonical-data-backed home page; C11 added the first derived visualization; C12 added person-centered disclosure over that visualization; C13 added the People index and full profiles; C14 added the uncertainty-preserving cross-person timeline; C15 made year context operational across temporal views; C16 added evidence-limited geographic projection and movement presentation; C17 made the People index an evidence-bounded directory. No search behavior, patterns view, or standalone Place/Research destination is implemented. `research/manifest.json` records the state at the end of A11, so its `websiteCodeCreated: false` field is historically correct for that research handoff even though C0 subsequently created application code.
 
 No application code may parse `research/` at runtime. The ingestion audit is recorded in `docs/research-ingestion-report.md`; it found 13 reused claim IDs, including 8 semantic collisions. Normalized data uses globally unique application IDs and preserves packet IDs only as file-scoped research provenance. The C5 integrity results are recorded in `docs/data-quality-report.md`; the C6 public query contract is recorded in `docs/genealogy-queries.md`. Further genealogy expansion must remain explicit and reviewed; unresolved claims may not be resolved merely to make the product complete.
 
