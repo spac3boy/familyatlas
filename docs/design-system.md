@@ -146,7 +146,7 @@ C8 establishes the persistent shell in the root layout:
 - The current destination uses both a visual rule/background treatment and `aria-current="page"`.
 - At `lg` and wider, navigation is an inline editorial row with the search affordance at the right edge.
 - Below `lg`, tablet and phone widths use compact search and menu controls. The menu opens a Base UI-backed modal sheet with focus management, Escape dismissal, backdrop dismissal, and an explicit close control.
-- Global search is visibly labeled `Soon` and disabled until a later task implements behavior.
+- Global search opens from either header mode or Command/Control+K. A shadcn Command list sits in a compact Base UI dialog, groups results as People, Places, Surnames, and Sources, and supports arrow-key selection, Enter navigation, and Escape dismissal.
 - The shell uses a solid background rather than blur or glass effects.
 
 The `lg` transition is intentional: five destinations should not be compressed into a tablet header. At 320px the brand and two compact controls remain on one line; navigation labels move to the sheet where each receives a full touch-friendly row.

@@ -90,7 +90,7 @@ Durable decisions live here. New entries should state the consequence; supersede
 
 - **Status:** accepted
 - **Decision:** Keep brand, primary navigation, deferred global search, skip navigation, and main-content framing in a persistent root-layout shell. Use inline navigation at `lg` and wider; use an accessible Base UI dialog sheet below `lg` rather than compressing all destinations into tablet and phone headers.
-- **Consequence:** Product routes supply page content rather than duplicating navigation. Active destinations use URL-derived state and `aria-current`; mobile navigation closes on selection. Search remains visibly unavailable until a dedicated implementation task supplies real behavior.
+- **Consequence:** Product routes supply page content rather than duplicating navigation. Active destinations use URL-derived state and `aria-current`; mobile navigation closes on selection. Search was enabled by C19 under D-025.
 
 ## D-016 — Explore interaction state is shared, React-owned, and route-independent
 
@@ -145,3 +145,9 @@ Durable decisions live here. New entries should state the consequence; supersede
 - **Status:** accepted
 - **Decision:** Generate `/places/[placeId]` from accepted canonical places, events, people, sources, and movement endpoints. A broad place may include events attached to its explicitly normalized child places, but those events remain labeled as occurring within the child place rather than directly at the parent geography. Movement classifications and endpoints remain unchanged.
 - **Consequence:** Place pages cannot manufacture a settlement, modern equivalent, route, date, or person association. Parish/county and region rollups depend only on `parentPlaceId`; surname labels remain recorded-name forms; record spans summarize dated events while disclosing undated records. Place-to-Journeys actions update centralized Explore state before navigation, and stable place routes serve all cross-links.
+
+## D-025 — Global search is a canonical graph projection
+
+- **Status:** accepted
+- **Decision:** Build the global search index from accepted people, places, recorded canonical/alternate surname forms, and normalized sources only. Keep indexing and deterministic ranking in framework-independent TypeScript; pass the serialized projection into the interactive shadcn Command presentation.
+- **Consequence:** Search cannot scrape `research/`, promote excluded records, infer surnames, or invent destinations. People, places, and sources use stable-ID routes; surname results use a stable `/people?surname=…` filter URL. Source routes expose normalized metadata and explicit graph references without becoming a second research archive.

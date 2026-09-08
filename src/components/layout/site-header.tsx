@@ -6,6 +6,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 
 import { Button, buttonVariants } from "@/components/ui/button"
+import { GlobalSearch } from "@/components/layout/global-search"
 import {
   Sheet,
   SheetCloseButton,
@@ -15,6 +16,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
+import type { GlobalSearchEntry } from "@/lib/genealogy/global-search"
 
 const navigation = [
   { label: "Explore", href: "/" },
@@ -41,15 +43,21 @@ function Brand() {
   )
 }
 
-function SearchAffordance({ compact = false }: { readonly compact?: boolean }) {
+function SearchAffordance({
+  compact = false,
+  onClick,
+}: {
+  readonly compact?: boolean
+  readonly onClick: () => void
+}) {
   return (
     <Button
       type="button"
       variant={compact ? "ghost" : "outline"}
       size={compact ? "icon" : "sm"}
-      disabled
-      aria-label="Search Family Atlas — coming soon"
-      title="Search is coming soon"
+      onClick={onClick}
+      aria-label="Search Family Atlas"
+      title="Search Family Atlas (Command or Control K)"
       className={cn(!compact && "gap-2.5 text-muted-foreground")}
     >
       <Search aria-hidden="true" />
@@ -57,7 +65,7 @@ function SearchAffordance({ compact = false }: { readonly compact?: boolean }) {
         <>
           <span>Search</span>
           <span className="border-l pl-2 text-[0.625rem] font-semibold tracking-[0.08em] uppercase opacity-75">
-            Soon
+            ⌘ K
           </span>
         </>
       )}
@@ -65,9 +73,12 @@ function SearchAffordance({ compact = false }: { readonly compact?: boolean }) {
   )
 }
 
-export function SiteHeader() {
+export function SiteHeader({
+  searchIndex,
+}: Readonly<{ searchIndex: readonly GlobalSearchEntry[] }>) {
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = React.useState(false)
+  const [searchOpen, setSearchOpen] = React.useState(false)
 
   return (
     <header className="sticky top-0 z-40 border-b bg-background">
@@ -95,11 +106,11 @@ export function SiteHeader() {
         </nav>
 
         <div className="ml-auto hidden lg:block">
-          <SearchAffordance />
+          <SearchAffordance onClick={() => setSearchOpen(true)} />
         </div>
 
         <div className="ml-auto flex items-center gap-1 lg:hidden">
-          <SearchAffordance compact />
+          <SearchAffordance compact onClick={() => setSearchOpen(true)} />
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger
               aria-label="Open navigation"
@@ -146,14 +157,17 @@ export function SiteHeader() {
                 <Button
                   type="button"
                   variant="outline"
-                  disabled
-                  aria-label="Search Family Atlas — coming soon"
+                  aria-label="Search Family Atlas"
+                  onClick={() => {
+                    setMobileOpen(false)
+                    setSearchOpen(true)
+                  }}
                   className="w-full justify-start text-muted-foreground"
                 >
                   <Search aria-hidden="true" />
                   Search the atlas
                   <span className="ml-auto text-[0.625rem] font-semibold tracking-[0.08em] uppercase">
-                    Soon
+                    ⌘ K
                   </span>
                 </Button>
               </div>
@@ -161,6 +175,7 @@ export function SiteHeader() {
           </Sheet>
         </div>
       </div>
+      <GlobalSearch index={searchIndex} open={searchOpen} onOpenChange={setSearchOpen} />
     </header>
   )
 }

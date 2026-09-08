@@ -1,6 +1,7 @@
 import type * as React from "react"
 
 import { SiteHeader } from "@/components/layout/site-header"
+import { familySearchIndex } from "@/data"
 import { ExploreStateProvider } from "@/state"
 
 export function AppShell({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -13,7 +14,7 @@ export function AppShell({ children }: Readonly<{ children: React.ReactNode }>) 
         >
           Skip to content
         </a>
-        <SiteHeader />
+        <SiteHeader searchIndex={familySearchIndex} />
         <main id="main-content" tabIndex={-1} className="min-h-[calc(100svh-4rem)]">
           {children}
         </main>
