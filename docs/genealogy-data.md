@@ -106,3 +106,9 @@ C18 derives the Places index and stable-ID place profiles in `src/lib/genealogy/
 C19 builds a serializable global index in `src/lib/genealogy/global-search.ts`, bound to the canonical graph by `src/data/search.ts`. It includes accepted people, accepted places, recorded surname forms, and accepted normalized sources. Supported alternate person names, historical/alternate place names, source metadata, citation handles, aliases, and stable IDs are keywords; they remain search terms rather than new claims. Text matching is case- and accent-insensitive, deterministic, and independent of React.
 
 Person and place results use their stable-ID routes. Recorded surnames are not canonical entities, so surname results use `/people?surname=…` and the directory validates the value against its graph-derived options. Source results use `/sources/[sourceId]`; those pages show only normalized source metadata and explicit normalized references. Neither indexing nor source presentation reads research Markdown at runtime.
+
+## Research overview projection
+
+C20 derives coverage counts, confidence registers, conclusion destinations, and the accepted source inventory in `src/lib/genealogy/research-overview.ts`. Every generated conclusion represents exactly one accepted canonical person, relationship, event, or place and retains that entity's confidence and source IDs. The application-facing `familyResearchOverview` is bound to the single graph in `src/data/research-overview.ts`.
+
+Methodology summaries, A11 archive totals, and selected active questions are reviewed into `src/data/research.ts`. They are explicit product data with a research-file provenance label, not a Markdown parser or a replacement archive. The Research page distinguishes the larger human archive—including collateral, rejected, unattached, contextual, and unresolved material—from the smaller accepted graph used by application views.

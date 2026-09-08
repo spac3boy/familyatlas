@@ -9,6 +9,7 @@ import Link from "next/link"
 
 import { PlaceJourneyButton } from "@/components/places/place-journey-button"
 import { Badge } from "@/components/ui/badge"
+import { ConfidenceMark } from "@/components/research/confidence-mark"
 import { formatPersonDetailDate } from "@/lib/genealogy/person-detail"
 import { formatRecordedSurnameLabel } from "@/lib/genealogy/people-directory"
 import type {
@@ -16,7 +17,7 @@ import type {
   PlaceProfileModel,
   PlaceProfileMovement,
 } from "@/lib/genealogy/place-profile"
-import type { Confidence, Place, Source } from "@/types"
+import type { Place, Source } from "@/types"
 
 const sections = [
   ["place-overview", "Overview"],
@@ -25,9 +26,6 @@ const sections = [
   ["place-movements", "Movements"],
   ["place-sources", "Sources"],
 ] as const
-
-const confidenceLabel = (confidence: Confidence) =>
-  confidence.charAt(0).toUpperCase() + confidence.slice(1)
 
 const sentenceCase = (value: string) =>
   value
@@ -160,9 +158,7 @@ function MovementEntry({ movement }: Readonly<{ movement: PlaceProfileMovement }
         </div>
         <div className="flex flex-wrap gap-2">
           <Badge variant="outline">{movement.classificationLabel}</Badge>
-          <Badge variant={movement.event.confidence}>
-            {confidenceLabel(movement.event.confidence)} claim
-          </Badge>
+          <ConfidenceMark confidence={movement.event.confidence} suffix="claim" />
         </div>
       </div>
 
@@ -229,7 +225,7 @@ export function PlaceProfile({ profile }: Readonly<{ profile: PlaceProfileModel 
           </div>
           <div className="border-t pt-5 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-7">
             <div className="flex flex-wrap gap-2">
-              <Badge variant={place.confidence}>{confidenceLabel(place.confidence)} place</Badge>
+              <ConfidenceMark confidence={place.confidence} suffix="place" />
               <Badge variant="outline">{profile.precisionLabel}</Badge>
             </div>
             <p className="mt-4 break-all text-xs leading-5 text-muted-foreground">{place.id}</p>
@@ -339,7 +335,7 @@ export function PlaceProfile({ profile }: Readonly<{ profile: PlaceProfileModel 
                       <Users aria-hidden="true" className="size-4 text-primary" />
                       {person.canonicalName}
                     </Link>
-                    <Badge variant={person.confidence}>{confidenceLabel(person.confidence)}</Badge>
+                    <ConfidenceMark confidence={person.confidence} />
                   </div>
                   {surnames.length > 0 && (
                     <p className="mt-2 text-xs leading-5 text-muted-foreground">
@@ -400,7 +396,7 @@ export function PlaceProfile({ profile }: Readonly<{ profile: PlaceProfileModel 
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
                     <h3 className="font-[560]">{entry.title}</h3>
-                    <Badge variant={entry.event.confidence}>{confidenceLabel(entry.event.confidence)}</Badge>
+                    <ConfidenceMark confidence={entry.event.confidence} />
                   </div>
                   <EventLocation entry={entry} />
                   <PersonLinks people={entry.people} />

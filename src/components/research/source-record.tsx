@@ -33,9 +33,9 @@ export function SourceRecord({ model }: Readonly<{ model: SourceRecordModel }>) 
 
   return (
     <article className="page-shell py-14 sm:py-18 lg:py-22">
-      <Link href="/" className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-primary hover:underline">
+      <Link href="/research#source-inventory" className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-primary hover:underline">
         <ArrowLeft aria-hidden="true" className="size-3.5" />
-        Return to Family Atlas
+        Return to source inventory
       </Link>
 
       <header className="mt-10 grid gap-7 border-b pb-10 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-end">

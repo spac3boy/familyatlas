@@ -8,6 +8,7 @@ import {
 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
+import { ConfidenceMark } from "@/components/research/confidence-mark"
 import type {
   PersonProfileModel,
   PersonProfilePlace,
@@ -85,9 +86,7 @@ function FamilyGroup({
               >
                 {person.canonicalName}
               </Link>
-              <Badge variant={relationship.confidence}>
-                {confidenceLabel(relationship.confidence)} relationship
-              </Badge>
+              <ConfidenceMark confidence={relationship.confidence} suffix="relationship" />
             </div>
             <RelationshipSources references={relationship.sourceRefs} />
           </li>
@@ -153,7 +152,7 @@ function PlaceEntry({ profilePlace }: Readonly<{ profilePlace: PersonProfilePlac
           {context && <p className="mt-1 text-sm leading-6 text-muted-foreground">{context}</p>}
         </div>
         <div className="flex flex-wrap gap-2">
-          <Badge variant={place.confidence}>{confidenceLabel(place.confidence)}</Badge>
+          <ConfidenceMark confidence={place.confidence} />
           <Badge variant="outline">{sentenceCase(place.precision)}</Badge>
         </div>
       </div>
@@ -206,7 +205,7 @@ export function PersonProfile({ profile }: Readonly<{ profile: PersonProfileMode
           </div>
           <div className="border-t pt-5 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-7">
             <div className="flex flex-wrap gap-2">
-              <Badge variant={person.confidence}>{confidenceLabel(person.confidence)} person</Badge>
+              <ConfidenceMark confidence={person.confidence} suffix="person" />
               <Badge variant="outline">
                 {detail.sourceCount} {detail.sourceCount === 1 ? "source" : "sources"}
               </Badge>
@@ -249,8 +248,11 @@ export function PersonProfile({ profile }: Readonly<{ profile: PersonProfileMode
                         </li>
                       ))}
                     </ol>
-                    <p className="mt-1 text-[0.6875rem] font-medium tracking-[0.04em] text-muted-foreground uppercase">
-                      {confidenceLabel(path.confidence)} path
+                  <p
+                    data-evidence-detail={path.confidence === "verified" ? "verified" : undefined}
+                    className="mt-1 text-[0.6875rem] font-medium tracking-[0.04em] text-muted-foreground uppercase"
+                  >
+                    {confidenceLabel(path.confidence)} path
                     </p>
                   </div>
                 ))}
@@ -269,7 +271,12 @@ export function PersonProfile({ profile }: Readonly<{ profile: PersonProfileMode
                 {person.alternateNames.map((name, index) => (
                   <li key={`${name.name}-${index}`}>
                     <span className="font-medium">{name.name}</span>
-                    <span className="text-muted-foreground"> · {sentenceCase(name.type)} · {confidenceLabel(name.confidence)}</span>
+                    <span className="text-muted-foreground">
+                      {` · ${sentenceCase(name.type)}`}
+                      <span data-evidence-detail={name.confidence === "verified" ? "verified" : undefined}>
+                        {` · ${confidenceLabel(name.confidence)}`}
+                      </span>
+                    </span>
                     <RelationshipSources references={name.sourceRefs} />
                   </li>
                 ))}
@@ -320,7 +327,7 @@ export function PersonProfile({ profile }: Readonly<{ profile: PersonProfileMode
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
                       <h3 className="font-[560]">{entry.label}</h3>
-                      <Badge variant={entry.event.confidence}>{confidenceLabel(entry.event.confidence)}</Badge>
+                      <ConfidenceMark confidence={entry.event.confidence} />
                     </div>
                     {entry.event.description && (
                       <p className="mt-2 text-sm leading-6 text-muted-foreground">{entry.event.description}</p>
@@ -437,7 +444,7 @@ export function PersonProfile({ profile }: Readonly<{ profile: PersonProfileMode
                     <Link href={flag.targetId.startsWith("person-") ? "#story" : `#${flag.targetId}`} className="font-medium leading-6 underline-offset-4 hover:text-primary hover:underline">
                       {flag.title}
                     </Link>
-                    {flag.confidence && <Badge variant={flag.confidence}>{confidenceLabel(flag.confidence)}</Badge>}
+                    {flag.confidence && <ConfidenceMark confidence={flag.confidence} alwaysVisible />}
                   </div>
                   {flag.details.map((detailText) => (
                     <p key={detailText} className="mt-2 text-sm leading-6 text-muted-foreground">{detailText}</p>

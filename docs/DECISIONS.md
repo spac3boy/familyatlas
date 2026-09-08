@@ -151,3 +151,9 @@ Durable decisions live here. New entries should state the consequence; supersede
 - **Status:** accepted
 - **Decision:** Build the global search index from accepted people, places, recorded canonical/alternate surname forms, and normalized sources only. Keep indexing and deterministic ranking in framework-independent TypeScript; pass the serialized projection into the interactive shadcn Command presentation.
 - **Consequence:** Search cannot scrape `research/`, promote excluded records, infer surnames, or invent destinations. People, places, and sources use stable-ID routes; surname results use a stable `/people?surname=…` filter URL. Source routes expose normalized metadata and explicit graph references without becoming a second research archive.
+
+## D-026 — Evidence Mode reveals confidence without weakening uncertainty defaults
+
+- **Status:** accepted
+- **Decision:** Keep Evidence Mode in the existing global Explore reducer and expose one control in the persistent shell. Normal browsing always shows probable and unresolved states where they qualify a claim; Evidence Mode additionally reveals restrained verified markers and supporting confidence context. Build the Research section from a framework-independent projection of accepted canonical entities plus explicitly reviewed application-facing methodology and open-question data.
+- **Consequence:** Evidence Mode cannot hide material uncertainty, alter confidence, or create a second evidence store. Research pages and cross-product confidence treatments never parse `research/` at runtime. The human archive remains fuller than the accepted graph, and coverage copy must distinguish those scopes.

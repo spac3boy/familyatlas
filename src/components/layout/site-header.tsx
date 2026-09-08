@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation"
 
 import { Button, buttonVariants } from "@/components/ui/button"
 import { GlobalSearch } from "@/components/layout/global-search"
+import { EvidenceModeToggle } from "@/components/research/evidence-mode"
 import {
   Sheet,
   SheetCloseButton,
@@ -105,11 +106,13 @@ export function SiteHeader({
           })}
         </nav>
 
-        <div className="ml-auto hidden lg:block">
+        <div className="ml-auto hidden items-center gap-1 lg:flex">
+          <EvidenceModeToggle />
           <SearchAffordance onClick={() => setSearchOpen(true)} />
         </div>
 
         <div className="ml-auto flex items-center gap-1 lg:hidden">
+          <EvidenceModeToggle compact />
           <SearchAffordance compact onClick={() => setSearchOpen(true)} />
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger

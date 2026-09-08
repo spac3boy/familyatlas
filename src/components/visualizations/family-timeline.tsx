@@ -146,7 +146,7 @@ function TimelineEventMark({
 }
 
 export function FamilyTimeline() {
-  const { selectedPerson, selectedBranch, selectedYear } = useExploreState()
+  const { selectedPerson, selectedBranch, selectedYear, evidenceMode } = useExploreState()
   const { selectBranch, selectPerson } = useExploreActions()
   const [scope, setScope] = React.useState<FamilyTimelineScope>(() => {
     if (selectedBranch === "maternal" || selectedBranch === "paternal") return selectedBranch
@@ -486,7 +486,8 @@ export function FamilyTimeline() {
                     <li key={event.id} className="text-xs leading-5">
                       <span className="font-medium">{eventName(event)}</span>
                       <span className="text-muted-foreground">
-                        {` · ${extent.label} · ${confidenceLabel(event.confidence)}`}
+                        {` · ${extent.label}`}
+                        {(evidenceMode === "evidence" || event.confidence !== "verified") && ` · ${confidenceLabel(event.confidence)}`}
                       </span>
                     </li>
                   ))}

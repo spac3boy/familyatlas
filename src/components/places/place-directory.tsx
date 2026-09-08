@@ -1,11 +1,8 @@
 import { ArrowRight, MapPin, MoveRight } from "lucide-react"
 import Link from "next/link"
 
-import { Badge } from "@/components/ui/badge"
+import { ConfidenceMark } from "@/components/research/confidence-mark"
 import type { PlaceIndexGroup } from "@/lib/genealogy/place-profile"
-
-const confidenceLabel = (value: string) =>
-  value.charAt(0).toUpperCase() + value.slice(1)
 
 export function PlaceDirectory({ groups }: Readonly<{ groups: readonly PlaceIndexGroup[] }>) {
   const placeCount = groups.reduce((total, group) => total + group.places.length, 0)
@@ -92,7 +89,7 @@ export function PlaceDirectory({ groups }: Readonly<{ groups: readonly PlaceInde
                       </span>
 
                       <span className="flex items-center justify-between gap-3 lg:justify-end">
-                        <Badge variant={place.confidence}>{confidenceLabel(place.confidence)}</Badge>
+                        <ConfidenceMark confidence={place.confidence} />
                         <ArrowRight aria-hidden="true" className="size-4 text-primary" />
                       </span>
                     </Link>

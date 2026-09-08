@@ -157,7 +157,7 @@ function PlaceMark({
 }
 
 export function FamilyJourneys() {
-  const { selectedPerson, selectedBranch, selectedYear, selectedPlace } = useExploreState()
+  const { selectedPerson, selectedBranch, selectedYear, selectedPlace, evidenceMode } = useExploreState()
   const { selectBranch, selectPerson, selectPlace } = useExploreActions()
   const [scope, setScope] = React.useState<FamilyJourneyScope>(() => {
     if (selectedBranch === "maternal" || selectedBranch === "paternal") return selectedBranch
@@ -502,7 +502,8 @@ export function FamilyJourneys() {
                         {place.modernName}
                       </button>
                       <p className="mt-1 text-[0.6875rem] leading-4 text-muted-foreground">
-                        {place.precision.replaceAll("-", " ")} · {place.confidence}
+                        {place.precision.replaceAll("-", " ")}
+                        {(evidenceMode === "evidence" || place.confidence !== "verified") && ` · ${place.confidence}`}
                       </p>
                       <Link
                         href={`/places/${place.id}`}
