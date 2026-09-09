@@ -1,6 +1,7 @@
 "use client"
 
 import { FamilyJourneys } from "@/components/visualizations/family-journeys"
+import { FamilyPatterns } from "@/components/visualizations/family-patterns"
 import { FamilyTimeline } from "@/components/visualizations/family-timeline"
 import { FamilyTree } from "@/components/visualizations/family-tree"
 import { useExploreState } from "@/state"
@@ -11,6 +12,13 @@ export function ExploreVisualizations() {
     return (
       <div id="family-explore">
         <FamilyJourneys />
+      </div>
+    )
+  }
+  if (activeView === "patterns") {
+    return (
+      <div id="family-explore">
+        <FamilyPatterns />
       </div>
     )
   }

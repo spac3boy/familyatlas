@@ -36,7 +36,7 @@ function Brand() {
     <Link
       href="/"
       aria-label="Family Atlas home"
-      className="inline-flex shrink-0 items-center gap-2.5 rounded-sm text-sm font-semibold tracking-[-0.01em]"
+      className="inline-flex min-h-11 shrink-0 items-center gap-2.5 rounded-sm text-sm font-semibold tracking-[-0.01em]"
     >
       <Library aria-hidden="true" className="size-4 text-primary" strokeWidth={1.75} />
       <span>Family Atlas</span>
@@ -80,6 +80,19 @@ export function SiteHeader({
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = React.useState(false)
   const [searchOpen, setSearchOpen] = React.useState(false)
+  const searchReturnFocusRef = React.useRef<HTMLElement | null>(null)
+
+  const setSearchDialogOpen = React.useCallback((nextOpen: boolean) => {
+    if (nextOpen && document.activeElement instanceof HTMLElement) {
+      searchReturnFocusRef.current = document.activeElement
+    }
+    setSearchOpen(nextOpen)
+  }, [])
+
+  const searchFinalFocus = React.useCallback(() => {
+    if (searchReturnFocusRef.current?.isConnected) return searchReturnFocusRef.current
+    return document.querySelector<HTMLElement>('header button[aria-label="Search Family Atlas"]')
+  }, [])
 
   return (
     <header className="sticky top-0 z-40 border-b bg-background">
@@ -108,12 +121,12 @@ export function SiteHeader({
 
         <div className="ml-auto hidden items-center gap-1 lg:flex">
           <EvidenceModeToggle />
-          <SearchAffordance onClick={() => setSearchOpen(true)} />
+          <SearchAffordance onClick={() => setSearchDialogOpen(true)} />
         </div>
 
         <div className="ml-auto flex items-center gap-1 lg:hidden">
           <EvidenceModeToggle compact />
-          <SearchAffordance compact onClick={() => setSearchOpen(true)} />
+          <SearchAffordance compact onClick={() => setSearchDialogOpen(true)} />
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger
               aria-label="Open navigation"
@@ -163,7 +176,7 @@ export function SiteHeader({
                   aria-label="Search Family Atlas"
                   onClick={() => {
                     setMobileOpen(false)
-                    setSearchOpen(true)
+                    setSearchDialogOpen(true)
                   }}
                   className="w-full justify-start text-muted-foreground"
                 >
@@ -178,7 +191,12 @@ export function SiteHeader({
           </Sheet>
         </div>
       </div>
-      <GlobalSearch index={searchIndex} open={searchOpen} onOpenChange={setSearchOpen} />
+      <GlobalSearch
+        index={searchIndex}
+        open={searchOpen}
+        onOpenChange={setSearchDialogOpen}
+        finalFocus={searchFinalFocus}
+      />
     </header>
   )
 }

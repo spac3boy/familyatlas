@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 
 import { SourceRecord } from "@/components/research/source-record"
@@ -10,6 +11,21 @@ export function generateStaticParams() {
   return familyGraph.sources
     .filter(({ researchStatus }) => researchStatus === "accepted")
     .map(({ id }) => ({ sourceId: id }))
+}
+
+export async function generateMetadata({
+  params,
+}: Readonly<{ params: Promise<{ sourceId: string }> }>): Promise<Metadata> {
+  const { sourceId } = await params
+  const source = isSourceId(sourceId)
+    ? familyGraph.sources.find((candidate) => candidate.id === sourceId)
+    : undefined
+  return {
+    title: source?.title ?? "Source not found",
+    description: source
+      ? `Review the normalized Family Atlas source record for ${source.title}.`
+      : "The requested Family Atlas source could not be found.",
+  }
 }
 
 export default async function SourcePage({

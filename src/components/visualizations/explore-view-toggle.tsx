@@ -1,6 +1,6 @@
 "use client"
 
-import { Map, Network, Rows3 } from "lucide-react"
+import { ChartColumn, Map, Network, Rows3 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { useExploreActions, useExploreState } from "@/state"
@@ -9,6 +9,7 @@ const availableViews = [
   { value: "tree", label: "Tree", icon: Network },
   { value: "journeys", label: "Journeys", icon: Map },
   { value: "timeline", label: "Timeline", icon: Rows3 },
+  { value: "patterns", label: "Patterns", icon: ChartColumn },
 ] as const
 
 export function ExploreViewToggle() {
@@ -16,7 +17,7 @@ export function ExploreViewToggle() {
   const { setActiveView } = useExploreActions()
 
   return (
-    <div role="group" aria-label="Explore visualization" className="flex gap-1.5">
+    <div role="group" aria-label="Explore visualization" className="flex flex-wrap gap-1.5">
       {availableViews.map(({ value, label, icon: Icon }) => (
         <Button
           key={value}

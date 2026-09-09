@@ -25,6 +25,9 @@ const ExploreDispatchContext = createContext<Dispatch<ExploreAction> | undefined
 
 export interface ExploreActions {
   readonly setActiveView: (view: ExploreView) => void
+  readonly showPersonInView: (personId: PersonId, view: "journeys" | "timeline") => void
+  readonly focusPersonInTree: (personId: PersonId) => void
+  readonly showPlaceInJourneys: (placeId: PlaceId) => void
   readonly selectPerson: (personId: PersonId | null) => void
   readonly selectYear: (year: number | null) => void
   readonly selectBranch: (branch: ExploreBranch | null) => void
@@ -61,6 +64,10 @@ export function useExploreActions(): ExploreActions {
   return useMemo(
     () => ({
       setActiveView: (view) => dispatch({ type: "set-active-view", view }),
+      showPersonInView: (personId, view) =>
+        dispatch({ type: "show-person-in-view", personId, view }),
+      focusPersonInTree: (personId) => dispatch({ type: "focus-person-in-tree", personId }),
+      showPlaceInJourneys: (placeId) => dispatch({ type: "show-place-in-journeys", placeId }),
       selectPerson: (personId) => dispatch({ type: "select-person", personId }),
       selectYear: (year) => dispatch({ type: "select-year", year }),
       selectBranch: (branch) => dispatch({ type: "select-branch", branch }),

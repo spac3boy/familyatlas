@@ -110,12 +110,12 @@ interface TreeNodeProps {
   readonly selected: boolean
   readonly showConfidence: boolean
   readonly focal: boolean
-  readonly onSelect: (personId: PersonId) => void
+  readonly onSelect: (personId: PersonId, trigger: SVGGElement) => void
   readonly onToggle: (personId: PersonId) => void
 }
 
 function TreeNode({ node, nodeWidth, nodeHeight, selected, showConfidence, focal, onSelect, onToggle }: TreeNodeProps) {
-  const activate = () => onSelect(node.personId)
+  const activate = (trigger: SVGGElement) => onSelect(node.personId, trigger)
   const toggle = () => node.hasParents && onToggle(node.personId)
 
   return (
@@ -129,11 +129,11 @@ function TreeNode({ node, nodeWidth, nodeHeight, selected, showConfidence, focal
       data-tree-node
       className="family-tree-node cursor-pointer outline-none"
       transform={`translate(${node.x} ${node.y - nodeHeight / 2})`}
-      onClick={activate}
+      onClick={(event) => activate(event.currentTarget)}
       onKeyDown={(event) => {
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault()
-          activate()
+          activate(event.currentTarget)
         } else if (event.key === "ArrowRight" && node.hasParents && !node.expanded) {
           event.preventDefault()
           toggle()
@@ -231,11 +231,12 @@ function TreeNode({ node, nodeWidth, nodeHeight, selected, showConfidence, focal
 
 export function FamilyTree() {
   const { selectedPerson, selectedBranch, evidenceMode } = useExploreState()
-  const { selectBranch, selectPerson, setActiveView } = useExploreActions()
+  const { focusPersonInTree, selectBranch, selectPerson } = useExploreActions()
   const [personPanelOpen, setPersonPanelOpen] = React.useState(false)
+  const personPanelTriggerRef = React.useRef<HTMLElement | SVGElement | null>(null)
   const [scope, setScope] = React.useState<FamilyTreeScope>(() => {
     if (selectedBranch === "maternal" || selectedBranch === "paternal") return selectedBranch
-    return "family"
+    return selectedPerson ? "selected" : "family"
   })
   const treeRootId = scope === "selected" ? selectedPerson : null
   const hierarchyOptions = React.useMemo(
@@ -323,7 +324,8 @@ export function FamilyTree() {
     )
   }
 
-  const handleSelectPerson = (personId: PersonId) => {
+  const handleSelectPerson = (personId: PersonId, trigger: HTMLElement | SVGElement) => {
+    personPanelTriggerRef.current = trigger
     selectPerson(personId)
     setPersonPanelOpen(true)
     if (scope === "selected") {
@@ -338,9 +340,7 @@ export function FamilyTree() {
   }
 
   const showPersonInTree = (personId: PersonId) => {
-    selectPerson(personId)
-    selectBranch(null)
-    setActiveView("tree")
+    focusPersonInTree(personId)
     setScope("selected")
     setExpandedPersonIds(
       defaultExpandedPersonIds(
@@ -576,7 +576,7 @@ export function FamilyTree() {
                     "flex min-h-14 w-full items-center justify-between gap-4 px-3 py-2 text-left text-sm transition-colors hover:bg-accent",
                     selectedPerson === person.personId && "bg-accent text-accent-foreground",
                   )}
-                  onClick={() => handleSelectPerson(person.personId)}
+                  onClick={(event) => handleSelectPerson(person.personId, event.currentTarget)}
                 >
                   <span>
                     <span className="block font-medium">{person.canonicalName}</span>
@@ -601,6 +601,7 @@ export function FamilyTree() {
           open={personPanelOpen}
           onOpenChange={setPersonPanelOpen}
           onShowInTree={showPersonInTree}
+          returnFocusRef={personPanelTriggerRef}
         />
       </div>
     </section>

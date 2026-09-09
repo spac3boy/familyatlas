@@ -89,12 +89,14 @@ Controls are compact and calm while remaining usable with touch, keyboard, and z
 - standard button height: 36px;
 - compact button height: 32px;
 - large button height: 40px;
+- below the desktop `lg` breakpoint, buttons, selects, and disclosure summaries have a minimum 44px touch target even when their visual variant is compact;
 - icon-only controls require an `aria-label`;
 - disabled controls retain legibility and prevent interaction;
 - hover adjusts semantic color or border without movement or large shadow changes;
 - visible focus uses the fjord-blue `ring` token with clear offset.
 
 Global focus styling covers native interactive elements. shadcn/Base UI components may add a component-aware focus ring but must preserve visible keyboard focus. Hover can never be the sole indication of availability.
+Modal dialogs, Sheets, Drawers, and visualization-triggered person details return focus to the initiating control after dismissal. If a responsive layout unmounts that exact trigger, focus returns to the corresponding visible header control.
 
 ## Genealogy semantics
 
@@ -129,6 +131,8 @@ Every implementation must retain:
 - non-color-only status communication;
 - readable zoom/reflow behavior;
 - structured text alternatives for future charts and visualizations.
+
+The spatial Tree, Journeys map, and Timeline pair their visual canvases with structured HTML alternatives. Pan and zoom are enhancements rather than the only route to content: named controls reset or change scale, and people, places, and records remain reachable through conventional lists and links. See [accessibility-audit.md](accessibility-audit.md) for the current limitations and C23 verification record.
 
 ## C7 preview boundary
 

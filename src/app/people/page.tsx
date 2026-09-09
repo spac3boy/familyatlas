@@ -1,8 +1,15 @@
+import type { Metadata } from "next"
+
 import { PeopleDirectory } from "@/components/people/people-directory"
 import { familyGraph, familyGraphQueries } from "@/data"
 import { buildPeopleDirectory } from "@/lib/genealogy/people-directory"
 
 const people = buildPeopleDirectory(familyGraph, familyGraphQueries)
+
+export const metadata: Metadata = {
+  title: "People",
+  description: "Browse accepted people in the canonical Family Atlas graph.",
+}
 
 export default function PeoplePage() {
   return (

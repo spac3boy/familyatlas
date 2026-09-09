@@ -9,11 +9,10 @@ import type { PlaceId } from "@/types"
 
 export function PlaceJourneyButton({ placeId }: Readonly<{ placeId: PlaceId }>) {
   const router = useRouter()
-  const { selectPlace, setActiveView } = useExploreActions()
+  const { showPlaceInJourneys } = useExploreActions()
 
   const showJourney = () => {
-    selectPlace(placeId)
-    setActiveView("journeys")
+    showPlaceInJourneys(placeId)
     router.push("/#family-explore")
   }
 
