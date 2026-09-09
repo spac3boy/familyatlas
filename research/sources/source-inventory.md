@@ -210,3 +210,11 @@ These aliases remain valid references in completed packets. They point to the sa
 4. The exact title/repository of the Marcellin baptism and Joseph–Céleste marriage results were not exposed.
 5. The original record images behind FamilySearch, Ancestry, Geneanet, Genealogy Trails, cemetery transcriptions, and compiled Louisiana reports were generally not inspected.
 6. No bibliographic claim in this inventory should be read as proof that a linked source remains available or unchanged; A9 preserves what the completed research actually used.
+
+## C24 application-era source addendum
+
+This dated addendum extends the A9 inventory without rewriting its original source accounting.
+
+| Stable source ID | Title or description | Record type/date | Repository | People and claims supported | Evidence/reliability notes | Inspection status |
+|---|---|---|---|---|---|---|
+| `SRC-C24-MICHAEL-CLOSE-FAMILY-CONFIRMATION` | Michael's C24 firsthand close-family confirmation | Family statement; 9 September 2026 | Family Atlas task history and `research/family-intake/close-family-confirmations.md` | Confirms the already supplied parent-child relationship roles forming Michael's paternal and maternal aunt/uncle groups and the nine accepted first-cousin branches | Family-provided primary evidence for the named relationship roles only. It does not establish biological/adoptive/legal parentage subtype, dates, places, spouse history, name variants, or distant ancestry. Existing documentary sources remain attached independently. | Directly inspected |

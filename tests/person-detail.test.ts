@@ -98,7 +98,7 @@ test("first-cousin labels and paths are graph-derived without cousin edges", () 
       "person-michael-buquet > person-aubin-buquet > person-verna-arlene-bakke > person-cathy-buquet > person-paige-bartholomew",
     ],
   );
-  assert.ok(paige.relationshipPaths.every(({ confidence }) => confidence === "probable"));
+  assert.ok(paige.relationshipPaths.every(({ confidence }) => confidence === "verified"));
   assert.deepEqual(paige.parents.map(({ person }) => person.id), [
     "person-cathy-buquet",
     "person-richard-russell-mcrae",

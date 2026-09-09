@@ -139,13 +139,13 @@ test("aunt and uncle paths reach Michael through a parent and shared grandparent
   assert.equal(cathy?.paths.length, 2);
   assert.deepEqual(
     cathy?.paths.map(({ confidence }) => confidence).sort(),
-    ["probable", "verified"],
+    ["verified", "verified"],
   );
   assert.equal(russell?.distance, 3);
   assert.equal(russell?.paths.length, 2);
   assert.deepEqual(
     russell?.paths.map(({ confidence }) => confidence).sort(),
-    ["probable", "verified"],
+    ["verified", "verified"],
   );
 });
 
@@ -169,7 +169,7 @@ test("first cousins are derived only from four parent-child edges", () => {
     ),
   ));
   assert.ok(cousins.every(({ paths }) =>
-    paths.every(({ confidence }) => confidence === "probable"),
+    paths.every(({ confidence }) => confidence === "verified"),
   ));
 
   const paige = cousins.find(({ person }) => person.id === "person-paige-bartholomew");
@@ -187,16 +187,16 @@ test("first cousins are derived only from four parent-child edges", () => {
   assert.deepEqual(queries.firstCousins("person-not-present"), []);
 });
 
-test("cousin relationship paths preserve probable parent assignments", () => {
+test("cousin relationship paths preserve verified family-confirmed parent assignments", () => {
   const paige = queries.relationshipPathToMichael("person-paige-bartholomew");
   const conrad = queries.relationshipPathToMichael("person-conrad-miller");
 
   assert.equal(paige?.distance, 4);
   assert.equal(paige?.paths.length, 2);
-  assert.ok(paige?.paths.every(({ confidence }) => confidence === "probable"));
+  assert.ok(paige?.paths.every(({ confidence }) => confidence === "verified"));
   assert.equal(conrad?.distance, 4);
   assert.equal(conrad?.paths.length, 2);
-  assert.ok(conrad?.paths.every(({ confidence }) => confidence === "probable"));
+  assert.ok(conrad?.paths.every(({ confidence }) => confidence === "verified"));
 });
 
 test("branch queries retain the path evidence behind their classification", () => {

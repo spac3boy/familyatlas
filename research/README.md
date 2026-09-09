@@ -12,7 +12,7 @@
 
 This directory preserves the Family Atlas genealogy research handoff: evidence, family-provided information, reasoning, uncertainty, conflicts, rejected identities, source references, geographic precision, and future research paths. It is designed for human review and for a deliberate later normalization step, not for direct application consumption.
 
-A0–A11 are complete. The archive is ready for normalization as a **first-pass research handoff**, not as a proof-standard or fully resolved genealogy. Important claims remain probable or unresolved, and many underlying original records were not inspected. No normalized application dataset or website code has been created by this research sequence.
+A0–A11 are complete. The archive is ready for normalization as a **first-pass research handoff**, not as a proof-standard or fully resolved genealogy. Important claims remain probable or unresolved, and many underlying original records were not inspected. The A0–A11 sequence itself created no application dataset or website code; later C-series implementation uses a separate normalized layer and adds dated family-intake records without rewriting the original packets.
 
 ## Archive structure
 
@@ -23,6 +23,7 @@ research/
   chat-inventory.md           Accessible Family History project-chat inventory
   manifest.json               Machine-readable inventory of this research archive
   open-questions.md           Completeness, conflict, and unresolved-question audit
+  family-intake/              Dated, application-era statements supplied directly by Michael
   people/
     00-immediate-family.md    Michael, parents, and four grandparents
     rita-leblanc.md           Complete Rita LeBlanc research packet
@@ -41,7 +42,7 @@ research/
 src/data/ or equivalent       Future normalized application data; not yet created
 ```
 
-The detailed person packet owns person-level reasoning. Branch files preserve deeper and collateral people without duplicating full biographies. The geography file owns place precision and movement classifications. The source inventory owns consolidated source metadata and aliases. `open-questions.md` is the final completeness and discrepancy audit. `manifest.json` inventories these files; it is not genealogy application data.
+The detailed person packet owns person-level reasoning. Branch files preserve deeper and collateral people without duplicating full biographies. The geography file owns place precision and movement classifications. The source inventory owns consolidated source metadata and aliases. `open-questions.md` is the A10 completeness and discrepancy audit. `family-intake/` preserves later explicit family statements as dated addenda. `manifest.json` inventories the archive as it stood at the end of A11; it is a historical handoff snapshot, not genealogy application data or a live filesystem index.
 
 The four `.gitkeep` files are legacy directory placeholders from A0. Their old “intentionally empty” text is non-authoritative now that those directories are populated; they are listed in the manifest only for complete filesystem accounting.
 

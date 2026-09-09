@@ -63,7 +63,7 @@ test("branch classification comes from canonical ancestry paths", () => {
   assert.equal(byId.get("person-richard-russell-mcrae")?.branch, "unclassified");
   assert.equal(byId.get("person-paige-bartholomew")?.relationshipLabel, "Paternal first cousin");
   assert.equal(byId.get("person-conrad-miller")?.relationshipLabel, "Maternal first cousin");
-  assert.equal(byId.get("person-paige-bartholomew")?.relationshipConfidence, "probable");
+  assert.equal(byId.get("person-paige-bartholomew")?.relationshipConfidence, "verified");
   assert.equal(byId.get("person-sidney-paul-roger")?.relationshipConfidence, "verified");
 });
 

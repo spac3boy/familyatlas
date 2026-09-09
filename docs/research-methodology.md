@@ -47,6 +47,8 @@ Normalization is an explicit offline development step from research evidence int
 
 C20A adds claim-level provenance without rewriting the historical research packets. `family-confirmed` means Michael supplied a firsthand close-family fact; `documented` means the claim has external documentary or published support. These are not confidence grades. A family-confirmed close relationship may be verified as a relationship while its parentage subtype and every unconfirmed biographical detail remain unknown, probable, or separately documented on their own records.
 
+C24 applies that rule to Michael's expressly confirmed parental sibling groups and nine first-cousin parent assignments. The confirmation upgrades only those named relationship roles; it does not upgrade spouse claims, parentage subtype, dates, places, name variants, migrations, or historical ancestry. Existing documentary provenance remains attached so Evidence Mode can show both support types together.
+
 ## Product evidence presentation
 
 The C20 Research page is an application-facing window into normalized evidence, not the research archive itself. It derives accepted conclusion and source registers from the canonical graph and uses a reviewed set of methodology statements, archive totals, and open questions under `src/data/`. The page must name the difference between archive coverage and accepted application coverage.

@@ -63,7 +63,7 @@ test("confidence is counted separately for each accepted entity type", () => {
 
   assert.deepEqual(rows, {
     people: { verified: 38, probable: 45, unresolved: 0 },
-    relationships: { verified: 42, probable: 77, unresolved: 0 },
+    relationships: { verified: 57, probable: 62, unresolved: 0 },
     events: { verified: 40, probable: 82, unresolved: 3 },
     places: { verified: 16, probable: 22, unresolved: 0 },
   });

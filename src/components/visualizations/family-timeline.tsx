@@ -7,6 +7,7 @@ import { PersonDetailPanel } from "@/components/people/person-detail-panel"
 import { Button } from "@/components/ui/button"
 import { ExploreViewToggle } from "@/components/visualizations/explore-view-toggle"
 import { TimeNavigator } from "@/components/visualizations/time-navigator"
+import { useElementWidth } from "@/components/visualizations/use-element-width"
 import { familyGraph, familyGraphQueries } from "@/data"
 import {
   buildFamilyTimelineModel,
@@ -39,23 +40,6 @@ const eventLabels: Readonly<Record<Event["type"], string>> = {
   death: "Death",
   burial: "Burial",
   other: "Other event",
-}
-
-function useElementWidth<T extends HTMLElement>() {
-  const ref = React.useRef<T>(null)
-  const [width, setWidth] = React.useState(960)
-
-  React.useEffect(() => {
-    const element = ref.current
-    if (!element) return
-    const update = () => setWidth(Math.max(1, element.getBoundingClientRect().width))
-    update()
-    const observer = new ResizeObserver(update)
-    observer.observe(element)
-    return () => observer.disconnect()
-  }, [])
-
-  return [ref, width] as const
 }
 
 function eventName(event: Event) {
@@ -155,7 +139,7 @@ export function FamilyTimeline() {
     if (selectedBranch === "maternal" || selectedBranch === "paternal") return selectedBranch
     return selectedPerson ? "selected" : "all"
   })
-  const [viewportRef, viewportWidth] = useElementWidth<HTMLDivElement>()
+  const [viewportRef, viewportWidth] = useElementWidth<HTMLDivElement>(960)
   const selectedName = selectedPerson
     ? familyGraph.people.find(({ id }) => id === selectedPerson)?.canonicalName
     : undefined

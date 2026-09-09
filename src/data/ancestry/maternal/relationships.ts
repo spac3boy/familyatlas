@@ -9,6 +9,7 @@ import type {
 } from "@/types";
 
 const owner = "research/people/rita-leblanc.md";
+const allenOwner = "research/people/allen-comeaux.md";
 
 function parentChild(
   id: RelationshipId,
@@ -17,6 +18,7 @@ function parentChild(
   confidence: Confidence,
   sourceRefs: NonEmptyReadonlyArray<SourceReference>,
   originalId: string,
+  researchFile: string = owner,
 ): ParentChildRelationship {
   return {
     id,
@@ -27,7 +29,7 @@ function parentChild(
     confidence,
     researchStatus: "accepted",
     sourceRefs,
-    researchRefs: [{ file: owner, originalId }],
+    researchRefs: [{ file: researchFile, originalId }],
     notes: ["The parent-child link is supported, but a biological, adoptive, or legal subtype was not separately documented."],
   };
 }
@@ -39,6 +41,7 @@ function couple(
   sourceRefs: NonEmptyReadonlyArray<SourceReference>,
   originalId: string,
   type: "spouse" | "partner" = "spouse",
+  researchFile: string = owner,
 ): Relationship {
   return {
     id,
@@ -47,15 +50,15 @@ function couple(
     confidence,
     researchStatus: "accepted",
     sourceRefs,
-    researchRefs: [{ file: owner, originalId }],
+    researchRefs: [{ file: researchFile, originalId }],
   };
 }
 
 export const maternalAncestorRelationships = [
   parentChild("relationship-lucuis-leblanc-parent-rita-leblanc", "person-lucuis-leblanc", "person-rita-leblanc-1928", "verified", [{ sourceId: "SRC-RITA-OBIT-ADVERTISER" }], "claim-rita-leblanc-010"),
   parentChild("relationship-euchariste-dugas-parent-rita-leblanc", "person-euchariste-dugas", "person-rita-leblanc-1928", "verified", [{ sourceId: "SRC-RITA-OBIT-ADVERTISER" }], "claim-rita-leblanc-011"),
-  parentChild("relationship-jules-comeaux-parent-allen-comeaux", "person-jules-comeaux-1888", "person-allen-comeaux-1925", "verified", [{ sourceId: "SRC-ALLEN-CENSUS-PROFILE" }], "claim-allen-comeaux-010"),
-  parentChild("relationship-joesette-r-parent-allen-comeaux", "person-joesette-r", "person-allen-comeaux-1925", "verified", [{ sourceId: "SRC-ALLEN-CENSUS-PROFILE" }], "claim-allen-comeaux-011"),
+  parentChild("relationship-jules-comeaux-parent-allen-comeaux", "person-jules-comeaux-1888", "person-allen-comeaux-1925", "verified", [{ sourceId: "SRC-ALLEN-CENSUS-PROFILE" }], "claim-allen-comeaux-010", allenOwner),
+  parentChild("relationship-joesette-r-parent-allen-comeaux", "person-joesette-r", "person-allen-comeaux-1925", "verified", [{ sourceId: "SRC-ALLEN-CENSUS-PROFILE" }], "claim-allen-comeaux-011", allenOwner),
   parentChild("relationship-moise-dugas-parent-euchariste-dugas", "person-moise-j-dugas", "person-euchariste-dugas", "probable", [{ sourceId: "SRC-EMMA-MILLER-FS" }], "claim-rita-leblanc-101"),
   parentChild("relationship-emma-miller-parent-euchariste-dugas", "person-emma-miller-1883", "person-euchariste-dugas", "probable", [{ sourceId: "SRC-EMMA-MILLER-FS" }], "claim-rita-leblanc-101"),
   parentChild("relationship-marcel-dugas-parent-moise-dugas", "person-marcel-dugas-1848", "person-moise-j-dugas", "probable", [{ sourceId: "SRC-MARCEL-DUGAS-FS" }], "claim-rita-leblanc-102"),
@@ -81,7 +84,7 @@ export const maternalAncestorRelationships = [
   parentChild("relationship-george-miller-parent-adolphe-miller", "person-george-charles-miller", "person-adolphe-miller-1849", "probable", [{ sourceId: "SRC-MILLER-ANCESTRY" }, { sourceId: "SRC-ST-CHARLES-INDEXED" }], "claim-rita-leblanc-112"),
   parentChild("relationship-pauline-savoie-parent-adolphe-miller", "person-pauline-savoie", "person-adolphe-miller-1849", "probable", [{ sourceId: "SRC-MILLER-ANCESTRY" }, { sourceId: "SRC-ST-CHARLES-INDEXED" }], "claim-rita-leblanc-112"),
 
-  couple("relationship-jules-comeaux-partner-joesette-r", ["person-jules-comeaux-1888", "person-joesette-r"], "verified", [{ sourceId: "SRC-ALLEN-CENSUS-PROFILE" }], "claim-allen-comeaux-091", "partner"),
+  couple("relationship-jules-comeaux-partner-joesette-r", ["person-jules-comeaux-1888", "person-joesette-r"], "verified", [{ sourceId: "SRC-ALLEN-CENSUS-PROFILE" }], "claim-allen-comeaux-091", "partner", allenOwner),
   couple("relationship-moise-dugas-spouse-emma-miller", ["person-moise-j-dugas", "person-emma-miller-1883"], "probable", [{ sourceId: "SRC-EMMA-MILLER-FS" }], "claim-rita-leblanc-101"),
   couple("relationship-marcel-dugas-spouse-marie-plaisance", ["person-marcel-dugas-1848", "person-marie-ruffin-plaisance"], "probable", [{ sourceId: "SRC-MARCEL-DUGAS-FS" }], "claim-rita-leblanc-102"),
   couple("relationship-marcellin-dugas-spouse-melanie-boudreaux", ["person-marcellin-dugas-1804", "person-melanie-boudreaux"], "probable", [{ sourceId: "SRC-MARCEL-DUGAS-FS" }, { sourceId: "SRC-MARCELLIN-GENEALOGY" }], "claim-rita-leblanc-103"),
