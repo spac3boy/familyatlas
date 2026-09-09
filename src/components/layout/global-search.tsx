@@ -47,10 +47,12 @@ export function GlobalSearch({
   index,
   open,
   onOpenChange,
+  finalFocus,
 }: Readonly<{
   index: readonly GlobalSearchEntry[]
   open: boolean
   onOpenChange: (open: boolean) => void
+  finalFocus: () => HTMLElement | null
 }>) {
   const router = useRouter()
   const [query, setQuery] = React.useState("")
@@ -84,7 +86,11 @@ export function GlobalSearch({
 
   return (
     <Dialog open={open} onOpenChange={setDialogOpen}>
-      <DialogContent showCloseButton={false} className="overflow-hidden p-0">
+      <DialogContent
+        showCloseButton={false}
+        finalFocus={finalFocus}
+        className="overflow-hidden p-0"
+      >
         <DialogTitle className="sr-only">Search Family Atlas</DialogTitle>
         <DialogDescription className="sr-only">
           Search canonical people, places, recorded surnames, and source records.

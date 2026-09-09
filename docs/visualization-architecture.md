@@ -33,6 +33,14 @@ C9 establishes one React-owned Explore state above route content. Its public sta
 
 The pure reducer and contracts live in `src/state/explore-state.ts`; the React provider and hooks live in `src/state/explore-context.tsx`. The provider is mounted in the persistent application shell so state survives view and route-content changes. Routes may offer shareable or entry-point parameters later, but the URL is not the canonical live state store and must not continuously overwrite in-memory interaction state.
 
+### Cross-view handoffs
+
+C22 keeps compound navigation intent inside the same reducer instead of splitting one handoff across several component-local updates. Person handoffs set the canonical `selectedPerson` together with the destination view; Tree focus also clears an incompatible branch scope so the selected person can become the temporary ancestry root. Place-to-Journeys handoffs retain shared year and Evidence Mode context while clearing stale person and branch scopes that could otherwise hide the requested place.
+
+Timeline rows and the accessible Journeys record list open the same responsive person details surface used by the Tree. The panel resolves relationship paths and profile routes from the selected canonical `PersonId`; it does not retain a second person identity. Sheet/Drawer disclosure state, tree expansion, and map clusters remain view-local because they describe presentation rather than family context.
+
+A map anchor updates `selectedPlace` only when it represents one unique canonical place. Selecting a cluster that contains several places explicitly clears the prior place rather than leaving an unrelated stale selection. If a retained place has no record under the current scope or year, Journeys explains that state instead of silently substituting another location.
+
 ## Dependency policy
 
 C11 adds `d3-hierarchy`, `d3-shape`, `d3-zoom`, and the `d3-selection` adapter required to bind zoom behavior to the React-owned SVG. C14 adds `d3-scale`, `d3-time`, `d3-axis`, and `d3-time-format` for timeline geometry and UTC axis calculations. C15 adds `d3-brush` for the isolated shared time-control gesture. The umbrella `d3` package is not installed. Continue adding individual modules only when a feature demonstrably needs them, and record durable boundary changes in `docs/DECISIONS.md`.
@@ -116,6 +124,18 @@ Movement encoding is evidence-limited:
 
 Multiple canonical places may share one honest cartographic anchor rather than being offset into invented coordinates. The marker discloses the grouped place count and the adjacent detail area lists each canonical claim with its original confidence and precision. Zoom/pan is local map state and uses immediate transforms, satisfying reduced-motion behavior.
 
+## Patterns V1
+
+Patterns V1 is an accepted-graph inventory, not a statistical description of the complete family. A framework-independent adapter (`buildFamilyPatternsModel`) selects accepted records and uses D3 linear scales only to calculate proportional bar geometry. React renders the bars, labels, counts, legends, and explanatory limits as ordinary accessible HTML.
+
+Three views are defensible at the current data depth:
+
+- **Recorded ancestors by generation** counts unique accepted ancestor identities along supported parent-child paths from Michael and separates their maternal, paternal, or shared branch membership. It was selected because every count derives from graph topology. Bar length compares represented generations; it is never divided by theoretical binary ancestor slots and is not labeled as biological-tree completeness.
+- **Birthplace evidence coverage** partitions every accepted person into a supported canonical birthplace, birth evidence without a place, or no accepted birth event. It was selected because it exposes the missingness that governs any later geographic analysis instead of treating unknown birthplace as zero or silently removing it.
+- **Confidence across accepted records** counts verified, probable, and unresolved states separately for people, relationships, events, and places. It was selected because confidence is explicitly present on every accepted record. Each entity type is its own whole; the display does not combine unlike records into an overall reliability score.
+
+Surname frequency, birthplace/geographic distribution, and branch-completeness percentages are intentionally absent. Recorded name forms mix canonical, maiden, married, and historical spellings; supported birthplaces cover too little of the accepted population and use mixed geographic precision; and no evidence-backed denominator exists for every biological ancestor. The interface documents these omissions so adding more bars is never mistaken for adding knowledge.
+
 ## Genealogy-safe encodings
 
 - Read relationships from the canonical graph; never manufacture placeholder ancestors to balance a layout.
@@ -140,4 +160,4 @@ Honor `prefers-reduced-motion`. Layout changes should remain understandable with
 
 Test calculation helpers with deterministic fixtures, including empty data, one-person graphs, uncertain dates, disconnected branches, ambiguous places, and reduced-motion modes. Test rendered semantics and keyboard behavior separately from geometry. Avoid brittle pixel snapshots as the only evidence of correctness.
 
-Family Tree V2, Timeline V1, Journeys V1, and their shared Time Navigator are implemented. Patterns remains unimplemented.
+Family Tree V2, Timeline V1, Journeys V1, Patterns V1, and the shared Time Navigator are implemented.

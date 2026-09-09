@@ -408,6 +408,14 @@ export function clusterJourneyPoints(
   return clusters;
 }
 
+/** A map cluster selects a canonical place only when exactly one unique place is represented. */
+export function uniqueJourneyPlaceId(
+  places: readonly Pick<Place, "id">[],
+): PlaceId | null {
+  const placeIds = new Set(places.map(({ id }) => id));
+  return placeIds.size === 1 ? [...placeIds][0] : null;
+}
+
 export function eventTimeStateLabel(state: EventTimeState): string {
   if (state === "unfiltered") return "all years";
   if (state === "supported") return "supported in selected year";

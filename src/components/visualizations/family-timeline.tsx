@@ -3,6 +3,7 @@
 import * as React from "react"
 import { ChevronRight } from "lucide-react"
 
+import { PersonDetailPanel } from "@/components/people/person-detail-panel"
 import { Button } from "@/components/ui/button"
 import { ExploreViewToggle } from "@/components/visualizations/explore-view-toggle"
 import { TimeNavigator } from "@/components/visualizations/time-navigator"
@@ -147,7 +148,9 @@ function TimelineEventMark({
 
 export function FamilyTimeline() {
   const { selectedPerson, selectedBranch, selectedYear, evidenceMode } = useExploreState()
-  const { selectBranch, selectPerson } = useExploreActions()
+  const { focusPersonInTree, selectBranch, selectPerson } = useExploreActions()
+  const [personPanelOpen, setPersonPanelOpen] = React.useState(false)
+  const personPanelTriggerRef = React.useRef<HTMLElement | SVGElement | null>(null)
   const [scope, setScope] = React.useState<FamilyTimelineScope>(() => {
     if (selectedBranch === "maternal" || selectedBranch === "paternal") return selectedBranch
     return selectedPerson ? "selected" : "all"
@@ -187,7 +190,16 @@ export function FamilyTimeline() {
     selectBranch(nextScope === "maternal" || nextScope === "paternal" ? nextScope : null)
   }
 
-  const choosePerson = (personId: PersonId) => selectPerson(personId)
+  const choosePerson = (personId: PersonId, trigger: HTMLElement | SVGElement) => {
+    personPanelTriggerRef.current = trigger
+    selectPerson(personId)
+    setPersonPanelOpen(true)
+  }
+
+  const showPersonInTree = (personId: PersonId) => {
+    focusPersonInTree(personId)
+    setPersonPanelOpen(false)
+  }
 
   return (
     <section id="family-timeline" aria-labelledby="family-timeline-heading" className="border-y bg-card">
@@ -330,13 +342,13 @@ export function FamilyTimeline() {
                     aria-pressed={isSelected}
                     data-time-state={temporalState?.state ?? "unfiltered"}
                     aria-label={`${row.person.canonicalName}. ${row.events.length} dated ${row.events.length === 1 ? "event" : "events"}${row.lifespan ? `. Supported lifespan: ${row.lifespan.label}` : ". No complete supported lifespan"}.${temporalState?.dim && selectedYear !== null ? ` Conclusively outside ${selectedYear}.` : ""}`}
-                    className="cursor-pointer outline-none"
+                    className="family-timeline-row cursor-pointer outline-none"
                     opacity={temporalState?.dim ? 0.28 : 1}
-                    onClick={() => choosePerson(row.person.id)}
+                    onClick={(event) => choosePerson(row.person.id, event.currentTarget)}
                     onKeyDown={(event) => {
                       if (event.key === "Enter" || event.key === " ") {
                         event.preventDefault()
-                        choosePerson(row.person.id)
+                        choosePerson(row.person.id, event.currentTarget)
                       }
                     }}
                   >
@@ -467,7 +479,7 @@ export function FamilyTimeline() {
                     selectedPerson === row.person.id && "text-primary",
                   )}
                   aria-pressed={selectedPerson === row.person.id}
-                  onClick={() => choosePerson(row.person.id)}
+                  onClick={(event) => choosePerson(row.person.id, event.currentTarget)}
                 >
                   {row.person.canonicalName}
                 </button>
@@ -513,6 +525,14 @@ export function FamilyTimeline() {
             </ul>
           </details>
         )}
+
+        <PersonDetailPanel
+          personId={selectedPerson}
+          open={personPanelOpen}
+          onOpenChange={setPersonPanelOpen}
+          onShowInTree={showPersonInTree}
+          returnFocusRef={personPanelTriggerRef}
+        />
       </div>
     </section>
   )

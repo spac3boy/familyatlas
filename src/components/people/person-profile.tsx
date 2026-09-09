@@ -222,7 +222,7 @@ export function PersonProfile({ profile }: Readonly<{ profile: PersonProfileMode
       <nav aria-label="Person profile sections" className="border-y bg-card">
         <div className="page-shell flex flex-wrap gap-x-6 gap-y-1 py-3">
           {sectionNavigation.map(([id, label]) => (
-            <Link key={id} href={`#${id}`} className="py-2 text-xs font-semibold text-muted-foreground hover:text-primary">
+            <Link key={id} href={`#${id}`} className="inline-flex min-h-11 items-center py-2 text-xs font-semibold text-muted-foreground hover:text-primary">
               {label}
             </Link>
           ))}

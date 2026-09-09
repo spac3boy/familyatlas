@@ -95,14 +95,13 @@ function PersonDetailContent({
     () => buildPersonDetailModel(familyGraph, personId, familyGraphQueries),
     [personId],
   )
-  const { setActiveView, selectPerson } = useExploreActions()
+  const { showPersonInView } = useExploreActions()
   const [actionStatus, setActionStatus] = React.useState("")
 
   if (!model) return null
 
   const chooseView = (view: "journeys" | "timeline", label: string) => {
-    selectPerson(model.person.id)
-    setActiveView(view)
+    showPersonInView(model.person.id, view)
     setActionStatus(`${model.person.canonicalName} is selected for the ${label} view.`)
   }
 
@@ -271,6 +270,7 @@ export interface PersonDetailPanelProps {
   readonly open: boolean
   readonly onOpenChange: (open: boolean) => void
   readonly onShowInTree: (personId: PersonId) => void
+  readonly returnFocusRef?: React.RefObject<HTMLElement | SVGElement | null>
 }
 
 export function PersonDetailPanel({
@@ -278,13 +278,26 @@ export function PersonDetailPanel({
   open,
   onOpenChange,
   onShowInTree,
+  returnFocusRef,
 }: PersonDetailPanelProps) {
   const desktop = useDesktopPanel()
+  const setPanelOpen = React.useCallback(
+    (nextOpen: boolean) => {
+      onOpenChange(nextOpen)
+      if (!nextOpen) {
+        window.requestAnimationFrame(() => {
+          const target = returnFocusRef?.current
+          if (target?.isConnected) target.focus()
+        })
+      }
+    },
+    [onOpenChange, returnFocusRef],
+  )
   if (!personId) return null
 
   if (desktop) {
     return (
-      <Sheet open={open} onOpenChange={onOpenChange}>
+      <Sheet open={open} onOpenChange={setPanelOpen}>
         <SheetContent className="w-[min(29rem,calc(100%-2rem))]">
           <div className="absolute top-4 right-4 z-10">
             <SheetCloseButton aria-label="Close person details" />
@@ -300,7 +313,7 @@ export function PersonDetailPanel({
   }
 
   return (
-    <Drawer open={open} onOpenChange={onOpenChange}>
+    <Drawer open={open} onOpenChange={setPanelOpen}>
       <DrawerContent>
         <div className="absolute top-3 right-4 z-10">
           <DrawerCloseButton aria-label="Close person details" />

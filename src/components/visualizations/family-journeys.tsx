@@ -6,6 +6,7 @@ import { zoom, zoomIdentity, type ZoomBehavior, type ZoomTransform } from "d3-zo
 import { ArrowUpRight, ChevronRight, LocateFixed, RotateCcw, ZoomIn, ZoomOut } from "lucide-react"
 import Link from "next/link"
 
+import { PersonDetailPanel } from "@/components/people/person-detail-panel"
 import { Button } from "@/components/ui/button"
 import { ExploreViewToggle } from "@/components/visualizations/explore-view-toggle"
 import { TimeNavigator } from "@/components/visualizations/time-navigator"
@@ -16,6 +17,7 @@ import {
   clusterJourneyPoints,
   formatTimelineDate,
   layoutFamilyJourneyMap,
+  uniqueJourneyPlaceId,
   type BoundaryFeatureCollection,
   type FamilyJourneyScope,
   type JourneyMovement,
@@ -24,7 +26,7 @@ import {
 } from "@/lib/visualization"
 import { cn } from "@/lib/utils"
 import { useExploreActions, useExploreState } from "@/state"
-import type { MovementClassification } from "@/types"
+import type { MovementClassification, PersonId } from "@/types"
 
 const scopeOptions: readonly { readonly value: FamilyJourneyScope; readonly label: string }[] = [
   { value: "all", label: "All family" },
@@ -158,7 +160,9 @@ function PlaceMark({
 
 export function FamilyJourneys() {
   const { selectedPerson, selectedBranch, selectedYear, selectedPlace, evidenceMode } = useExploreState()
-  const { selectBranch, selectPerson, selectPlace } = useExploreActions()
+  const { focusPersonInTree, selectBranch, selectPerson, selectPlace } = useExploreActions()
+  const [personPanelOpen, setPersonPanelOpen] = React.useState(false)
+  const personPanelTriggerRef = React.useRef<HTMLElement | SVGElement | null>(null)
   const [scope, setScope] = React.useState<FamilyJourneyScope>(() => {
     if (selectedBranch === "maternal" || selectedBranch === "paternal") return selectedBranch
     return selectedPerson ? "selected" : "all"
@@ -236,7 +240,9 @@ export function FamilyJourneys() {
   const sharedSelectedClusterId = sharedSelectedAnchorId
     ? clusters.find(({ points }) => points.some(({ anchorId }) => anchorId === sharedSelectedAnchorId))?.id
     : undefined
-  const shownClusterId = activeClusterId ?? sharedSelectedClusterId ?? null
+  const validActiveClusterId =
+    activeClusterId && clusters.some(({ id }) => id === activeClusterId) ? activeClusterId : null
+  const shownClusterId = validActiveClusterId ?? sharedSelectedClusterId ?? null
   const activeCluster = clusters.find(({ id }) => id === shownClusterId)
   const activeClusterPoints = activeCluster?.points ?? []
   const activeClusterPlaces = [...new Map(
@@ -245,6 +251,9 @@ export function FamilyJourneys() {
   const activeClusterEvents = new Set(activeClusterPoints.flatMap(({ events }) => events.map(({ id }) => id)))
   const selectedPointInCluster = selectedPlace
     ? activeClusterPoints.find(({ places }) => places.some(({ id }) => id === selectedPlace))
+    : undefined
+  const selectedPlaceRecord = selectedPlace
+    ? familyGraph.places.find(({ id }) => id === selectedPlace)
     : undefined
 
   const applyTransform = React.useCallback((nextTransform: ZoomTransform) => {
@@ -284,13 +293,24 @@ export function FamilyJourneys() {
   const activatePoint = (point: JourneyPlacePoint) => {
     const cluster = clusters.find(({ points }) => points.some(({ anchorId }) => anchorId === point.anchorId))
     setActiveClusterId(cluster?.id ?? null)
-    if (point.places.length === 1) selectPlace(point.places[0].id)
+    selectPlace(uniqueJourneyPlaceId(point.places))
   }
 
   const activateCluster = (cluster: JourneyPointCluster) => {
     setActiveClusterId(cluster.id)
     const places = new Map(cluster.points.flatMap(({ places: pointPlaces }) => pointPlaces).map((place) => [place.id, place]))
-    if (places.size === 1) selectPlace([...places.values()][0].id)
+    selectPlace(uniqueJourneyPlaceId([...places.values()]))
+  }
+
+  const openPersonDetails = (personId: PersonId, trigger: HTMLElement | SVGElement) => {
+    personPanelTriggerRef.current = trigger
+    selectPerson(personId)
+    setPersonPanelOpen(true)
+  }
+
+  const showPersonInTree = (personId: PersonId) => {
+    focusPersonInTree(personId)
+    setPersonPanelOpen(false)
   }
 
   return (
@@ -385,6 +405,13 @@ export function FamilyJourneys() {
 
         <TimeNavigator label="Filter family journeys by year" />
 
+        {selectedPlaceRecord && !sharedSelectedClusterId && (
+          <p className="mt-4 border-l-2 border-primary pl-3 text-xs leading-5 text-muted-foreground" role="status">
+            <span className="font-semibold text-foreground">{selectedPlaceRecord.modernName}</span>{" "}
+            is selected, but it has no mapped record in the current family scope or year.
+          </p>
+        )}
+
         <div className="mt-6 grid gap-5 lg:grid-cols-[minmax(0,1fr)_18rem]">
           <div
             ref={viewportRef}
@@ -464,6 +491,20 @@ export function FamilyJourneys() {
                 the structured list below.
               </p>
             )}
+            {clusters.length === 0 && countryBoundaries.features.length > 0 && (
+              <div
+                className="pointer-events-none absolute inset-0 flex items-center justify-center p-6 text-center"
+                aria-hidden="true"
+              >
+                <div className="max-w-xs rounded-md border bg-card/95 p-4 shadow-sm">
+                  <LocateFixed className="mx-auto size-5 text-primary" />
+                  <p className="mt-3 text-sm font-medium">No mapped locations for this scope</p>
+                  <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                    Choose another family scope or person to inspect supported map evidence.
+                  </p>
+                </div>
+              </div>
+            )}
             <div className="pointer-events-none absolute right-3 bottom-3 rounded-sm border bg-card/95 px-2.5 py-1.5 text-[0.625rem] font-medium tracking-[0.05em] text-muted-foreground uppercase">
               Pan · Zoom · Inspect
             </div>
@@ -529,12 +570,22 @@ export function FamilyJourneys() {
                   </p>
                 )}
               </>
-            ) : (
+            ) : clusters.length > 0 ? (
               <div className="flex min-h-40 flex-col justify-center">
                 <LocateFixed aria-hidden="true" className="size-5 text-primary" />
                 <p className="mt-4 text-sm font-medium">Select a place marker</p>
                 <p className="mt-2 text-xs leading-5 text-muted-foreground">
                   A marker may group several canonical places that share the same honest map anchor.
+                </p>
+              </div>
+            ) : (
+              <div className="flex min-h-40 flex-col justify-center" role="status">
+                <LocateFixed aria-hidden="true" className="size-5 text-primary" />
+                <p className="mt-4 text-sm font-medium">No mapped locations for this scope</p>
+                <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                  The atlas does not invent a location for a person or branch without supported map
+                  evidence. Choose another scope, or review any supported unplotted places in the
+                  structured list below.
                 </p>
               </div>
             )}
@@ -600,7 +651,7 @@ export function FamilyJourneys() {
                             "text-xs underline decoration-border underline-offset-4 hover:text-primary",
                             selectedPerson === person.id && "font-semibold text-primary",
                           )}
-                          onClick={() => selectPerson(person.id)}
+                          onClick={(event) => openPersonDetails(person.id, event.currentTarget)}
                         >
                           {person.canonicalName}
                         </button>
@@ -655,6 +706,14 @@ export function FamilyJourneys() {
           version 5.1.x. Cartographic anchors are display references only and do not alter genealogy
           evidence or place precision.
         </p>
+
+        <PersonDetailPanel
+          personId={selectedPerson}
+          open={personPanelOpen}
+          onOpenChange={setPersonPanelOpen}
+          onShowInTree={showPersonInTree}
+          returnFocusRef={personPanelTriggerRef}
+        />
       </div>
     </section>
   )

@@ -30,6 +30,13 @@ export const initialExploreState: ExploreState = {
 
 export type ExploreAction =
   | { readonly type: "set-active-view"; readonly view: ExploreView }
+  | {
+      readonly type: "show-person-in-view"
+      readonly personId: PersonId
+      readonly view: "journeys" | "timeline"
+    }
+  | { readonly type: "focus-person-in-tree"; readonly personId: PersonId }
+  | { readonly type: "show-place-in-journeys"; readonly placeId: PlaceId }
   | { readonly type: "select-person"; readonly personId: PersonId | null }
   | { readonly type: "select-year"; readonly year: number | null }
   | { readonly type: "select-branch"; readonly branch: ExploreBranch | null }
@@ -60,6 +67,39 @@ export function exploreStateReducer(state: ExploreState, action: ExploreAction):
   switch (action.type) {
     case "set-active-view":
       return withChangedValue(state, "activeView", action.view)
+    case "show-person-in-view":
+      if (state.activeView === action.view && state.selectedPerson === action.personId) return state
+      return { ...state, activeView: action.view, selectedPerson: action.personId }
+    case "focus-person-in-tree":
+      if (
+        state.activeView === "tree" &&
+        state.selectedPerson === action.personId &&
+        state.selectedBranch === null
+      ) {
+        return state
+      }
+      return {
+        ...state,
+        activeView: "tree",
+        selectedPerson: action.personId,
+        selectedBranch: null,
+      }
+    case "show-place-in-journeys":
+      if (
+        state.activeView === "journeys" &&
+        state.selectedPlace === action.placeId &&
+        state.selectedPerson === null &&
+        state.selectedBranch === null
+      ) {
+        return state
+      }
+      return {
+        ...state,
+        activeView: "journeys",
+        selectedPerson: null,
+        selectedBranch: null,
+        selectedPlace: action.placeId,
+      }
     case "select-person":
       return withChangedValue(state, "selectedPerson", action.personId)
     case "select-year":

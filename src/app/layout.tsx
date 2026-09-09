@@ -6,7 +6,10 @@ import { AppShell } from "@/components/layout/app-shell"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "Family Atlas",
+  title: {
+    default: "Family Atlas",
+    template: "%s | Family Atlas",
+  },
   description: "A quiet, source-grounded family history atlas.",
 }
 
@@ -16,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <body>
         <AppShell>{children}</AppShell>
       </body>

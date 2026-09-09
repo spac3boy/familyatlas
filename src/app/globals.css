@@ -183,6 +183,12 @@
     stroke-width: 2px;
   }
 
+  .family-timeline-row:focus-visible > rect:first-of-type {
+    stroke: var(--ring);
+    stroke-width: 2px;
+    vector-effect: non-scaling-stroke;
+  }
+
   [data-map-mark]:focus-visible circle:last-of-type {
     stroke: var(--ring);
     stroke-width: 3px;
@@ -214,6 +220,18 @@
     [data-evidence-detail="provenance"]
   ) {
     display: none !important;
+  }
+}
+
+@media (max-width: 1023px) {
+  button,
+  select,
+  summary {
+    min-block-size: 2.75rem;
+  }
+
+  button {
+    min-inline-size: 2.75rem;
   }
 }
 
