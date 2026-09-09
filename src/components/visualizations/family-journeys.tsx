@@ -10,6 +10,8 @@ import { PersonDetailPanel } from "@/components/people/person-detail-panel"
 import { Button } from "@/components/ui/button"
 import { ExploreViewToggle } from "@/components/visualizations/explore-view-toggle"
 import { TimeNavigator } from "@/components/visualizations/time-navigator"
+import { useElementWidth } from "@/components/visualizations/use-element-width"
+import { useRafZoomTransform } from "@/components/visualizations/use-raf-zoom-transform"
 import { familyGraph, familyGraphQueries } from "@/data"
 import { familyPlaceMapAnchors } from "@/data/geography/place-map-anchors"
 import {
@@ -19,6 +21,7 @@ import {
   layoutFamilyJourneyMap,
   uniqueJourneyPlaceId,
   type BoundaryFeatureCollection,
+  type FamilyJourneyMapLayout,
   type FamilyJourneyScope,
   type JourneyMovement,
   type JourneyPlacePoint,
@@ -40,23 +43,6 @@ const emptyBoundaries: BoundaryFeatureCollection = { type: "FeatureCollection", 
 function boundaryDataUrl(file: string): string {
   if (typeof document === "undefined") return `/data/${file}`
   return new URL(`data/${file}`, document.baseURI).toString()
-}
-
-function useElementWidth<T extends HTMLElement>() {
-  const ref = React.useRef<T>(null)
-  const [width, setWidth] = React.useState(960)
-
-  React.useEffect(() => {
-    const element = ref.current
-    if (!element) return
-    const update = () => setWidth(Math.max(1, element.getBoundingClientRect().width))
-    update()
-    const observer = new ResizeObserver(update)
-    observer.observe(element)
-    return () => observer.disconnect()
-  }, [])
-
-  return [ref, width] as const
 }
 
 function movementLabel(classification: MovementClassification): string {
@@ -158,6 +144,70 @@ function PlaceMark({
   )
 }
 
+const JourneyMapMarks = React.memo(function JourneyMapMarks({
+  layout,
+  clusters,
+  activeClusterId,
+  onActivate,
+}: {
+  readonly layout: FamilyJourneyMapLayout
+  readonly clusters: readonly JourneyPointCluster[]
+  readonly activeClusterId: string | null
+  readonly onActivate: (cluster: JourneyPointCluster) => void
+}) {
+  return (
+    <>
+      <g aria-hidden="true">
+        {layout.countryPaths.map((path, index) => (
+          <path
+            key={`country-${index}`}
+            d={path}
+            fill="var(--surface-subtle)"
+            stroke="var(--border)"
+            strokeWidth={0.8}
+            vectorEffect="non-scaling-stroke"
+          />
+        ))}
+        {layout.subdivisionPaths.map((path, index) => (
+          <path
+            key={`subdivision-${index}`}
+            d={path}
+            fill="none"
+            stroke="var(--border)"
+            strokeWidth={0.55}
+            strokeOpacity={0.75}
+            vectorEffect="non-scaling-stroke"
+          />
+        ))}
+        {layout.movements.map((movement) =>
+          movement.path ? (
+            <path
+              key={movement.event.id}
+              d={movement.path}
+              fill="none"
+              stroke="var(--primary)"
+              strokeWidth={movement.classification === "documented-migration-move" ? 1.8 : 1.5}
+              strokeDasharray={
+                movement.classification === "strongly-inferred-move" ? "7 5" : undefined
+              }
+              strokeOpacity={movement.timeState === "indeterminate" ? 0.36 : 0.7}
+              vectorEffect="non-scaling-stroke"
+            />
+          ) : null,
+        )}
+      </g>
+      {clusters.map((cluster) => (
+        <PlaceMark
+          key={cluster.id}
+          cluster={cluster}
+          active={activeClusterId === cluster.id}
+          onActivate={() => onActivate(cluster)}
+        />
+      ))}
+    </>
+  )
+})
+
 export function FamilyJourneys() {
   const { selectedPerson, selectedBranch, selectedYear, selectedPlace, evidenceMode } = useExploreState()
   const { focusPersonInTree, selectBranch, selectPerson, selectPlace } = useExploreActions()
@@ -173,11 +223,11 @@ export function FamilyJourneys() {
     React.useState<BoundaryFeatureCollection>(emptyBoundaries)
   const [boundaryError, setBoundaryError] = React.useState(false)
   const [activeClusterId, setActiveClusterId] = React.useState<string | null>(null)
-  const [viewportRef, viewportWidth] = useElementWidth<HTMLDivElement>()
+  const [viewportRef, viewportWidth] = useElementWidth<HTMLDivElement>(960)
   const viewportHeight = viewportWidth < 640 ? 480 : 580
   const svgRef = React.useRef<SVGSVGElement>(null)
   const zoomBehaviorRef = React.useRef<ZoomBehavior<SVGSVGElement, unknown> | null>(null)
-  const [transform, setTransform] = React.useState<ZoomTransform>(zoomIdentity)
+  const [transform, scheduleTransform] = useRafZoomTransform()
 
   React.useEffect(() => {
     let cancelled = false
@@ -273,14 +323,14 @@ export function FamilyJourneys() {
         const target = event.target instanceof Element ? event.target : null
         return !target?.closest("[data-map-mark]") && (!event.ctrlKey || event.type === "wheel") && !event.button
       })
-      .on("zoom", (event) => setTransform(event.transform))
+      .on("zoom", (event) => scheduleTransform(event.transform))
     selection.call(behavior)
     zoomBehaviorRef.current = behavior
     return () => {
       selection.on(".zoom", null)
       zoomBehaviorRef.current = null
     }
-  }, [])
+  }, [scheduleTransform])
 
   const chooseScope = (nextScope: FamilyJourneyScope) => {
     if (nextScope === "selected" && !selectedPerson) return
@@ -296,11 +346,11 @@ export function FamilyJourneys() {
     selectPlace(uniqueJourneyPlaceId(point.places))
   }
 
-  const activateCluster = (cluster: JourneyPointCluster) => {
+  const activateCluster = React.useCallback((cluster: JourneyPointCluster) => {
     setActiveClusterId(cluster.id)
     const places = new Map(cluster.points.flatMap(({ places: pointPlaces }) => pointPlaces).map((place) => [place.id, place]))
     selectPlace(uniqueJourneyPlaceId([...places.values()]))
-  }
+  }, [selectPlace])
 
   const openPersonDetails = (personId: PersonId, trigger: HTMLElement | SVGElement) => {
     personPanelTriggerRef.current = trigger
@@ -430,53 +480,12 @@ export function FamilyJourneys() {
             >
               <rect width={layout.width} height={layout.height} fill="var(--background)" />
               <g transform={transform.toString()}>
-                <g aria-hidden="true">
-                  {layout.countryPaths.map((path, index) => (
-                    <path
-                      key={`country-${index}`}
-                      d={path}
-                      fill="var(--surface-subtle)"
-                      stroke="var(--border)"
-                      strokeWidth={0.8}
-                      vectorEffect="non-scaling-stroke"
-                    />
-                  ))}
-                  {layout.subdivisionPaths.map((path, index) => (
-                    <path
-                      key={`subdivision-${index}`}
-                      d={path}
-                      fill="none"
-                      stroke="var(--border)"
-                      strokeWidth={0.55}
-                      strokeOpacity={0.75}
-                      vectorEffect="non-scaling-stroke"
-                    />
-                  ))}
-                  {layout.movements.map((movement) =>
-                    movement.path ? (
-                      <path
-                        key={movement.event.id}
-                        d={movement.path}
-                        fill="none"
-                        stroke="var(--primary)"
-                        strokeWidth={movement.classification === "documented-migration-move" ? 1.8 : 1.5}
-                        strokeDasharray={
-                          movement.classification === "strongly-inferred-move" ? "7 5" : undefined
-                        }
-                        strokeOpacity={movement.timeState === "indeterminate" ? 0.36 : 0.7}
-                        vectorEffect="non-scaling-stroke"
-                      />
-                    ) : null,
-                  )}
-                </g>
-                {clusters.map((cluster) => (
-                  <PlaceMark
-                    key={cluster.id}
-                    cluster={cluster}
-                    active={shownClusterId === cluster.id}
-                    onActivate={() => activateCluster(cluster)}
-                  />
-                ))}
+                <JourneyMapMarks
+                  layout={layout}
+                  clusters={clusters}
+                  activeClusterId={shownClusterId}
+                  onActivate={activateCluster}
+                />
               </g>
             </svg>
 

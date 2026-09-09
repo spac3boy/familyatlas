@@ -6,6 +6,7 @@ import { select } from "d3-selection"
 import { X } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { useElementWidth } from "@/components/visualizations/use-element-width"
 import { familyGraph, familyGraphQueries } from "@/data"
 import {
   buildTimeSelectionEffects,
@@ -16,23 +17,6 @@ import {
 } from "@/lib/visualization"
 import { useExploreActions, useExploreState } from "@/state"
 
-function useElementWidth<T extends HTMLElement>() {
-  const ref = React.useRef<T>(null)
-  const [width, setWidth] = React.useState(720)
-
-  React.useEffect(() => {
-    const element = ref.current
-    if (!element) return
-    const update = () => setWidth(Math.max(1, element.getBoundingClientRect().width))
-    update()
-    const observer = new ResizeObserver(update)
-    observer.observe(element)
-    return () => observer.disconnect()
-  }, [])
-
-  return [ref, width] as const
-}
-
 export interface TimeNavigatorProps {
   readonly label?: string
 }
@@ -40,7 +24,7 @@ export interface TimeNavigatorProps {
 export function TimeNavigator({ label = "Family time navigator" }: TimeNavigatorProps) {
   const { selectedYear } = useExploreState()
   const { selectYear } = useExploreActions()
-  const [containerRef, measuredWidth] = useElementWidth<HTMLDivElement>()
+  const [containerRef, measuredWidth] = useElementWidth<HTMLDivElement>(720)
   const keyboardRef = React.useRef<HTMLDivElement>(null)
   const brushRef = React.useRef<SVGGElement>(null)
   const brushBehaviorRef = React.useRef<BrushBehavior<unknown> | null>(null)

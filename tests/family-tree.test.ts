@@ -167,7 +167,7 @@ test("daughter-centered edges come only from canonical relationships", () => {
   assert.equal(
     paigeParentEdges.find(({ parentPersonId }) => parentPersonId === "person-cathy-buquet")
       ?.confidence,
-    "probable",
+    "verified",
   );
   assert.ok(
     layout.edges.some(

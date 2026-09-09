@@ -189,7 +189,7 @@ test("siblings are represented only through family-confirmed shared-parent edges
   assert.ok(relationships.every(({ type }) => type !== ("sibling" as Relationship["type"])));
 });
 
-test("parental sibling groups are documentary and never use redundant kinship edges", () => {
+test("parental sibling groups retain documentary support and Michael's family confirmation", () => {
   const relationships: readonly Relationship[] = foundationRelationships;
   const paternalChildren = relationships.filter(
     (relationship) =>
@@ -217,10 +217,11 @@ test("parental sibling groups are documentary and never use redundant kinship ed
     ),
   );
   assert.ok(
-    [...paternalChildren, ...maternalChildren].every(
-      (relationship) => !evidenceProvenanceKinds(relationship).includes("family-confirmed"),
+    [...paternalChildren, ...maternalChildren].every((relationship) =>
+      evidenceProvenanceKinds(relationship).includes("family-confirmed"),
     ),
   );
+  assert.ok([...paternalChildren, ...maternalChildren].every(({ confidence }) => confidence === "verified"));
   assert.ok(
     relationships.every(({ type }) =>
       !["aunt", "uncle", "sibling"].includes(type),
@@ -228,7 +229,7 @@ test("parental sibling groups are documentary and never use redundant kinship ed
   );
 });
 
-test("direct obituary parentage stays distinct from probable other-parent links", () => {
+test("family confirmation verifies parental sibling roles without erasing documentary distinctions", () => {
   const relationships: readonly Relationship[] = foundationRelationships;
   const confidenceFor = (parentId: PersonId, childId: PersonId) =>
     relationships.find(
@@ -240,7 +241,7 @@ test("direct obituary parentage stays distinct from probable other-parent links"
 
   for (const childId of ["person-michael-buquet-edmond-child", "person-cathy-buquet"] as const) {
     assert.equal(confidenceFor("person-verna-arlene-bakke", childId), "verified");
-    assert.equal(confidenceFor("person-edmond-p-buquet-1919", childId), "probable");
+    assert.equal(confidenceFor("person-edmond-p-buquet-1919", childId), "verified");
   }
   for (const childId of [
     "person-russell-j-comeaux",
@@ -249,11 +250,11 @@ test("direct obituary parentage stays distinct from probable other-parent links"
     "person-priscilla-comeaux",
   ] as const) {
     assert.equal(confidenceFor("person-rita-leblanc-1928", childId), "verified");
-    assert.equal(confidenceFor("person-allen-comeaux-1925", childId), "probable");
+    assert.equal(confidenceFor("person-allen-comeaux-1925", childId), "verified");
   }
 });
 
-test("first-cousin parent assignments preserve direct versus documentary-inferred support", () => {
+test("first-cousin parent assignments combine family confirmation with retained documentary support", () => {
   const relationships: readonly Relationship[] = foundationRelationships;
   const cousinIds = new Set<PersonId>([
     "person-paige-bartholomew",
@@ -277,17 +278,24 @@ test("first-cousin parent assignments preserve direct versus documentary-inferre
       .filter(({ confidence }) => confidence === "verified")
       .map(({ id }) => id)
       .sort(),
-    [
-      "relationship-richard-mcrae-parent-paige-bartholomew",
-      "relationship-richard-mcrae-parent-sean-mcrae",
-    ],
+    cousinParentEdges.map(({ id }) => id).sort(),
   );
   assert.ok(cousinParentEdges.every((edge) =>
     evidenceProvenanceKinds(edge).includes("documented"),
   ));
-  assert.ok(cousinParentEdges.every((edge) =>
-    !evidenceProvenanceKinds(edge).includes("family-confirmed"),
-  ));
+  assert.deepEqual(
+    cousinParentEdges
+      .filter((edge) => evidenceProvenanceKinds(edge).includes("family-confirmed"))
+      .map(({ id }) => id)
+      .sort(),
+    cousinParentEdges
+      .filter(
+        (edge) =>
+          edge.type === "parent-child" && edge.parentId !== "person-richard-russell-mcrae",
+      )
+      .map(({ id }) => id)
+      .sort(),
+  );
 
   const sidney = familyGraph.people.find(({ id }) => id === "person-sidney-paul-roger");
   assert.ok(sidney && "idAliases" in sidney);

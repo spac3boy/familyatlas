@@ -43,7 +43,7 @@ const cousinIds = [
   "person-sean-mcrae",
 ] as const satisfies readonly PersonId[];
 
-const probableCousinParentEdgeIds = [
+const familyConfirmedCousinParentEdgeIds = [
   "relationship-allen-paul-comeaux-jr-parent-brandi-comeaux",
   "relationship-allen-paul-comeaux-jr-parent-casey-comeaux",
   "relationship-allen-paul-comeaux-jr-parent-gerard-comeaux",
@@ -105,11 +105,11 @@ test("C20E preserves Michael's shared-parent sibling context without inventing S
   assert.equal(queries.branchForPerson("person-gina-buquet")?.classification, "both");
 });
 
-test("C20E derives exactly nine probable first-cousin paths and excludes guarded identities", () => {
+test("C24 derives exactly nine verified first-cousin paths and excludes guarded identities", () => {
   const cousins = queries.firstCousins("person-michael-buquet");
   assert.deepEqual(ids(cousins), [...cousinIds].sort());
   assert.equal(cousins.length, 9);
-  assert.ok(cousins.every(({ paths }) => paths.every(({ confidence }) => confidence === "probable")));
+  assert.ok(cousins.every(({ paths }) => paths.every(({ confidence }) => confidence === "verified")));
   for (const excludedId of [
     "person-sidney-paul-roger",
     "person-lauren-dugas",
@@ -119,12 +119,12 @@ test("C20E derives exactly nine probable first-cousin paths and excludes guarded
   }
 
   const cousinEdges = familyGraph.relationships.filter(({ id }) =>
-    probableCousinParentEdgeIds.includes(id as (typeof probableCousinParentEdgeIds)[number]),
+    familyConfirmedCousinParentEdgeIds.includes(id as (typeof familyConfirmedCousinParentEdgeIds)[number]),
   ) as readonly Relationship[];
   assert.equal(cousinEdges.length, 9);
-  assert.ok(cousinEdges.every(({ confidence }) => confidence === "probable"));
+  assert.ok(cousinEdges.every(({ confidence }) => confidence === "verified"));
   assert.ok(cousinEdges.every((edge) => evidenceProvenanceKinds(edge).includes("documented")));
-  assert.ok(cousinEdges.every((edge) => !evidenceProvenanceKinds(edge).includes("family-confirmed")));
+  assert.ok(cousinEdges.every((edge) => evidenceProvenanceKinds(edge).includes("family-confirmed")));
 });
 
 test("C20E preserves identity variants without duplicate accepted people", () => {
@@ -164,7 +164,7 @@ test("C20E keeps extended-family directory, search, profiles, and tree projectio
   for (const cousinId of cousinIds) {
     const record = directory.get(cousinId);
     assert.ok(record);
-    assert.equal(record.relationshipConfidence, "probable");
+    assert.equal(record.relationshipConfidence, "verified");
     assert.ok(record.branch === "maternal" || record.branch === "paternal");
     assert.ok(searchGlobalIndex(familySearchIndex, record.person.canonicalName).some(
       ({ kind, entityId }) => kind === "person" && entityId === cousinId,

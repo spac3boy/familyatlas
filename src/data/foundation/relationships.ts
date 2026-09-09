@@ -1,6 +1,32 @@
-import type { Relationship } from "@/types";
+import type { Relationship, RelationshipId } from "@/types";
 
-export const foundationRelationships = [
+const C24_CLOSE_FAMILY_SOURCE_ID = "SRC-C24-MICHAEL-CLOSE-FAMILY-CONFIRMATION" as const;
+
+const c24ConfirmedRelationshipIds = new Set<RelationshipId>([
+  "relationship-verna-bakke-parent-michael-buquet-edmond-child",
+  "relationship-edmond-buquet-parent-michael-buquet-edmond-child",
+  "relationship-verna-bakke-parent-cathy-buquet",
+  "relationship-edmond-buquet-parent-cathy-buquet",
+  "relationship-rita-leblanc-parent-russell-j-comeaux",
+  "relationship-allen-comeaux-parent-russell-j-comeaux",
+  "relationship-rita-leblanc-parent-allen-paul-comeaux-jr",
+  "relationship-allen-comeaux-parent-allen-paul-comeaux-jr",
+  "relationship-rita-leblanc-parent-peggy-comeaux",
+  "relationship-allen-comeaux-parent-peggy-comeaux",
+  "relationship-rita-leblanc-parent-priscilla-comeaux",
+  "relationship-allen-comeaux-parent-priscilla-comeaux",
+  "relationship-cathy-buquet-parent-paige-bartholomew",
+  "relationship-cathy-buquet-parent-sean-mcrae",
+  "relationship-peggy-comeaux-parent-conrad-miller",
+  "relationship-russell-comeaux-parent-rustie-lynn-comeaux",
+  "relationship-russell-comeaux-parent-rhyan-comeaux",
+  "relationship-priscilla-comeaux-parent-dexter-babineaux",
+  "relationship-allen-paul-comeaux-jr-parent-gerard-comeaux",
+  "relationship-allen-paul-comeaux-jr-parent-casey-comeaux",
+  "relationship-allen-paul-comeaux-jr-parent-brandi-comeaux",
+]);
+
+const foundationRelationshipClaims = [
   {
     id: "relationship-aubin-buquet-parent-michael-buquet",
     type: "parent-child",
@@ -253,7 +279,7 @@ export const foundationRelationships = [
     ],
     researchRefs: [{ file: "research/branches/paternal-ancestors.md" }],
     notes: [
-      "Verna's maternity is direct; Edmond's paternity remains probable under the research archive's weakest-link rule.",
+      "Documentary evidence for Edmond's parent role remains indirect; Michael's later family confirmation establishes the relationship role.",
     ],
   },
   {
@@ -293,7 +319,7 @@ export const foundationRelationships = [
     ],
     researchRefs: [{ file: "research/branches/paternal-ancestors.md" }],
     notes: [
-      "Verna's maternity is direct; Edmond's paternity remains probable under the research archive's weakest-link rule.",
+      "Documentary evidence for Edmond's parent role remains indirect; Michael's later family confirmation establishes the relationship role.",
     ],
   },
   {
@@ -365,7 +391,7 @@ export const foundationRelationships = [
       },
     ],
     researchRefs: [{ file: "research/branches/maternal-ancestors.md" }],
-    notes: ["Rita's maternity is verified; Allen's paternity remains probable."],
+    notes: ["Documentary evidence for Allen's parent role remains indirect; Michael's later family confirmation establishes the relationship role."],
   },
   {
     id: "relationship-rita-leblanc-parent-allen-paul-comeaux-jr",
@@ -415,7 +441,7 @@ export const foundationRelationships = [
       },
     ],
     researchRefs: [{ file: "research/branches/maternal-ancestors.md" }],
-    notes: ["Rita's maternity is verified; Allen's paternity remains probable."],
+    notes: ["Documentary evidence for Allen's parent role remains indirect; Michael's later family confirmation establishes the relationship role."],
   },
   {
     id: "relationship-rita-leblanc-parent-peggy-comeaux",
@@ -465,7 +491,7 @@ export const foundationRelationships = [
       },
     ],
     researchRefs: [{ file: "research/branches/maternal-ancestors.md" }],
-    notes: ["Rita's maternity is verified; Allen's paternity remains probable."],
+    notes: ["Documentary evidence for Allen's parent role remains indirect; Michael's later family confirmation establishes the relationship role."],
   },
   {
     id: "relationship-rita-leblanc-parent-priscilla-comeaux",
@@ -515,7 +541,7 @@ export const foundationRelationships = [
       },
     ],
     researchRefs: [{ file: "research/branches/maternal-ancestors.md" }],
-    notes: ["Rita's maternity is verified; Allen's paternity remains probable."],
+    notes: ["Documentary evidence for Allen's parent role remains indirect; Michael's later family confirmation establishes the relationship role."],
   },
   {
     id: "relationship-allen-paul-comeaux-jr-spouse-monica",
@@ -623,7 +649,7 @@ export const foundationRelationships = [
       },
     ],
     researchRefs: [{ file: "research/family-intake/cousins.md" }],
-    notes: ["Documentary-inferred only; family confirmation and a direct parent record remain absent."],
+    notes: ["The documentary parent placement is indirect; Michael's later family confirmation establishes Cathy's parent role."],
   },
   {
     id: "relationship-richard-mcrae-parent-paige-bartholomew",
@@ -669,7 +695,7 @@ export const foundationRelationships = [
       },
     ],
     researchRefs: [{ file: "research/family-intake/cousins.md" }],
-    notes: ["Documentary-inferred only; family confirmation and a direct parent record remain absent."],
+    notes: ["The documentary parent placement is indirect; Michael's later family confirmation establishes Cathy's parent role."],
   },
   {
     id: "relationship-richard-mcrae-parent-sean-mcrae",
@@ -713,7 +739,7 @@ export const foundationRelationships = [
       },
     ],
     researchRefs: [{ file: "research/family-intake/cousins.md" }],
-    notes: ["Documentary-inferred only; Clarence Miller's parentage is not inferred."],
+    notes: ["Michael later confirmed Peggy's parent role; Clarence Miller's parentage is not inferred."],
   },
   {
     id: "relationship-russell-comeaux-parent-rustie-lynn-comeaux",
@@ -738,7 +764,7 @@ export const foundationRelationships = [
       },
     ],
     researchRefs: [{ file: "research/family-intake/cousins.md" }],
-    notes: ["Documentary-inferred only; no family-confirmed provenance is applied."],
+    notes: ["Michael later confirmed Russell's parent role; the earlier documentary reconstruction remains attached."],
   },
   {
     id: "relationship-russell-comeaux-parent-rhyan-comeaux",
@@ -763,7 +789,7 @@ export const foundationRelationships = [
       },
     ],
     researchRefs: [{ file: "research/family-intake/cousins.md" }],
-    notes: ["Documentary-inferred only; Ryan/Ryan Earl identity forms remain unresolved."],
+    notes: ["Michael later confirmed Russell's parent role; Ryan/Ryan Earl identity forms remain unresolved."],
   },
   {
     id: "relationship-priscilla-comeaux-parent-dexter-babineaux",
@@ -789,7 +815,7 @@ export const foundationRelationships = [
     ],
     researchRefs: [{ file: "research/family-intake/cousins.md" }],
     notes: [
-      "Documentary-inferred only; neither Karlon nor Tippy LeBlanc is inferred as Dexter's father.",
+      "Michael later confirmed Priscilla's parent role; neither Karlon nor Tippy LeBlanc is inferred as Dexter's father.",
     ],
   },
   {
@@ -815,7 +841,7 @@ export const foundationRelationships = [
       },
     ],
     researchRefs: [{ file: "research/family-intake/cousins.md" }],
-    notes: ["Documentary-inferred only; Monica's parentage is not inferred."],
+    notes: ["Michael later confirmed Allen Jr.'s parent role; Monica's parentage is not inferred."],
   },
   {
     id: "relationship-allen-paul-comeaux-jr-parent-casey-comeaux",
@@ -840,7 +866,7 @@ export const foundationRelationships = [
       },
     ],
     researchRefs: [{ file: "research/family-intake/cousins.md" }],
-    notes: ["Documentary-inferred only; Monica's parentage is not inferred."],
+    notes: ["Michael later confirmed Allen Jr.'s parent role; Monica's parentage is not inferred."],
   },
   {
     id: "relationship-allen-paul-comeaux-jr-parent-brandi-comeaux",
@@ -865,7 +891,7 @@ export const foundationRelationships = [
       },
     ],
     researchRefs: [{ file: "research/family-intake/cousins.md" }],
-    notes: ["Documentary-inferred only; Monica's parentage is not inferred."],
+    notes: ["Michael later confirmed Allen Jr.'s parent role; Monica's parentage is not inferred."],
   },
   {
     id: "relationship-paulette-comeaux-parent-sidney-paul-roger",
@@ -1083,3 +1109,28 @@ export const foundationRelationships = [
     notes: ["The parent-child role is confirmed; its biological/adoptive/legal subtype is not specified."],
   },
 ] as const satisfies readonly Relationship[];
+
+export const foundationRelationships: readonly Relationship[] = foundationRelationshipClaims.map(
+  (relationship) => {
+    if (!c24ConfirmedRelationshipIds.has(relationship.id)) return relationship;
+    const claim: Relationship = relationship;
+
+    return {
+      ...claim,
+      confidence: "verified",
+      sourceRefs: [...claim.sourceRefs, { sourceId: C24_CLOSE_FAMILY_SOURCE_ID }],
+      provenance: [
+        {
+          kind: "family-confirmed",
+          sourceRefs: [{ sourceId: C24_CLOSE_FAMILY_SOURCE_ID }],
+          note: "Michael's C24 instruction confirms this previously supplied close-family relationship from firsthand family knowledge.",
+        },
+        ...(claim.provenance ?? []),
+      ],
+      researchRefs: [
+        ...(claim.researchRefs ?? []),
+        { file: "research/family-intake/close-family-confirmations.md" },
+      ],
+    };
+  },
+);

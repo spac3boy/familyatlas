@@ -53,7 +53,7 @@ By default, relationship, event, and person-list queries use records whose `rese
 
 `ancestors` and `descendants` accept `{ maxDepth }`. Their paths follow only parent-child edges; couple relationships do not create ancestry. `relationshipPathToMichael` may follow parent-child, spouse, and partner edges because it describes graph relationship rather than lineage.
 
-`firstCousins` never matches by surname, obituary list position, or a stored cousin label. It requires four accepted parent-child edges for each returned path. A probable parent assignment therefore yields a probable cousin path even when the shared grandparent and surrounding identities are verified.
+`firstCousins` never matches by surname, obituary list position, or a stored cousin label. It requires four accepted parent-child edges for each returned path. A probable parent assignment therefore yields a probable cousin path even when the shared grandparent and surrounding identities are verified. In the current C24 graph, Michael's nine accepted first-cousin paths are verified because he confirmed each relationship role; their previously attached documentary evidence remains independently classified and partly indirect.
 
 ## Uncertainty behavior
 

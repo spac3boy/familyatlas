@@ -348,7 +348,7 @@ export const foundationPeople = [
     researchRefs: [{ file: "research/branches/paternal-ancestors.md" }],
     notes: [
       "The middle initial, birth surname, spouse identity, and personal biographical details remain unresolved.",
-      "Working parent links to Paige Bartholomew and Sean McRae are preserved separately at probable confidence.",
+      "Parent links to Paige Bartholomew and Sean McRae are verified by Michael's family confirmation; their documentary support remains indirect.",
     ],
   },
   {
@@ -387,7 +387,7 @@ export const foundationPeople = [
     researchRefs: [{ file: "research/branches/maternal-ancestors.md" }],
     notes: [
       "Living status, dates, spouse, and personal biographical details are not established.",
-      "Working parent links to Rustie Lynn and Rhyan are preserved separately at probable confidence.",
+      "Parent links to Rustie Lynn and Rhyan are verified by Michael's family confirmation; their documentary support remains indirect.",
     ],
   },
   {
@@ -413,7 +413,7 @@ export const foundationPeople = [
     researchRefs: [{ file: "research/branches/maternal-ancestors.md" }],
     notes: [
       "Living status, dates, places, and personal biographical details are not established.",
-      "Working parent links to Gerard, Casey, and Brandi are preserved separately at probable confidence.",
+      "Parent links to Gerard, Casey, and Brandi are verified by Michael's family confirmation; their documentary support remains indirect.",
     ],
   },
   {
@@ -458,7 +458,7 @@ export const foundationPeople = [
     researchRefs: [{ file: "research/branches/maternal-ancestors.md" }],
     notes: [
       "Living status, dates, places, and personal biographical details are not established.",
-      "The working parent link to Conrad is preserved separately at probable confidence.",
+      "The parent link to Conrad is verified by Michael's family confirmation; its documentary support remains indirect.",
     ],
   },
   {
@@ -499,7 +499,7 @@ export const foundationPeople = [
     notes: [
       "The 2015 and 2017 surname and spouse forms are retained without inferring a chronology.",
       "No relationship is inferred between either reported spouse and Dexter Babineaux.",
-      "The working parent link to Dexter is preserved separately at probable confidence.",
+      "The parent link to Dexter is verified by Michael's family confirmation; its documentary support remains indirect.",
       "Living status, dates, places, and personal biographical details are not established.",
     ],
   },
@@ -715,7 +715,7 @@ export const foundationPeople = [
       { file: "research/family-intake/cousins.md" },
     ],
     notes: [
-      "Cathy's maternity remains probable and is represented on the relationship rather than assumed from Paige's identity.",
+      "Michael's later family confirmation establishes Cathy as Paige's parent; the documentary support for that placement remains indirect.",
       "Potentially living person; dates, places, and sensitive biographical details are intentionally omitted.",
     ],
   },
@@ -759,7 +759,7 @@ export const foundationPeople = [
       { file: "research/family-intake/cousins.md" },
     ],
     notes: [
-      "Cathy's maternity remains probable and is represented on the relationship rather than assumed from Sean's identity.",
+      "Michael's later family confirmation establishes Cathy as Sean's parent; the documentary support for that placement remains indirect.",
       "Potentially living person; dates, places, and sensitive biographical details are intentionally omitted.",
     ],
   },

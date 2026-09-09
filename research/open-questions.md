@@ -8,6 +8,8 @@
 - **Source-chat verification:** Both pages of `Explain Surname History` (`6a89bd6f-ac54-83ea-b46b-e1868c2089ba`) and all turns of `Continue Rita Research` (`6a9af740-124c-83ea-8fa8-f79c259cff72`) were re-read. `Plan Family Atlas Website` is planning material and supplies no independent genealogy evidence.
 - **Research boundary:** No new internet research was performed. This file consolidates unresolved work, completed search paths, contradictions, and coverage; it does not resolve gaps by inference or create application data.
 
+> **C24 application-era update — 9 September 2026:** Michael directly confirmed the already named parental sibling groups and all nine accepted first-cousin parent assignments. Questions in this A10 snapshot asking which child was parent to those grandchildren are therefore resolved for relationship-role purposes. Documentary strength remains separately described, parentage subtype remains unknown, and the Rhyan/Ryan identity forms, Priscilla spouse chronology, and Lauren/Collin placement remain unresolved. See [family-intake/close-family-confirmations.md](family-intake/close-family-confirmations.md).
+
 ## Classification rules
 
 Every question below has one primary classification:
@@ -405,3 +407,4 @@ No other named genealogically relevant person found in the completed packets or 
 | Date | Change | Reason/source |
 |---|---|---|
 | 2026-09-04 | Created A10 unresolved-questions and completeness audit | Full reread of `research/` plus verification against both original genealogy source chats |
+| 2026-09-09 | Added C24 supersession note for Michael's confirmed aunt/uncle and first-cousin relationship roles | Direct family confirmation recorded in `family-intake/close-family-confirmations.md`; historical A10 entries remain visible |

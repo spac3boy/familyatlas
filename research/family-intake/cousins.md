@@ -4,6 +4,8 @@
 
 This intake records the reviewed C20D handoff supplied by Michael on 8 September 2026. It extends the completed A0–A11 archive without rewriting its original packets. The earlier branch audits already preserve every cousin below as a named grandchild of Verna Arlene Bakke Buquet or Rita LeBlanc Comeaux; C20D supplies the current parent mapping and additional documentary context.
 
+> **C24 update — 9 September 2026:** Michael subsequently confirmed all nine parent-to-cousin assignments listed in this intake as firsthand close-family knowledge. The C20D descriptions below remain as the historical documentary assessment. The live canonical relationship claims are now `verified` with both `family-confirmed` and `documented` provenance; the documentary evidence considered by itself is still indirect. See [close-family-confirmations.md](close-family-confirmations.md).
+
 No direct `cousin` relationships are created. First-cousin status is derived through parent-child edges from Michael to a parent, shared grandparent, that parent's sibling, and the cousin.
 
 ## Paternal branch
@@ -80,10 +82,7 @@ Sid Roger is not a cousin record. Michael previously identified Sidney Paul Roge
 
 All cousins are treated as potentially living. No birth dates, addresses, phone numbers, email addresses, or other sensitive public-record details are normalized.
 
-## Remaining family-confirmation questions
+## Remaining questions after C24
 
-- Can Michael or Cathy confirm Cathy as Paige and Sean's mother?
-- Can Michael confirm each of the seven maternal parent assignments?
 - Are Rhyan Comeaux, Ryan Comeaux, and Ryan Earl Comeaux the same person?
 - What later surnames used by Rustie Lynn are appropriate to preserve publicly?
-- What is the exact genealogical or stepfamily position of Lauren Dugas and Collin Adkisson through Jennifer Buquet?

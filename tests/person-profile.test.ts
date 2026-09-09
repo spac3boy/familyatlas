@@ -20,7 +20,7 @@ test("a richly researched profile retains events, places, evidence, and explicit
     "place-us-la-evangeline-oaks-guest-house",
     "place-us-la-st-peter-catholic-cemetery-carencro",
   ]);
-  assert.equal(rita.evidence.length, 6);
+  assert.equal(rita.evidence.length, 7);
   assert.ok(
     rita.researchFlags.some(({ title }) =>
       title.includes("Spouse relationship with Allen Paul Comeaux Sr. is probable"),
@@ -121,7 +121,7 @@ test("lateral-family profiles preserve sparse biography and conflicting spouse r
   assert.ok(priscilla.detail.person.notes?.some((note) => note.includes("without inferring a chronology")));
 });
 
-test("cousin profiles stay privacy-safe and expose probable parent placement", () => {
+test("cousin profiles stay privacy-safe while confirmed parent roles no longer appear probable", () => {
   const paige = buildPersonProfileModel(
     familyGraph,
     "person-paige-bartholomew",
@@ -137,11 +137,7 @@ test("cousin profiles stay privacy-safe and expose probable parent placement", (
   assert.equal(paige.detail.relationshipLabel, "Paternal first cousin");
   assert.equal(paige.detail.lifespan, undefined);
   assert.equal(paige.timeline.length, 0);
-  assert.ok(
-    paige.researchFlags.some(({ title }) =>
-      title.includes("Parent relationship with Cathy B. McRae is probable"),
-    ),
-  );
+  assert.ok(!paige.researchFlags.some(({ title }) => title.includes("Parent relationship")));
   assert.ok(
     !paige.researchFlags.some(({ title }) =>
       title.includes("Parent relationship with Richard Russell McRae is probable"),

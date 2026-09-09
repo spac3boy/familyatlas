@@ -146,6 +146,14 @@ Surname frequency, birthplace/geographic distribution, and branch-completeness p
 - Never draw a continuous journey line when only disconnected endpoints are supported.
 - Keep rejected and unattached identities outside accepted family paths; research views may display them with explicit disposition.
 
+## Performance boundary
+
+Non-default Explore views are dynamically loaded, while the default Tree remains available in the initial route. The loading surface reserves useful vertical space so code splitting does not trade transfer cost for an avoidable layout jump.
+
+ResizeObserver notifications are rounded, equality-checked, and committed at most once per animation frame before they can trigger D3 layout or projection work. D3 zoom gestures are similarly sampled into a latest pending transform and committed to React once per frame. Memoized mark layers let transform-only Tree and Journeys updates avoid reconciling unchanged SVG descendants. These boundaries optimize interaction without giving D3 DOM ownership.
+
+The C25 measurements and future Canvas/virtualization threshold are recorded in `docs/performance-audit.md`.
+
 ## Responsive behavior
 
 Measure available space rather than assuming a desktop canvas. Prefer responsive `viewBox` SVG, container observation, and layouts that can recompute from typed inputs. On narrow screens, simplify labels, use progressive disclosure, or offer a structured list rather than shrinking content below usability.

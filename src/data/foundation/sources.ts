@@ -2,6 +2,26 @@ import type { Source } from "@/types";
 
 export const foundationSources = [
   {
+    id: "SRC-C24-MICHAEL-CLOSE-FAMILY-CONFIRMATION",
+    title: "Michael's C24 close-family relationship confirmation",
+    category: "family-provided",
+    recordType: "Family statement",
+    date: { kind: "exact", value: "2026-09-09" },
+    jurisdiction: "Buquet/Comeaux family",
+    repository: "Family Atlas task history and research archive",
+    urls: [],
+    citationHandles: [],
+    evidenceClass: "family-provided",
+    inspectionStatus: "directly-inspected",
+    researchStatus: "accepted",
+    reliabilityNotes: [
+      "Michael confirms the previously supplied close-family parent, grandparent, sibling, aunt/uncle, and first-cousin relationship structure from firsthand family knowledge.",
+      "This source establishes only the named relationship roles; it does not verify parentage subtype, spouse claims, names beyond the supplied forms, dates, places, migrations, or other biographical details.",
+      "Documentary support remains attached independently where already available.",
+    ],
+    researchRefs: [{ file: "research/family-intake/close-family-confirmations.md" }],
+  },
+  {
     id: "SRC-RICHARD-MCRAE-MEMORIAL-2026",
     title: "Richard Russell McRae memorial",
     category: "obituary",
@@ -47,7 +67,7 @@ export const foundationSources = [
     researchStatus: "accepted",
     reliabilityNotes: [
       "The C20D handoff summarizes later family obituaries and independent relationships supporting the proposed maternal parent mapping.",
-      "Individual source titles, wording, URLs, and citation handles were not preserved, so every exact parent assignment remains probable.",
+      "Individual source titles, wording, URLs, and citation handles were not preserved, so this source set alone supports each exact parent assignment only indirectly; Michael's later family confirmation is represented by a separate source.",
       "Reported Ryan and Ryan Earl forms are retained only as unresolved possible variants of obituary-recorded Rhyan Comeaux.",
     ],
     researchRefs: [{ file: "research/family-intake/cousins.md" }],

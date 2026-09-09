@@ -18,8 +18,8 @@ test("research coverage is derived from the accepted canonical graph", () => {
   })
   assert.deepEqual(familyResearchOverview.coverage.relationships, {
     total: 119,
-    verified: 42,
-    probable: 77,
+    verified: 57,
+    probable: 62,
     unresolved: 0,
   })
   assert.deepEqual(familyResearchOverview.coverage.events, {
@@ -34,7 +34,7 @@ test("research coverage is derived from the accepted canonical graph", () => {
     probable: 22,
     unresolved: 0,
   })
-  assert.equal(familyResearchOverview.coverage.sources, 59)
+  assert.equal(familyResearchOverview.coverage.sources, 60)
 })
 
 test("research conclusions preserve confidence separately from classified provenance", () => {
@@ -45,20 +45,14 @@ test("research conclusions preserve confidence separately from classified proven
     provenanceKinds.includes("family-confirmed"),
   )
 
-  assert.equal(familyConfirmed.length, 16)
+  assert.equal(familyConfirmed.length, 37)
   assert.ok(familyConfirmed.every(({ confidence }) => confidence === "verified"))
-  assert.deepEqual(
-    familyConfirmed
-      .filter(({ provenanceKinds }) => provenanceKinds.includes("documented"))
-      .map(({ title }) => title)
-      .sort(),
-    [
-      "Aubin Buquet → Gina Buquet",
-      "Paulette Comeaux → Gina Buquet",
-      "Rita LeBlanc → Paulette Comeaux",
-      "Verna Arlene Bakke Buquet → Aubin Buquet",
-    ],
+  const dualProvenance = familyConfirmed.filter(({ provenanceKinds }) =>
+    provenanceKinds.includes("documented"),
   )
+  assert.equal(dualProvenance.length, 25)
+  assert.ok(dualProvenance.some(({ title }) => title === "Cathy B. McRae → Paige Bartholomew"))
+  assert.ok(dualProvenance.some(({ title }) => title === "Allen Paul Comeaux Sr. → Peggy C. Miller"))
 })
 
 test("every canonical conclusion retains confidence, source references, and a stable destination", () => {

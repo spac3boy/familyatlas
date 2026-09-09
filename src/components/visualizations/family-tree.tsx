@@ -9,6 +9,8 @@ import { PersonDetailPanel } from "@/components/people/person-detail-panel"
 import { ConfidenceMark } from "@/components/research/confidence-mark"
 import { Button } from "@/components/ui/button"
 import { ExploreViewToggle } from "@/components/visualizations/explore-view-toggle"
+import { useElementWidth } from "@/components/visualizations/use-element-width"
+import { useRafZoomTransform } from "@/components/visualizations/use-raf-zoom-transform"
 import { familyGraph } from "@/data"
 import {
   buildFamilyTreeHierarchy,
@@ -32,23 +34,6 @@ const scopeOptions: readonly { readonly value: FamilyTreeScope; readonly label: 
   { value: "maternal", label: "Michael’s maternal" },
   { value: "selected", label: "Selected person" },
 ]
-
-function useElementWidth<T extends HTMLElement>() {
-  const ref = React.useRef<T>(null)
-  const [width, setWidth] = React.useState(960)
-
-  React.useEffect(() => {
-    const element = ref.current
-    if (!element) return
-    const update = () => setWidth(Math.max(1, element.getBoundingClientRect().width))
-    update()
-    const observer = new ResizeObserver(update)
-    observer.observe(element)
-    return () => observer.disconnect()
-  }, [])
-
-  return [ref, width] as const
-}
 
 function defaultFamilyExpandedPersonIds(): ReadonlySet<PersonId> {
   return new Set([
@@ -229,6 +214,54 @@ function TreeNode({ node, nodeWidth, nodeHeight, selected, showConfidence, focal
   )
 }
 
+interface TreeMarksProps {
+  readonly layout: FamilyTreeLayout
+  readonly selectedPerson: PersonId | null
+  readonly showEvidence: boolean
+  readonly onSelect: (personId: PersonId, trigger: SVGGElement) => void
+  readonly onToggle: (personId: PersonId) => void
+}
+
+const TreeMarks = React.memo(function TreeMarks({
+  layout,
+  selectedPerson,
+  showEvidence,
+  onSelect,
+  onToggle,
+}: TreeMarksProps) {
+  return (
+    <>
+      <g aria-hidden="true">
+        {layout.edges.map((edge) => (
+          <path
+            key={edge.occurrenceId}
+            d={edge.path}
+            fill="none"
+            stroke={edge.relationshipType === "spouse" ? "var(--primary)" : "var(--muted-foreground)"}
+            strokeWidth={edge.relationshipType === "spouse" ? 2 : 1.25}
+            strokeDasharray={edgeDash(edge.confidence)}
+            strokeOpacity={edge.confidence === "verified" ? 0.62 : 0.72}
+            vectorEffect="non-scaling-stroke"
+          />
+        ))}
+      </g>
+      {layout.nodes.map((node) => (
+        <TreeNode
+          key={node.occurrenceId}
+          node={node}
+          nodeWidth={layout.nodeWidth}
+          nodeHeight={layout.nodeHeight}
+          selected={selectedPerson === node.personId}
+          showConfidence={showEvidence || node.confidence !== "verified"}
+          focal={node.role === "focus"}
+          onSelect={onSelect}
+          onToggle={onToggle}
+        />
+      ))}
+    </>
+  )
+})
+
 export function FamilyTree() {
   const { selectedPerson, selectedBranch, evidenceMode } = useExploreState()
   const { focusPersonInTree, selectBranch, selectPerson } = useExploreActions()
@@ -246,11 +279,11 @@ export function FamilyTree() {
   const [expandedPersonIds, setExpandedPersonIds] = React.useState<ReadonlySet<PersonId>>(() =>
     defaultFamilyExpandedPersonIds(),
   )
-  const [viewportRef, viewportWidth] = useElementWidth<HTMLDivElement>()
+  const [viewportRef, viewportWidth] = useElementWidth<HTMLDivElement>(960)
   const viewportHeight = viewportWidth < 640 ? 560 : 640
   const svgRef = React.useRef<SVGSVGElement>(null)
   const zoomBehaviorRef = React.useRef<ZoomBehavior<SVGSVGElement, unknown> | null>(null)
-  const [transform, setTransform] = React.useState<ZoomTransform>(zoomIdentity)
+  const [transform, scheduleTransform] = useRafZoomTransform()
 
   const treeLayout = React.useMemo(() => {
     const layoutOptions = {
@@ -296,14 +329,14 @@ export function FamilyTree() {
         const target = event.target instanceof Element ? event.target : null
         return !target?.closest("[data-tree-node]") && (!event.ctrlKey || event.type === "wheel") && !event.button
       })
-      .on("zoom", (event) => setTransform(event.transform))
+      .on("zoom", (event) => scheduleTransform(event.transform))
     selection.call(behavior)
     zoomBehaviorRef.current = behavior
     return () => {
       selection.on(".zoom", null)
       zoomBehaviorRef.current = null
     }
-  }, [])
+  }, [scheduleTransform])
 
   React.useEffect(() => {
     resetView()
@@ -324,20 +357,23 @@ export function FamilyTree() {
     )
   }
 
-  const handleSelectPerson = (personId: PersonId, trigger: HTMLElement | SVGElement) => {
-    personPanelTriggerRef.current = trigger
-    selectPerson(personId)
-    setPersonPanelOpen(true)
-    if (scope === "selected") {
-      setExpandedPersonIds(
-        defaultExpandedPersonIds(
-          familyGraph,
-          { scope: "selected", selectedPersonId: personId },
-          INITIAL_VISIBLE_GENERATIONS,
-        ),
-      )
-    }
-  }
+  const handleSelectPerson = React.useCallback(
+    (personId: PersonId, trigger: HTMLElement | SVGElement) => {
+      personPanelTriggerRef.current = trigger
+      selectPerson(personId)
+      setPersonPanelOpen(true)
+      if (scope === "selected") {
+        setExpandedPersonIds(
+          defaultExpandedPersonIds(
+            familyGraph,
+            { scope: "selected", selectedPersonId: personId },
+            INITIAL_VISIBLE_GENERATIONS,
+          ),
+        )
+      }
+    },
+    [scope, selectPerson],
+  )
 
   const showPersonInTree = (personId: PersonId) => {
     focusPersonInTree(personId)
@@ -352,14 +388,14 @@ export function FamilyTree() {
     setPersonPanelOpen(false)
   }
 
-  const togglePerson = (personId: PersonId) => {
+  const togglePerson = React.useCallback((personId: PersonId) => {
     setExpandedPersonIds((current) => {
       const next = new Set(current)
       if (next.has(personId)) next.delete(personId)
       else next.add(personId)
       return next
     })
-  }
+  }, [])
 
   const showAllGenerations = () =>
     setExpandedPersonIds(new Set(familyGraph.people.map(({ id }) => id)))
@@ -507,33 +543,13 @@ export function FamilyTree() {
           >
             <rect width="100%" height="100%" fill="var(--background)" />
             <g transform={transform.toString()}>
-              <g aria-hidden="true">
-                {treeLayout.edges.map((edge) => (
-                  <path
-                    key={edge.occurrenceId}
-                    d={edge.path}
-                    fill="none"
-                    stroke={edge.relationshipType === "spouse" ? "var(--primary)" : "var(--muted-foreground)"}
-                    strokeWidth={edge.relationshipType === "spouse" ? 2 : 1.25}
-                    strokeDasharray={edgeDash(edge.confidence)}
-                    strokeOpacity={edge.confidence === "verified" ? 0.62 : 0.72}
-                    vectorEffect="non-scaling-stroke"
-                  />
-                ))}
-              </g>
-              {treeLayout.nodes.map((node) => (
-                <TreeNode
-                  key={node.occurrenceId}
-                  node={node}
-                  nodeWidth={treeLayout.nodeWidth}
-                  nodeHeight={treeLayout.nodeHeight}
-                  selected={selectedPerson === node.personId}
-                  showConfidence={evidenceMode === "evidence" || node.confidence !== "verified"}
-                  focal={node.role === "focus"}
-                  onSelect={handleSelectPerson}
-                  onToggle={togglePerson}
-                />
-              ))}
+              <TreeMarks
+                layout={treeLayout}
+                selectedPerson={selectedPerson}
+                showEvidence={evidenceMode === "evidence"}
+                onSelect={handleSelectPerson}
+                onToggle={togglePerson}
+              />
             </g>
           </svg>
 

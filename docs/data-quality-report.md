@@ -4,7 +4,40 @@
 
 **Extended-family regression audit:** 2026-09-08
 
-**Current scope:** the canonical application graph after C20A–C20D, including accepted direct ancestry, immediate family, parental sibling groups, and nine currently identified first-cousin candidates
+**Genealogy, provenance, privacy, and integrity audit:** 2026-09-09
+
+**Current scope:** the canonical application graph after C24, including accepted direct ancestry, immediate family, parental sibling groups, and nine family-confirmed first cousins
+
+## C24 result
+
+The C24 graph passes the structural and genealogy-specific audit with **0 errors, 3 expected warnings, and 0 informational findings**. The warnings remain the three intentionally preserved historical birth conflicts described below.
+
+| Entity | Count |
+|---|---:|
+| People | 83 |
+| Relationships | 119 |
+| Parent-child relationships | 88 |
+| Spouse relationships | 28 |
+| Partner relationships | 3 |
+| Events | 125 |
+| Places | 38 |
+| Sources | 60 |
+
+C24 adds no people, relationships, events, or places. It adds one family-provided source and applies Michael's direct family confirmation to 21 existing parent-child claims: 12 edges forming the two parental sibling groups and 9 aunt/uncle-to-cousin edges. All 21 retain their prior `documented` provenance, including notes where documentary support is indirect. The resulting graph has 57 verified and 62 probable relationships; 37 relationships are family-confirmed, and 25 carry both family-confirmed and documented provenance.
+
+The audit also repaired three research-reference ownership errors. The Jules Comeaux→Allen Comeaux, Joesette R. Comeaux→Allen Comeaux, and Jules Comeaux–Joesette relationship claims now point to `research/people/allen-comeaux.md`, where their cited original claim IDs actually occur, rather than to Rita's packet.
+
+Current relationship derivation is evidence-safe:
+
+- two paternal and four maternal aunt/uncle identities derive from shared parent-child edges;
+- all nine first cousins derive through four parent-child edges, with no direct aunt, uncle, sibling, or cousin relationship type;
+- Sidney Paul Roger remains Michael's maternal sibling through Paulette and is not a cousin;
+- Lauren Dugas and Collin Adkisson remain research-only names with no canonical people, relationships, placement, or planned addition;
+- Richard Russell McRae's documented father edges remain independent and do not create a Cathy–Richard spouse claim;
+- `parentage: "unknown"` remains on the newly confirmed roles, so family confirmation is not presented as proof of biological, adoptive, or legal subtype;
+- Priscilla's two spouse reports, Rhyan/Ryan name forms, and distant ancestral claims retain their prior uncertainty.
+
+No privacy-sensitive canonical data required removal. Living close-family birth events remain year-only where intentionally published, while lateral living relatives retain no exact birth dates, addresses, phone numbers, email addresses, contact details, or sparse-location-derived journeys.
 
 ## C5 baseline result
 
@@ -115,11 +148,13 @@ No inferred route, exact place, exact date, or relationship subtype was created 
 - Absence of an automated chronology warning can mean the dates are too broad or unknown to determine impossibility.
 - The research archive remains the authority for reasoning, rejected identities, exhausted searches, and full source context. Application data must not replace or rewrite that evidence trail.
 
-## C20E extended-family regression audit
+## C20E extended-family regression audit (historical pre-C24 snapshot)
+
+> The confidence and provenance statements in this section record the graph as audited on 8 September 2026. The C24 result above supersedes its documentary-only treatment of the 21 later-confirmed close-family relationship roles; all other safeguards remain current.
 
 The expanded graph passes runtime validation and the genealogy-specific audit with **0 errors, 3 expected warnings, and 0 informational findings**. The warnings remain the same intentionally preserved C5 birth conflicts; lateral-family normalization introduced no new chronology, ancestry-cycle, duplicate-ID, or likely-duplicate warning.
 
-Current graph totals:
+C20E graph totals:
 
 | Entity | Count |
 |---|---:|

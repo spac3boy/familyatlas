@@ -205,3 +205,15 @@ Durable decisions live here. New entries should state the consequence; supersede
 - **Status:** accepted
 - **Decision:** Limit Patterns V1 to counts whose denominator and meaning are explicit in the accepted canonical graph: unique recorded ancestors by supported generation and branch, birthplace-evidence coverage across accepted people, and confidence mix within each accepted entity type. Use D3 only for proportional scale calculations and let React render accessible HTML. Keep missing birthplace evidence as named categories and describe generation counts as represented identities rather than theoretical ancestor slots.
 - **Consequence:** Patterns V1 cannot claim biological-tree completeness, collapse unknowns into zeros, or combine people, relationships, events, and places into one quality score. Surname rankings remain excluded while canonical, maiden, married, and historical forms overlap; geographic distributions remain excluded while birthplace coverage is sparse and precision is mixed; branch-completeness percentages remain excluded because the graph has no defensible complete-family denominator.
+
+## D-035 — Direct close-family confirmation supersedes documentary-only relationship uncertainty
+
+- **Status:** accepted
+- **Decision:** Treat Michael's C24 confirmation of the already supplied paternal and maternal aunt/uncle groups and nine first-cousin parent assignments as primary family evidence for those relationship roles. Add `family-confirmed` provenance to the 21 existing parent-child claims and classify the roles as verified, while retaining every documentary source and its direct-versus-indirect reliability note.
+- **Consequence:** This decision supersedes only the documentary-only confidence outcome recorded in D-031 and D-032. Kinship labels remain graph-derived; no aunt, uncle, sibling, or cousin edge is introduced. Parentage subtype, spouse relationships, biographical facts, Rhyan/Ryan identity forms, Priscilla's spouse chronology, Richard McRae's separate father links, and historical ancestry are not upgraded by association. Lauren Dugas and Collin Adkisson receive no canonical person records, relationships, or placement.
+
+## D-036 — Optimize visualization delivery without changing ownership
+
+- **Status:** accepted
+- **Decision:** Keep the default Tree in the initial route and dynamically load Timeline, Journeys, and Patterns on first selection. Coalesce resize and zoom notifications to one React commit per animation frame, and memoize stable SVG mark layers beneath React-owned transforms. Retain SVG because the measured Tree, Timeline, and map complexity is moderate and typed D3 calculations are fast at the current graph size.
+- **Consequence:** Initial page-route JavaScript is smaller, resize storms do not repeatedly reproject map geometry, and pan/zoom does not require every stable mark to reconcile for every raw input event. D3 remains responsible for calculation and isolated gesture sampling; React still owns state, SVG elements, and rendered transforms. Canvas remains deferred until measured real-device evidence justifies the accessibility and implementation tradeoff.

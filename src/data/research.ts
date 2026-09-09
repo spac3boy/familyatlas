@@ -220,14 +220,6 @@ export const normalizedResearchQuestions = [
     researchFile: "research/family-intake/siblings-needed.md",
   },
   {
-    id: "research-question-cousin-parent-mapping",
-    group: "Cross-family identity",
-    question: "Can the probable Cathy, Peggy, Russell, Priscilla, and Allen Jr. cousin-parent assignments be directly confirmed?",
-    classification: "requires-family-knowledge",
-    nextEvidence: "Michael or another close relative's confirmation, or directly inspected records that expressly name each parent-child pair.",
-    researchFile: "research/family-intake/cousins.md",
-  },
-  {
     id: "research-question-rhyan-ryan-identity",
     group: "Cross-family identity",
     question: "Do Rhyan Comeaux, Ryan Comeaux, and Ryan Earl Comeaux identify the same person?",
