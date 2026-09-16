@@ -84,7 +84,7 @@ function nodeAriaLabel(node: FamilyTreeLayoutNode): string {
       : " Known parents are hidden. Press Right Arrow to reveal them."
     : node.parentsVisible
       ? " Known parents are shown."
-    : " No parents are represented beyond this person in the current tree."
+    : " No earlier parents are shown for this person in the current tree."
   return `${node.canonicalName}.${date} ${node.confidence} confidence.${ancestry}`
 }
 
@@ -429,11 +429,12 @@ export function FamilyTree() {
           <div>
             <p className="editorial-label mb-4">Family tree / V2</p>
             <h2 id="family-tree-heading" className="editorial-heading">
-              Begin with the next generation.
+              Begin with Chloé and Jolie.
             </h2>
             <p id="family-tree-description" className="editorial-copy mt-5 max-w-2xl">
-              Chloé and Jolie anchor the family view. Every line comes from a supported canonical
-              relationship; dashed lines indicate probable or unresolved links.
+              From Chloé and Jolie, follow our family back through the generations. Every line is
+              supported by a record or family confirmation; dashed lines mark connections we are
+              still working to verify.
             </p>
           </div>
           <p className="border-t pt-5 text-sm leading-6 text-muted-foreground lg:border-t-0 lg:border-l lg:pt-0 lg:pl-8">

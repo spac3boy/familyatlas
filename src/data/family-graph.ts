@@ -17,7 +17,7 @@ import type { GenealogyGraph } from "@/types";
 /**
  * The single application-facing family graph.
  *
- * The reviewed seven-person foundation and C5 direct ancestry are composed here.
+ * The reviewed family foundation and accepted direct ancestry are composed here.
  * Product code must not create parallel genealogy data.
  */
 export const familyGraph = {

@@ -16,7 +16,7 @@ This document tells application contributors how to use the completed research a
 | Conflicts, gaps, and exhausted searches | `research/open-questions.md` |
 | Coverage and handoff state | `research/manifest.json` |
 
-When a material conflict cannot be resolved from the archive, return to the relevant original chat or underlying record. A prior Codex summary is not a substitute for the source material.
+When a material conflict cannot be resolved from the archive, return to the underlying record or, when available, the relevant original chat. An AI summary is not a substitute for source material. If neither source is accessible, retain the archive's uncertainty; existing application maintenance does not require chat access.
 
 ## Evidence discipline
 

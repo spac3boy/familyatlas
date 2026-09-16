@@ -134,7 +134,7 @@ test("cousin profiles stay privacy-safe while confirmed parent roles no longer a
   );
   assert.ok(paige && rhyan);
 
-  assert.equal(paige.detail.relationshipLabel, "Paternal first cousin");
+  assert.equal(paige.detail.relationshipLabel, "Michael's paternal first cousin");
   assert.equal(paige.detail.lifespan, undefined);
   assert.equal(paige.timeline.length, 0);
   assert.ok(!paige.researchFlags.some(({ title }) => title.includes("Parent relationship")));

@@ -21,6 +21,7 @@ Family Atlas is a source-grounded genealogy application. Use this file to find t
 | Evidence and confidence methodology | [docs/research-methodology.md](docs/research-methodology.md) |
 | Current state and next boundary | [docs/STATUS.md](docs/STATUS.md) |
 | Durable technical/product decisions | [docs/DECISIONS.md](docs/DECISIONS.md) |
+| Local, CI, deployment, and portability contract | [docs/PORTABILITY.md](docs/PORTABILITY.md) |
 | Research archive policy | [research/README.md](research/README.md) |
 | Research coverage | [research/manifest.json](research/manifest.json) |
 

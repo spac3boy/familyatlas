@@ -40,7 +40,7 @@ export function SourceRecord({ model }: Readonly<{ model: SourceRecordModel }>) 
 
       <header className="mt-10 grid gap-7 border-b pb-10 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-end">
         <div>
-          <p className="editorial-label">Normalized source record</p>
+          <p className="editorial-label">Source record</p>
           <h1 className="mt-5 max-w-4xl text-3xl leading-tight font-[560] tracking-[-0.035em] sm:text-4xl">
             {source.title}
           </h1>
@@ -91,15 +91,18 @@ export function SourceRecord({ model }: Readonly<{ model: SourceRecordModel }>) 
               </div>
             )}
             {source.urls.length === 0 && source.citationHandles.length === 0 && (
-              <p className="mt-5 text-sm leading-6 text-muted-foreground">No public URL or citation handle is preserved in normalized data.</p>
+              <p className="mt-5 text-sm leading-6 text-muted-foreground">
+                No public URL or citation handle has been recorded for this source.
+              </p>
             )}
           </section>
 
           <section aria-labelledby="source-use-heading">
-            <p className="editorial-label">03 · Canonical graph</p>
+            <p className="editorial-label">03 · Family Atlas</p>
             <h2 id="source-use-heading" className="mt-3 text-xl font-[560]">Represented in the atlas</h2>
             <p className="mt-3 text-sm leading-6 text-muted-foreground">
-              These links reflect explicit normalized references to this source; they do not expand its claims.
+              These links show where Family Atlas uses this source; they do not add to what the
+              source itself claims.
             </p>
 
             {people.length > 0 && (
@@ -148,7 +151,9 @@ export function SourceRecord({ model }: Readonly<{ model: SourceRecordModel }>) 
               {source.reliabilityNotes.map((note) => <li key={note}>{note}</li>)}
             </ul>
           ) : (
-            <p className="mt-5 text-sm leading-6 text-muted-foreground">No additional reliability note is represented.</p>
+            <p className="mt-5 text-sm leading-6 text-muted-foreground">
+              We haven&apos;t added a separate reliability note for this source.
+            </p>
           )}
           {source.contradictionNotes && source.contradictionNotes.length > 0 && (
             <div className="mt-8 border-l-2 border-confidence-probable-foreground/30 pl-4">
@@ -160,7 +165,8 @@ export function SourceRecord({ model }: Readonly<{ model: SourceRecordModel }>) 
       </div>
 
       <footer className="border-t pt-6 text-xs leading-5 text-muted-foreground">
-        This route reads normalized application data only. It does not search or parse research prose at runtime.
+        This record contains the source details reviewed for Family Atlas. It does not search the
+        wider working archive.
       </footer>
     </article>
   )

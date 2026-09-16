@@ -1,5 +1,8 @@
+import { Suspense } from "react"
 import type { Metadata } from "next"
 
+import heroLouisiana from "@/assets/family-atlas-hero-louisiana.jpg"
+import { EditorialHero } from "@/components/layout/editorial-hero"
 import { PeopleDirectory } from "@/components/people/people-directory"
 import { familyGraph, familyGraphQueries } from "@/data"
 import { buildPeopleDirectory } from "@/lib/genealogy/people-directory"
@@ -8,26 +11,30 @@ const people = buildPeopleDirectory(familyGraph, familyGraphQueries)
 
 export const metadata: Metadata = {
   title: "People",
-  description: "Browse accepted people in the canonical Family Atlas graph.",
+  description: "Meet the relatives and family connections gathered in Family Atlas.",
 }
 
 export default function PeoplePage() {
   return (
-    <div className="page-shell py-16 sm:py-20 lg:py-24">
-      <div className="grid items-end gap-8 lg:grid-cols-[minmax(0,1fr)_20rem]">
-        <div>
-          <p className="editorial-label">Canonical family graph</p>
-          <h1 className="editorial-display mt-5">People</h1>
-        </div>
-        <p className="border-t pt-5 text-sm leading-6 text-muted-foreground lg:border-t-0 lg:border-l lg:pt-0 lg:pl-7">
-          Every profile reflects the current accepted graph. Sparse records remain sparse, and uncertain relationships stay labeled.
-        </p>
-      </div>
+    <>
+      <EditorialHero
+        image={heroLouisiana}
+        imagePosition="center 56%"
+        eyebrow="Our family, one person at a time"
+        title="People"
+        aside={
+          <p className="max-w-sm text-sm leading-6">
+            Browse the relatives and family connections we&apos;ve identified so far. When a
+            relationship is uncertain—or a life story is still thin—we say so.
+          </p>
+        }
+      />
 
-      <Suspense fallback={<p className="mt-14 border-y py-8 text-sm text-muted-foreground">Loading directory filters…</p>}>
-        <PeopleDirectory records={people} />
-      </Suspense>
-    </div>
+      <div className="page-shell pb-16 sm:pb-20 lg:pb-24">
+        <Suspense fallback={<p className="mt-14 border-y py-8 text-sm text-muted-foreground">Loading directory filters…</p>}>
+          <PeopleDirectory records={people} />
+        </Suspense>
+      </div>
+    </>
   )
 }
-import { Suspense } from "react"

@@ -25,7 +25,7 @@ There is no runtime edge from application code back to research Markdown.
 | Path | Responsibility |
 |---|---|
 | `research/` | Human-readable evidence, reasoning, conflicts, source handles, and open questions |
-| `src/data/` | Normalized, reviewed data for the single canonical graph; currently the C5 direct-ancestor graph and its pre-bound queries |
+| `src/data/` | Normalized, reviewed, JSON-compatible data for the single canonical graph and its pre-bound queries |
 | `src/types/` | Shared application and graph contracts |
 | `src/lib/genealogy/` | Framework-independent graph validation, quality audit, and read-only query utilities |
 | `src/app/` | Next.js App Router routes, layouts, and route-level composition |

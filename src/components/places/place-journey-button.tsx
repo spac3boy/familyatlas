@@ -7,7 +7,10 @@ import { Button } from "@/components/ui/button"
 import { useExploreActions } from "@/state"
 import type { PlaceId } from "@/types"
 
-export function PlaceJourneyButton({ placeId }: Readonly<{ placeId: PlaceId }>) {
+export function PlaceJourneyButton({
+  placeId,
+  placeName,
+}: Readonly<{ placeId: PlaceId; placeName: string }>) {
   const router = useRouter()
   const { showPlaceInJourneys } = useExploreActions()
 
@@ -19,7 +22,7 @@ export function PlaceJourneyButton({ placeId }: Readonly<{ placeId: PlaceId }>) 
   return (
     <Button type="button" variant="outline" onClick={showJourney}>
       <Map aria-hidden="true" />
-      Show in Journeys
+      See {placeName} on the map
     </Button>
   )
 }

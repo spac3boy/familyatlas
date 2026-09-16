@@ -99,8 +99,8 @@ test("C20E preserves Michael's shared-parent sibling context without inventing S
   );
   const sidney = buildPersonDetailModel(familyGraph, "person-sidney-paul-roger", queries);
   const gina = buildPersonDetailModel(familyGraph, "person-gina-buquet", queries);
-  assert.equal(sidney?.relationshipLabel, "Maternal sibling through Paulette Comeaux");
-  assert.equal(gina?.relationshipLabel, "Sibling through both recorded parents");
+  assert.equal(sidney?.relationshipLabel, "Michael's maternal sibling through Paulette Comeaux");
+  assert.equal(gina?.relationshipLabel, "Michael's sibling through both recorded parents");
   assert.equal(queries.branchForPerson("person-sidney-paul-roger")?.classification, "maternal");
   assert.equal(queries.branchForPerson("person-gina-buquet")?.classification, "both");
 });
@@ -173,8 +173,8 @@ test("C20E keeps extended-family directory, search, profiles, and tree projectio
     assert.ok(treeIds.has(cousinId));
   }
 
-  assert.equal(directory.get("person-cathy-buquet")?.relationshipLabel, "Paternal aunt/uncle");
-  assert.equal(directory.get("person-russell-j-comeaux")?.relationshipLabel, "Maternal aunt/uncle");
+  assert.equal(directory.get("person-cathy-buquet")?.relationshipLabel, "Michael's paternal aunt/uncle");
+  assert.equal(directory.get("person-russell-j-comeaux")?.relationshipLabel, "Michael's maternal aunt/uncle");
 });
 
 test("C20E prevents sparse living-relative records from inventing life ranges or journeys", () => {

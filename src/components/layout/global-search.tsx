@@ -93,7 +93,7 @@ export function GlobalSearch({
       >
         <DialogTitle className="sr-only">Search Family Atlas</DialogTitle>
         <DialogDescription className="sr-only">
-          Search canonical people, places, recorded surnames, and source records.
+          Search family members, places, recorded surnames, and sources.
         </DialogDescription>
         <Command label="Search Family Atlas" shouldFilter={false} loop>
           <CommandInput
@@ -110,7 +110,7 @@ export function GlobalSearch({
               </div>
             ) : grouped.length === 0 ? (
               <div className="px-4 py-12 text-center text-sm text-muted-foreground">
-                No canonical records found for “{query.trim()}”.
+                No people, places, surnames, or sources found for “{query.trim()}”.
               </div>
             ) : (
               grouped.map(({ kind, entries }) => (

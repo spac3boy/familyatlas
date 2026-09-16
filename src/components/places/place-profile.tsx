@@ -21,7 +21,7 @@ import type { Place, Source } from "@/types"
 
 const sections = [
   ["place-overview", "Overview"],
-  ["place-people", "People & surnames"],
+  ["place-people", "Family connections"],
   ["place-events", "Events"],
   ["place-movements", "Movements"],
   ["place-sources", "Sources"],
@@ -222,6 +222,11 @@ export function PlaceProfile({ profile }: Readonly<{ profile: PlaceProfileModel 
             {profile.context && (
               <p className="mt-5 text-lg leading-7 text-muted-foreground">{profile.context}</p>
             )}
+            <p className="mt-5 max-w-2xl text-sm leading-6 text-muted-foreground">
+              Our records connect {place.modernName} with {profile.people.length}{" "}
+              {profile.people.length === 1 ? "family member" : "family members"} and{" "}
+              {profile.events.length} {profile.events.length === 1 ? "event" : "events"}.
+            </p>
           </div>
           <div className="border-t pt-5 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-7">
             <div className="flex flex-wrap gap-2">
@@ -230,7 +235,7 @@ export function PlaceProfile({ profile }: Readonly<{ profile: PlaceProfileModel 
             </div>
             <p className="mt-4 break-all text-xs leading-5 text-muted-foreground">{place.id}</p>
             <div className="mt-5">
-              <PlaceJourneyButton placeId={place.id} />
+              <PlaceJourneyButton placeId={place.id} placeName={place.modernName} />
             </div>
           </div>
         </div>
@@ -262,13 +267,13 @@ export function PlaceProfile({ profile }: Readonly<{ profile: PlaceProfileModel 
                 </dl>
               ) : (
                 <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                  No modern administrative equivalent is established in the canonical record.
+                  We haven&apos;t yet found a reliable modern equivalent for this historical place.
                 </p>
               )}
             </div>
 
             <div>
-              <p className="editorial-label">Record span</p>
+              <p className="editorial-label">Years represented</p>
               <p className="mt-4 font-[560]">{profile.dateRange.label}</p>
               <p className="mt-2 text-xs leading-5 text-muted-foreground">
                 {profile.dateRange.datedEventCount} dated {profile.dateRange.datedEventCount === 1 ? "event" : "events"}
@@ -286,17 +291,17 @@ export function PlaceProfile({ profile }: Readonly<{ profile: PlaceProfileModel 
 
           {(profile.parentPlace || profile.childPlaces.length > 0) && (
             <div className="mt-9 border-t pt-7">
-              <p className="editorial-label">Canonical place hierarchy</p>
+              <p className="editorial-label">How this place fits</p>
               <div className="mt-4 grid gap-5 sm:grid-cols-2">
                 {profile.parentPlace && (
                   <div>
-                    <p className="text-xs text-muted-foreground">Contained by</p>
+                    <p className="text-xs text-muted-foreground">Part of</p>
                     <p className="mt-1 text-sm"><PlaceLink place={profile.parentPlace} /></p>
                   </div>
                 )}
                 {profile.childPlaces.length > 0 && (
                   <div>
-                    <p className="text-xs text-muted-foreground">Contains represented places</p>
+                    <p className="text-xs text-muted-foreground">Places within it</p>
                     <ul className="mt-1 space-y-1 text-sm">
                       {profile.childPlaces.map((child) => <li key={child.id}><PlaceLink place={child} /></li>)}
                     </ul>
@@ -325,7 +330,7 @@ export function PlaceProfile({ profile }: Readonly<{ profile: PlaceProfileModel 
           )}
         </ProfileSection>
 
-        <ProfileSection id="place-people" number="02" title="People & surnames">
+        <ProfileSection id="place-people" number="02" title="Family connections">
           {profile.people.length > 0 ? (
             <ul className="divide-y border-t">
               {profile.people.map(({ person, surnames, associations }) => (
@@ -353,14 +358,16 @@ export function PlaceProfile({ profile }: Readonly<{ profile: PlaceProfileModel 
               ))}
             </ul>
           ) : (
-            <p className="text-sm leading-6 text-muted-foreground">No accepted people are linked to this place.</p>
+            <p className="text-sm leading-6 text-muted-foreground">
+              We haven&apos;t yet connected a family member directly to this place.
+            </p>
           )}
 
           {profile.surnames.length > 0 && (
             <div className="mt-10 border-t pt-7">
               <p className="editorial-label">Surname index</p>
               <p className="mt-2 text-xs leading-5 text-muted-foreground">
-                These are recorded canonical or alternate name forms, not inferred birth surnames.
+                These are surname forms found in the records, not assumed birth surnames.
               </p>
               <ul className="mt-5 flex flex-wrap gap-2">
                 {profile.surnames.map((surname) => (
@@ -379,7 +386,7 @@ export function PlaceProfile({ profile }: Readonly<{ profile: PlaceProfileModel 
           <p className="mb-6 text-xs leading-5 text-muted-foreground">
             {profile.directEventCount} directly linked {profile.directEventCount === 1 ? "event" : "events"}
             {profile.events.length > profile.directEventCount
-              ? ` · ${profile.events.length - profile.directEventCount} within represented child places`
+              ? ` · ${profile.events.length - profile.directEventCount} within nearby places shown here`
               : ""}
           </p>
           <ol className="border-t">
@@ -414,8 +421,8 @@ export function PlaceProfile({ profile }: Readonly<{ profile: PlaceProfileModel 
           {profile.movements.length > 0 ? (
             <>
               <p className="mb-5 text-sm leading-6 text-muted-foreground">
-                Movement classifications come directly from the canonical evidence model. Endpoint
-                observations do not become a precise route.
+                The records connect these places, but we draw a route only when a source actually
+                describes one.
               </p>
               <ol className="divide-y border-t">
                 {profile.movements.map((movement) => (
@@ -425,7 +432,7 @@ export function PlaceProfile({ profile }: Readonly<{ profile: PlaceProfileModel 
             </>
           ) : (
             <p className="text-sm leading-6 text-muted-foreground">
-              No movement event uses this place as a supported endpoint.
+              We haven&apos;t found a supported movement to or from this place.
             </p>
           )}
         </ProfileSection>
@@ -498,8 +505,7 @@ export function PlaceProfile({ profile }: Readonly<{ profile: PlaceProfileModel 
       <footer className="border-t bg-surface-subtle">
         <div className="page-shell flex flex-wrap items-center justify-between gap-5 py-8">
           <p className="max-w-xl text-xs leading-5 text-muted-foreground">
-            Geographic precision, uncertainty, and movement classification remain attached to the
-            canonical evidence represented above.
+            We keep place names, dates, and routes as precise as the records allow.
           </p>
           <Link href="/places" className="inline-flex items-center gap-2 text-sm font-medium hover:text-primary">
             Browse all places

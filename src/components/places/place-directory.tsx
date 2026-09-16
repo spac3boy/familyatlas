@@ -8,24 +8,13 @@ export function PlaceDirectory({ groups }: Readonly<{ groups: readonly PlaceInde
   const placeCount = groups.reduce((total, group) => total + group.places.length, 0)
 
   return (
-    <div className="page-shell py-16 sm:py-20 lg:py-24">
-      <header className="grid items-end gap-8 lg:grid-cols-[minmax(0,1fr)_20rem]">
-        <div>
-          <p className="editorial-label">Canonical family geography</p>
-          <h1 className="editorial-display mt-5">Places</h1>
-        </div>
-        <p className="border-t pt-5 text-sm leading-6 text-muted-foreground lg:border-t-0 lg:border-l lg:pt-0 lg:pl-7">
-          Locations appear only at the precision supported by the record. A parish is not displayed
-          as a town, and an unknown route remains unknown.
-        </p>
-      </header>
-
+    <div className="page-shell pb-16 sm:pb-20 lg:pb-24">
       <div className="mt-14 flex items-center justify-between gap-4 border-y py-4 text-xs text-muted-foreground sm:mt-18">
         <p>
           <span className="font-semibold text-foreground tabular-nums">{placeCount}</span>{" "}
-          canonical {placeCount === 1 ? "place" : "places"}
+          {placeCount === 1 ? "place" : "places"} connected to our family
         </p>
-        <p className="hidden sm:block">Grouped by the narrowest represented regional context.</p>
+        <p className="hidden sm:block">Grouped by the most specific location the records support.</p>
       </div>
 
       <div>

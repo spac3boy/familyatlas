@@ -117,7 +117,7 @@ export function FamilyPatterns() {
             </div>
             <PatternLegend segments={generationLegend} />
             <p className="mt-5 border-t pt-4 text-xs leading-5 text-muted-foreground">
-              Bar length compares represented identities across generations. It is not a percentage
+              Bar length compares the family members recorded in each generation. It is not a percentage
               of expected ancestor slots, and probable paths remain included as probable evidence.
             </p>
           </article>
@@ -139,7 +139,7 @@ export function FamilyPatterns() {
             </div>
             <p className="mt-5 border-t pt-4 text-xs leading-5 text-muted-foreground">
               Supported birthplace evidence currently represents {model.birthplaceEvidence.distinctSupportedPlaces}{" "}
-              distinct canonical places. That sample is too sparse and too mixed in precision for
+              distinct recorded places. That sample is too sparse and too mixed in precision for
               a responsible birthplace-distribution ranking.
             </p>
           </article>

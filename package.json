@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint .",
     "test": "node --import tsx --test tests/*.test.ts",
-    "type-check": "tsc --noEmit"
+    "type-check": "next typegen && tsc --noEmit"
   },
   "engines": {
     "node": ">=20.9.0"

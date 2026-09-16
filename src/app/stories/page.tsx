@@ -2,50 +2,56 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { ArrowRight, BookOpenText } from "lucide-react"
 
+import heroNorwayCoast from "@/assets/family-atlas-hero-norway-coast.jpg"
+import { EditorialHero } from "@/components/layout/editorial-hero"
 import { buttonVariants } from "@/components/ui/button-variants"
 import { cn } from "@/lib/utils"
 
 export const metadata: Metadata = {
   title: "Stories",
-  description: "Family Atlas stories will be published only from reviewed, supported research.",
+  description: "Family stories being gathered from reviewed records and family recollections.",
 }
 
 export default function StoriesPage() {
   return (
-    <div className="page-shell py-16 sm:py-20 lg:py-24">
-      <div className="grid items-end gap-8 lg:grid-cols-[minmax(0,1fr)_20rem]">
-        <div>
-          <p className="editorial-label">Narrative collection</p>
-          <h1 className="editorial-display mt-5">Stories</h1>
-        </div>
-        <p className="border-t pt-5 text-sm leading-6 text-muted-foreground lg:border-t-0 lg:border-l lg:pt-0 lg:pl-7">
-          Family narratives will appear here only after the supporting research has been reviewed
-          for evidence, uncertainty, and privacy.
-        </p>
-      </div>
+    <>
+      <EditorialHero
+        image={heroNorwayCoast}
+        imagePosition="center 54%"
+        eyebrow="Narrative collection"
+        title="Stories"
+        aside={
+          <p className="max-w-sm text-sm leading-6">
+            We&apos;re bringing records, places, and family recollections together into stories worth
+            passing on.
+          </p>
+        }
+      />
 
-      <section
-        className="mt-14 border-y py-12 sm:mt-16 sm:py-16"
-        aria-labelledby="stories-empty-heading"
-      >
-        <BookOpenText aria-hidden="true" className="size-5 text-primary" />
-        <h2 id="stories-empty-heading" className="mt-5 text-2xl font-[560] tracking-[-0.03em]">
-          No standalone stories are published yet.
-        </h2>
-        <p className="mt-4 max-w-2xl text-sm leading-6 text-muted-foreground">
-          The family graph, profiles, places, and research evidence remain available while this
-          narrative layer is intentionally unfinished. Nothing is generated merely to fill the page.
-        </p>
-        <div className="mt-7 flex flex-wrap gap-3">
-          <Link href="/#family-explore" className={cn(buttonVariants(), "gap-2")}>
-            Explore the family
-            <ArrowRight aria-hidden="true" />
-          </Link>
-          <Link href="/research" className={buttonVariants({ variant: "outline" })}>
-            Review the research
-          </Link>
-        </div>
-      </section>
-    </div>
+      <div className="page-shell pb-16 sm:pb-20 lg:pb-24">
+        <section
+          className="mt-14 border-y py-12 sm:mt-16 sm:py-16"
+          aria-labelledby="stories-empty-heading"
+        >
+          <BookOpenText aria-hidden="true" className="size-5 text-primary" />
+          <h2 id="stories-empty-heading" className="mt-5 text-2xl font-[560] tracking-[-0.03em]">
+            Our stories are still coming together.
+          </h2>
+          <p className="mt-4 max-w-2xl text-sm leading-6 text-muted-foreground">
+            Profiles, places, and records are already here to explore. As we verify more details—and
+            hear more family memories—we&apos;ll turn them into fuller stories.
+          </p>
+          <div className="mt-7 flex flex-wrap gap-3">
+            <Link href="/people" className={cn(buttonVariants(), "gap-2")}>
+              Explore family profiles
+              <ArrowRight aria-hidden="true" />
+            </Link>
+            <Link href="/research" className={buttonVariants({ variant: "outline" })}>
+              See what we&apos;re still learning
+            </Link>
+          </div>
+        </section>
+      </div>
+    </>
   )
 }

@@ -97,7 +97,7 @@ function personConclusion(person: Person): ResearchConclusion {
     kind: "person",
     confidence: person.confidence,
     title: person.canonicalName,
-    detail: "Accepted identity in the canonical family graph.",
+    detail: "Included in Family Atlas as a supported family identity.",
     href: `/people/${person.id}`,
     sourceIds: sourceIds(person),
     provenanceKinds: evidenceProvenanceKinds(person),

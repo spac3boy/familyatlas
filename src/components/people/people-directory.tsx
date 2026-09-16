@@ -29,7 +29,7 @@ function branchLabel(branch: BranchClassification): string | undefined {
   if (branch === "maternal") return "Maternal"
   if (branch === "paternal") return "Paternal"
   if (branch === "both") return "Maternal and paternal"
-  if (branch === "self") return "Reference person"
+  if (branch === "self") return "Atlas starting point"
   return undefined
 }
 
@@ -106,12 +106,13 @@ export function PeopleDirectory({ records }: Readonly<{ records: readonly People
 
   return (
     <>
-      <section aria-labelledby="people-filters-heading" className="mt-14 border-y bg-surface-subtle py-5 sm:mt-18 sm:py-6">
+      <section aria-labelledby="people-filters-heading" className="mt-14 border bg-surface-subtle p-5 sm:mt-18 sm:p-6">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <h2 id="people-filters-heading" className="text-sm font-semibold">Filter the directory</h2>
             <p className="mt-1 text-xs leading-5 text-muted-foreground">
-              Surnames are recorded name forms; birthplace requires an explicit birth-event location.
+              Surnames follow the forms found in records. Birthplaces appear only when a birth
+              record names a place.
             </p>
           </div>
           <Button
@@ -213,7 +214,7 @@ export function PeopleDirectory({ records }: Readonly<{ records: readonly People
           <span className="font-semibold text-foreground tabular-nums">{filteredRecords.length}</span>
           {` ${filteredRecords.length === 1 ? "person" : "people"}`}
         </p>
-        <p className="hidden sm:block">Generation counts parent-child steps from Michael.</p>
+        <p className="hidden sm:block">Generations count outward from Michael through recorded parent-child links.</p>
       </div>
 
       {filteredRecords.length > 0 ? (
