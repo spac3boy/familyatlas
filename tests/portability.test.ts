@@ -78,6 +78,16 @@ test("shadcn configuration and editable UI source are checked in", () => {
   }
 })
 
+test("type-checking generates Next.js declarations for a clean clone", () => {
+  const packageJson = JSON.parse(
+    readFileSync(path.join(repositoryRoot, "package.json"), "utf8"),
+  ) as { scripts?: Record<string, string> }
+  const gitignore = readFileSync(path.join(repositoryRoot, ".gitignore"), "utf8")
+
+  assert.equal(packageJson.scripts?.["type-check"], "next typegen && tsc --noEmit")
+  assert.match(gitignore, /^next-env\.d\.ts$/m)
+})
+
 test("production deployment has one main-only validation-gated path", () => {
   const workflowDirectory = path.join(repositoryRoot, ".github/workflows")
   assert.deepEqual(readdirSync(workflowDirectory).sort(), ["ci.yml", "deploy-pages.yml"])
