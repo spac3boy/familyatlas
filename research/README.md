@@ -20,7 +20,7 @@ A0â€“A11 are complete. The archive is ready for normalization as a **first-pass 
 research/
   README.md                   Archive policy, structure, and handoff status
   packet-template.md          Standard format for person research packets
-  chat-inventory.md           Accessible Family History project-chat inventory
+  chat-inventory.md           Historical Family History project-chat access inventory
   manifest.json               Machine-readable inventory of this research archive
   open-questions.md           Completeness, conflict, and unresolved-question audit
   family-intake/              Dated, application-era statements supplied directly by Michael
@@ -48,7 +48,7 @@ The four `.gitkeep` files are legacy directory placeholders from A0. Their old â
 
 ## Research methodology
 
-- Re-read the relevant original Family History project chats rather than treating prior Codex summaries as evidence.
+- For new source synthesis, re-read the relevant original Family History project chats when they are available rather than treating an AI summary as evidence. The checked-in packets and source inventory remain the portable handoff when chat access is unavailable; preserve their uncertainty rather than reconstructing missing detail.
 - Preserve explicit family information as `family-provided`; do not present it as independently verified merely because it is credible.
 - Separate a source's literal content from identity matching and genealogical inference.
 - Give every important claim a confidence state and source reference.
@@ -114,7 +114,7 @@ The final consistency audit found two proposed IDs for Philomene Comeaux. Under 
 - Keep bundled source sets intact when the original chat does not expose enough metadata to split them safely.
 - A research synthesis preserves reasoning and stopping points but is not independent evidence and never replaces the underlying source.
 - Distinguish original records/images from derivative indexes/transcriptions, compiled genealogies, obituaries, secondary histories, and family-provided information.
-- Use `sources/source-inventory.md` as the consolidated source authority and `chat-inventory.md` to locate the original project chats when a claim needs rechecking.
+- Use `sources/source-inventory.md` as the consolidated source authority. `chat-inventory.md` can locate the original project chats when that optional historical access is available, but application maintenance and existing-claim presentation must not depend on it.
 
 ## Geographic precision
 
@@ -162,7 +162,7 @@ When files differ because later tasks exposed more evidence, use this precedence
 5. `open-questions.md` for unresolved conflicts, packet drift, and exhausted searches.
 6. This README and `manifest.json` for archive policy, navigation, and current handoff status.
 
-If a material dispute remains, return to the original source chat or underlying record; do not resolve it by file precedence alone.
+If a material dispute remains, return to the underlying record or, when available, the original source chat; do not resolve it by file precedence alone. If neither can be accessed, leave the claim unresolved at its preserved confidence.
 
 ## Final status
 

@@ -175,7 +175,7 @@ function biographyFor(
 
   return (
     sentences.slice(0, 3).join(" ") ||
-    `The canonical family graph currently preserves ${person.canonicalName} through supported family relationships; no additional biographical events are established in the normalized record.`
+    `What we know so far about ${person.canonicalName} comes mainly from family connections. We haven't yet added dates, places, or other details about ${person.canonicalName}'s life.`
   );
 }
 
@@ -185,7 +185,7 @@ function relationshipLabel(
   originalPaths: ReturnType<GenealogyQueries["relationshipPathToMichael"]>,
 ): string {
   if (!originalPaths) return "Relationship to Michael unresolved";
-  if (originalPaths.distance === 0) return "Reference person";
+  if (originalPaths.distance === 0) return "Starting point for this atlas";
   const branch = queries.branchForPerson(personId)?.classification;
   const branchLabel =
     branch === "maternal"
@@ -201,19 +201,19 @@ function relationshipLabel(
   if (siblingMatch) {
     const sharedParentNames = siblingMatch.sharedParents.map(({ parent }) => parent.canonicalName);
     if (sharedParentNames.length === 1) {
-      return `${branchLabel ? `${branchLabel} sibling` : "Sibling"} through ${sharedParentNames[0]}`;
+      return `Michael's ${branchLabel ? `${branchLabel.toLowerCase()} sibling` : "sibling"} through ${sharedParentNames[0]}`;
     }
-    if (sharedParentNames.length === 2) return "Sibling through both recorded parents";
-    return "Sibling through shared recorded parents";
+    if (sharedParentNames.length === 2) return "Michael's sibling through both recorded parents";
+    return "Michael's sibling through shared recorded parents";
   }
   const isParentsSibling = queries.parents(MICHAEL_BUQUET_ID).some(({ person: parent }) =>
     queries.siblings(parent.id).some(({ person: sibling }) => sibling.id === personId),
   );
-  if (isParentsSibling) return branchLabel ? `${branchLabel} aunt/uncle` : "Aunt/uncle";
+  if (isParentsSibling) return branchLabel ? `Michael's ${branchLabel.toLowerCase()} aunt/uncle` : "Michael's aunt/uncle";
   const isFirstCousin = queries
     .firstCousins(MICHAEL_BUQUET_ID)
     .some(({ person }) => person.id === personId);
-  if (isFirstCousin) return branchLabel ? `${branchLabel} first cousin` : "First cousin";
+  if (isFirstCousin) return branchLabel ? `Michael's ${branchLabel.toLowerCase()} first cousin` : "Michael's first cousin";
   const primaryPath = originalPaths.paths[0];
   const isDirectAncestor = primaryPath.relationships.every((relationship, index) => {
     if (relationship.type !== "parent-child") return false;
@@ -223,7 +223,7 @@ function relationshipLabel(
     );
   });
   if (!isDirectAncestor) {
-    return `Related through ${originalPaths.distance} supported relationship${originalPaths.distance === 1 ? "" : "s"}`;
+    return `Connected to Michael through ${originalPaths.distance} family relationship${originalPaths.distance === 1 ? "" : "s"}`;
   }
 
   const generation = originalPaths.distance;
@@ -235,7 +235,7 @@ function relationshipLabel(
         : generation === 3
           ? "great-grandparent"
           : `${generation - 2}× great-grandparent`;
-  return branchLabel ? `${branchLabel} ${kinship}` : titleCase(kinship);
+  return branchLabel ? `Michael's ${branchLabel.toLowerCase()} ${kinship}` : `Michael's ${titleCase(kinship).toLowerCase()}`;
 }
 
 export function buildPersonDetailModel(

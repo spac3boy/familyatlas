@@ -271,7 +271,7 @@ export function PersonProfile({ profile }: Readonly<{ profile: PersonProfileMode
               <ul className="mt-3 space-y-2 text-sm leading-6">
                 <li>
                   <span className="font-medium">{person.canonicalName}</span>
-                  <span className="text-muted-foreground"> · Canonical display name</span>
+                  <span className="text-muted-foreground"> · Name used in this atlas</span>
                 </li>
                 {person.alternateNames.map((name, index) => (
                   <li key={`${name.name}-${index}`}>
@@ -299,7 +299,7 @@ export function PersonProfile({ profile }: Readonly<{ profile: PersonProfileMode
             </div>
           ) : (
             <p className="text-sm leading-6 text-muted-foreground">
-              No direct family relationships are represented for this person in the canonical graph.
+              We haven&apos;t yet connected {person.canonicalName} to close family members in this atlas.
             </p>
           )}
         </ProfileSection>
@@ -311,7 +311,7 @@ export function PersonProfile({ profile }: Readonly<{ profile: PersonProfileMode
             </ul>
           ) : (
             <p className="text-sm leading-6 text-muted-foreground">
-              No place-linked events are represented for this person in the canonical graph.
+              We haven&apos;t yet found place details for {person.canonicalName}.
             </p>
           )}
         </ProfileSection>
@@ -358,7 +358,7 @@ export function PersonProfile({ profile }: Readonly<{ profile: PersonProfileMode
             </ol>
           ) : (
             <p className="text-sm leading-6 text-muted-foreground">
-              No life events are represented for this person in the canonical graph.
+              We haven&apos;t yet added dated life events for {person.canonicalName}.
             </p>
           )}
         </ProfileSection>
@@ -432,14 +432,15 @@ export function PersonProfile({ profile }: Readonly<{ profile: PersonProfileMode
             </ol>
           ) : (
             <p className="text-sm leading-6 text-muted-foreground">
-              No source record is linked to this person in the canonical graph.
+              We haven&apos;t yet linked a source record to {person.canonicalName}.
             </p>
           )}
         </ProfileSection>
 
         <ProfileSection id="open-research" number="06" title="Open research questions">
           <p className="mb-6 max-w-2xl text-sm leading-6 text-muted-foreground">
-            This section reports explicit uncertainty carried by normalized claims. It does not infer questions from missing family-tree branches.
+            These are specific questions raised by the records we have reviewed. A missing branch
+            does not automatically become a research question.
           </p>
           {researchFlags.length > 0 ? (
             <ul className="divide-y border-t">
@@ -459,7 +460,8 @@ export function PersonProfile({ profile }: Readonly<{ profile: PersonProfileMode
             </ul>
           ) : (
             <p className="text-sm leading-6 text-muted-foreground">
-              No person-specific research flag is currently represented in normalized application data. This does not mean the genealogy is complete.
+              We don&apos;t have a specific open question for {person.canonicalName} yet. That does not
+              mean this family story is complete.
             </p>
           )}
         </ProfileSection>
@@ -468,7 +470,7 @@ export function PersonProfile({ profile }: Readonly<{ profile: PersonProfileMode
       <footer className="border-t bg-surface-subtle">
         <div className="page-shell flex flex-col gap-4 py-9 sm:flex-row sm:items-center sm:justify-between">
           <p className="max-w-xl text-xs leading-5 text-muted-foreground">
-            This profile is generated from normalized application data. Research prose is never scraped at runtime.
+            This profile reflects the family information and records reviewed for Family Atlas.
           </p>
           <Link href="/people" className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline">
             Browse all people

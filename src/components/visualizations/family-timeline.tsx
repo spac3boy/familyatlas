@@ -451,7 +451,7 @@ export function FamilyTimeline() {
           </summary>
           <p className="mt-3 max-w-2xl text-xs leading-5 text-muted-foreground">
             This is the non-spatial equivalent of the timeline. Date wording and confidence are
-            preserved from canonical data.
+            preserved from the family records.
           </p>
           <div className="mt-5 grid gap-px border bg-border sm:grid-cols-2 lg:grid-cols-3">
             {model.rows.map((row) => (

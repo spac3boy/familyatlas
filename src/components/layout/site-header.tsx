@@ -36,9 +36,9 @@ function Brand() {
     <Link
       href="/"
       aria-label="Family Atlas home"
-      className="inline-flex min-h-11 shrink-0 items-center gap-2.5 rounded-sm text-sm font-semibold tracking-[-0.01em]"
+      className="inline-flex min-h-11 shrink-0 items-center gap-2.5 rounded-sm text-sm font-semibold tracking-[-0.01em] text-background"
     >
-      <Library aria-hidden="true" className="size-4 text-primary" strokeWidth={1.75} />
+      <Library aria-hidden="true" className="size-4 text-background" strokeWidth={1.75} />
       <span>Family Atlas</span>
     </Link>
   )
@@ -59,7 +59,10 @@ function SearchAffordance({
       onClick={onClick}
       aria-label="Search Family Atlas"
       title="Search Family Atlas (Command or Control K)"
-      className={cn(!compact && "gap-2.5 text-muted-foreground")}
+      className={cn(
+        "text-background/80 hover:bg-background/10 hover:text-background",
+        !compact && "gap-2.5 border-background/25 bg-transparent hover:border-background/40",
+      )}
     >
       <Search aria-hidden="true" />
       {!compact && (
@@ -95,7 +98,7 @@ export function SiteHeader({
   }, [])
 
   return (
-    <header className="sticky top-0 z-40 border-b bg-background">
+    <header className="sticky top-0 z-40 border-b border-background/15 bg-foreground text-background">
       <div className="page-shell flex h-16 items-center gap-5">
         <Brand />
 
@@ -108,9 +111,9 @@ export function SiteHeader({
                 href={item.href}
                 aria-current={current ? "page" : undefined}
                 className={cn(
-                  "relative inline-flex items-center px-3 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground",
-                  "after:absolute after:inset-x-3 after:bottom-0 after:h-px after:bg-primary after:opacity-0",
-                  current && "text-foreground after:opacity-100",
+                  "relative inline-flex items-center px-3 text-sm font-medium text-background/70 transition-colors hover:text-background",
+                  "after:absolute after:inset-x-3 after:bottom-0 after:h-px after:bg-background after:opacity-0",
+                  current && "text-background after:opacity-100",
                 )}
               >
                 {item.label}
@@ -120,17 +123,23 @@ export function SiteHeader({
         </nav>
 
         <div className="ml-auto hidden items-center gap-1 lg:flex">
-          <EvidenceModeToggle />
+          <EvidenceModeToggle className="bg-transparent text-background/80 hover:bg-background/10 hover:text-background aria-pressed:bg-background/15" />
           <SearchAffordance onClick={() => setSearchDialogOpen(true)} />
         </div>
 
         <div className="ml-auto flex items-center gap-1 lg:hidden">
-          <EvidenceModeToggle compact />
+          <EvidenceModeToggle
+            compact
+            className="bg-transparent text-background/80 hover:bg-background/10 hover:text-background aria-pressed:bg-background/15"
+          />
           <SearchAffordance compact onClick={() => setSearchDialogOpen(true)} />
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger
               aria-label="Open navigation"
-              className={buttonVariants({ variant: "ghost", size: "icon" })}
+              className={cn(
+                buttonVariants({ variant: "ghost", size: "icon" }),
+                "text-background/80 hover:bg-background/10 hover:text-background",
+              )}
             >
               <Menu aria-hidden="true" />
             </SheetTrigger>

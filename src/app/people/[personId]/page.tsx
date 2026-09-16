@@ -19,7 +19,7 @@ export async function generateMetadata({
   return {
     title: person?.canonicalName ?? "Person not found",
     description: person
-      ? `Review the supported Family Atlas profile for ${person.canonicalName}.`
+      ? `Meet ${person.canonicalName} through the family connections and records gathered in Family Atlas.`
       : "The requested Family Atlas person could not be found.",
   }
 }

@@ -570,7 +570,7 @@ export function FamilyJourneys() {
                     ? selectedPointInCluster.precisionNotes.join(" ")
                     : activeClusterPoints.length === 1
                       ? activeClusterPoints[0].precisionNotes.join(" ")
-                      : "Nearby display anchors are grouped so their full-size touch targets do not overlap. Select a place above to retain that canonical place in shared Explore context."}
+                      : "Nearby places are grouped so their full-size touch targets do not overlap. Select a place above to keep it in view while you explore."}
                 </p>
                 {activeCluster.unknownRouteEventIds.length > 0 && (
                   <p className="mt-4 border-l-2 border-muted-foreground pl-3 text-xs leading-5 text-muted-foreground">
@@ -584,7 +584,7 @@ export function FamilyJourneys() {
                 <LocateFixed aria-hidden="true" className="size-5 text-primary" />
                 <p className="mt-4 text-sm font-medium">Select a place marker</p>
                 <p className="mt-2 text-xs leading-5 text-muted-foreground">
-                  A marker may group several canonical places that share the same honest map anchor.
+                  A marker may group several recorded places that share the same map location.
                 </p>
               </div>
             ) : (
@@ -698,7 +698,7 @@ export function FamilyJourneys() {
             <div className="mt-9 border-t pt-5">
               <h3 className="editorial-label">Supported, not plotted</h3>
               <p className="mt-3 max-w-2xl text-xs leading-5 text-muted-foreground">
-                These historical places remain in the canonical graph, but the archive does not support
+                These historical places remain part of our family record, but the sources do not support
                 a modern map anchor precise enough for this view.
               </p>
               <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm">

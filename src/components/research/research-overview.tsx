@@ -14,7 +14,6 @@ import {
   ProvenanceMarks,
   confidencePresentation,
 } from "@/components/research/confidence-mark"
-import { EvidenceModeToggle } from "@/components/research/evidence-mode"
 import { Badge } from "@/components/ui/badge"
 import {
   normalizedResearchQuestions,
@@ -101,7 +100,8 @@ function ConclusionRegister({
         </div>
         <div>
           <p className="text-sm leading-6 text-muted-foreground">
-            <strong className="text-foreground tabular-nums">{conclusions.length}</strong> accepted canonical {conclusions.length === 1 ? "claim" : "claims"}
+            <strong className="text-foreground tabular-nums">{conclusions.length}</strong>{" "}
+            {conclusions.length === 1 ? "claim" : "claims"} included in the atlas
           </p>
           <div className="mt-5 space-y-2">
             {(Object.keys(kindLabels) as ResearchConclusionKind[]).map((kind) => {
@@ -135,25 +135,7 @@ export function ResearchOverview({ model }: Readonly<{ model: ResearchOverviewMo
   ] as const
 
   return (
-    <article>
-      <header className="page-shell pt-16 pb-12 sm:pt-20 sm:pb-16 lg:pt-24">
-        <div className="grid items-end gap-9 lg:grid-cols-[minmax(0,1fr)_21rem]">
-          <div>
-            <p className="editorial-label">Evidence trail</p>
-            <h1 className="editorial-display mt-5">Research</h1>
-            <p className="mt-7 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl">
-              See what the atlas establishes, what remains probable, and where the record still stops.
-            </p>
-          </div>
-          <div className="border-t pt-5 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-7">
-            <p className="text-sm leading-6 text-muted-foreground">
-              Evidence Mode reveals verified confidence and classified support—family confirmed, documented, or both—alongside uncertainty that always stays visible.
-            </p>
-            <EvidenceModeToggle className="mt-5" />
-          </div>
-        </div>
-      </header>
-
+    <div>
       <nav aria-label="Research sections" className="border-y bg-card">
         <div className="page-shell flex flex-wrap gap-x-6 gap-y-1 py-3">
           {navigation.map(([id, label]) => (
@@ -181,7 +163,9 @@ export function ResearchOverview({ model }: Readonly<{ model: ResearchOverviewMo
               ))}
             </div>
             <p className="mt-6 text-xs leading-5 text-muted-foreground">
-              The complete human-readable method remains in <span className="font-mono">research/README.md</span>. This page uses only reviewed application data at runtime.
+              The fuller research method is documented in{" "}
+              <span className="font-mono">research/README.md</span>. This page presents the reviewed
+              findings used throughout the atlas.
             </p>
           </div>
         </div>
@@ -209,13 +193,16 @@ export function ResearchOverview({ model }: Readonly<{ model: ResearchOverviewMo
 
               <div className="mt-8 grid gap-7 border-t pt-7 sm:grid-cols-2">
                 <div>
-                  <p className="editorial-label">Accepted application graph</p>
+                  <p className="editorial-label">Records used in the atlas</p>
                   <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                    {coverage.sources} normalized sources support the accepted direct-ancestor graph. {coverage.directlyInspectedSources} were directly inspected, {coverage.sourcesWithPublicUrls} retain public URLs, and {coverage.sourcesWithContradictions} preserve contradiction notes.
+                    {coverage.sources} reviewed sources support the people, relationships, events,
+                    and places shown here. {coverage.directlyInspectedSources} were directly
+                    inspected, {coverage.sourcesWithPublicUrls} retain public links, and{" "}
+                    {coverage.sourcesWithContradictions} preserve notes about conflicting details.
                   </p>
                 </div>
                 <div>
-                  <p className="editorial-label">Human research archive</p>
+                  <p className="editorial-label">Wider research archive</p>
                   <p className="mt-3 text-sm leading-6 text-muted-foreground">
                     The A11 handoff records {researchArchiveCoverage.genealogicallyRelevantIdentities} genealogically relevant identities, {researchArchiveCoverage.proposedSources} proposed sources or source sets, {researchArchiveCoverage.representedPlaces} represented places, and {researchArchiveCoverage.movementEntries} movement entries.
                   </p>
@@ -235,7 +222,10 @@ export function ResearchOverview({ model }: Readonly<{ model: ResearchOverviewMo
           </div>
           <div>
             <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
-              Every register below is generated from accepted canonical entities. Confidence records whether a conclusion is established; provenance records how it is supported. A probable claim never becomes verified through repetition or visual prominence.
+              These lists summarize the claims included in Family Atlas. Confidence says how firmly
+              a detail is established; provenance says whether it comes from family confirmation,
+              historical documentation, or both. Repetition alone never makes a probable claim
+              verified.
             </p>
             <div className="mt-8">
               <ConclusionRegister confidence="verified" conclusions={model.conclusions.verified} />
@@ -250,19 +240,21 @@ export function ResearchOverview({ model }: Readonly<{ model: ResearchOverviewMo
           <div className="grid gap-9 lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-14">
             <div>
               <p className="editorial-label">04</p>
-              <h2 id="questions-heading" className="mt-3 text-xl font-[560]">Unresolved questions</h2>
+              <h2 id="questions-heading" className="mt-3 text-xl font-[560]">What we&apos;re still learning</h2>
               <ConfidenceMark confidence="unresolved" alwaysVisible className="mt-5" />
             </div>
             <div>
               <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
-                These questions were deliberately normalized from the archive. They are not generated from empty branches or guessed missing relatives.
+                These questions come from gaps or conflicts in the records we&apos;ve reviewed. Family
+                knowledge may help with some of them; we do not create questions simply because a
+                branch is empty.
               </p>
 
               {model.conclusions.unresolved.length > 0 && (
                 <details className="mt-7 border-y bg-card px-4 open:pb-4">
                   <summary className="flex min-h-12 cursor-pointer list-none items-center gap-3 text-sm font-medium marker:hidden">
                     <ChevronRight aria-hidden="true" className="size-4 text-primary transition-transform motion-reduce:transition-none" />
-                    Canonical unresolved claims
+                    Unresolved claims in the atlas
                     <span className="ml-auto text-xs font-normal text-muted-foreground tabular-nums">{model.conclusions.unresolved.length}</span>
                   </summary>
                   <ConclusionList conclusions={model.conclusions.unresolved} />
@@ -308,7 +300,11 @@ export function ResearchOverview({ model }: Readonly<{ model: ResearchOverviewMo
           <div>
             <div className="flex gap-3 border-l-2 border-primary/30 pl-4 text-sm leading-6 text-muted-foreground">
               <Database aria-hidden="true" className="mt-1 size-4 shrink-0 text-primary" />
-              <p>These {coverage.sources} records are the accepted normalized subset of the larger research inventory. Open a record for retrieval details, citation handles, reliability notes, and explicit graph references.</p>
+              <p>
+                These {coverage.sources} records are the reviewed sources used in the atlas. Open a
+                record for links, citation details, reliability notes, and the people, places, or
+                events it supports.
+              </p>
             </div>
             <div className="mt-8 space-y-2">
               {model.sourceGroups.map((group) => (
@@ -348,10 +344,11 @@ export function ResearchOverview({ model }: Readonly<{ model: ResearchOverviewMo
         <div className="page-shell flex gap-3 py-9 text-xs leading-5 text-muted-foreground">
           <Archive aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-primary" />
           <p className="max-w-2xl">
-            <span className="font-medium text-foreground">research/</span> remains the human-readable evidence trail. The interface above is a reviewed projection from typed application data and does not scrape the archive.
+            The <span className="font-medium text-foreground">research/</span> archive holds the fuller
+            evidence trail. This page presents the material currently reviewed for use in Family Atlas.
           </p>
         </div>
       </footer>
-    </article>
+    </div>
   )
 }

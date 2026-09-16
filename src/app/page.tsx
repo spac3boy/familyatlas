@@ -1,6 +1,8 @@
 import Link from "next/link"
 import { ArrowDownRight } from "lucide-react"
 
+import heroMountains from "@/assets/family-atlas-hero-mountains.jpg"
+import { EditorialHero } from "@/components/layout/editorial-hero"
 import { ExploreVisualizations } from "@/components/visualizations/explore-visualizations"
 import { buttonVariants } from "@/components/ui/button-variants"
 import { familyGraph, familyGraphQueries } from "@/data"
@@ -63,31 +65,28 @@ function formatExactDate(value: string): string {
 export default function Home() {
   return (
     <>
-      <section className="page-shell pt-20 pb-16 sm:pt-28 sm:pb-24 lg:pt-36 lg:pb-32">
-        <div className="grid items-end gap-12 lg:grid-cols-[minmax(0,2fr)_minmax(16rem,1fr)] lg:gap-20">
-          <div>
-            <p className="editorial-label mb-6">A source-grounded family history</p>
-            <h1 className="editorial-display max-w-4xl">Family Atlas</h1>
-            <p className="mt-7 max-w-xl text-xl leading-8 text-muted-foreground sm:text-2xl sm:leading-9">
-              Explore a family across people, place, and time.
-            </p>
-          </div>
-
-          <div className="border-t pt-6 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-8">
-            <p className="max-w-sm text-sm leading-6 text-muted-foreground">
-              Follow relationships, locations, and historical records while keeping uncertainty
-              and evidence in view.
+      <EditorialHero
+        image={heroMountains}
+        eyebrow="Our family, gathered from records and recollections"
+        title="Family Atlas"
+        description="Meet the people who came before us, the places they called home, and the stories we're still piecing together."
+        size="home"
+        aside={
+          <>
+            <p className="max-w-sm text-sm leading-6">
+              Some details are well documented. Others come from family memory or remain open
+              questions. We show the difference.
             </p>
             <Link
               href="#family-explore"
               className={cn(buttonVariants({ size: "lg" }), "mt-7")}
             >
-              Explore the family
+              Explore our family
               <ArrowDownRight aria-hidden="true" />
             </Link>
-          </div>
-        </div>
-      </section>
+          </>
+        }
+      />
 
       <ExploreVisualizations />
 
@@ -98,9 +97,9 @@ export default function Home() {
       >
         <div className="page-shell py-16 sm:py-20 lg:py-24">
           <div className="max-w-2xl">
-            <p className="editorial-label mb-4">The collection</p>
+            <p className="editorial-label mb-4">Explore our history</p>
             <h2 id="collection-heading" className="editorial-heading">
-              A family, read three ways.
+              Follow our family through people, places, and time.
             </h2>
           </div>
 
@@ -111,8 +110,8 @@ export default function Home() {
                 {michael.canonicalName}
               </h3>
               <p className="mt-4 text-sm leading-6 text-muted-foreground">
-                Begin with the reference person, then follow the relationships preserved in the
-                family graph.
+                Start with Michael, then follow the parents, grandparents, siblings, and cousins
+                connected to him.
               </p>
               <dl className="mt-10 border-t pt-4">
                 <dt className="editorial-label">Parents</dt>
@@ -128,9 +127,10 @@ export default function Home() {
 
             <article className="border-b py-8 lg:border-b-0 lg:px-12">
               <p className="editorial-label">02 / Places</p>
-              <h3 className="mt-8 text-2xl font-[560] tracking-[-0.035em]">Known ground</h3>
+              <h3 className="mt-8 text-2xl font-[560] tracking-[-0.035em]">Places our family knew</h3>
               <p className="mt-4 text-sm leading-6 text-muted-foreground">
-                Read each location at the level of precision supported by the archive.
+                Visit the towns, parishes, regions, and countries connected to our family&apos;s
+                records and recollections.
               </p>
               <ul className="mt-10 divide-y border-t" aria-label="Featured family places">
                 {featuredPlaces.map((place) => (
@@ -148,9 +148,10 @@ export default function Home() {
 
             <article className="py-8 lg:pl-12">
               <p className="editorial-label">03 / Time</p>
-              <h3 className="mt-8 text-2xl font-[560] tracking-[-0.035em]">Lives in context</h3>
+              <h3 className="mt-8 text-2xl font-[560] tracking-[-0.035em]">Lives across time</h3>
               <p className="mt-4 text-sm leading-6 text-muted-foreground">
-                Move through events without turning historical uncertainty into false precision.
+                See when lives overlapped, while approximate and conflicting dates remain clearly
+                marked.
               </p>
               <ol className="mt-10 divide-y border-t" aria-label="Featured verified events">
                 {featuredEvents.map(({ event, date }) => {
@@ -178,8 +179,8 @@ export default function Home() {
 
       <footer className="page-shell py-10 sm:py-12">
         <p className="max-w-xl text-xs leading-5 text-muted-foreground">
-          Family Atlas presents normalized, source-linked research. Unknown and unresolved details
-          remain visible rather than being filled for completeness.
+          Family Atlas brings together family knowledge and historical records. When a detail is
+          uncertain or still unknown, we say so.
         </p>
       </footer>
     </>

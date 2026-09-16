@@ -12,7 +12,7 @@ test("person details derive the Michael-first relationship path from canonical e
   );
 
   assert.ok(rita);
-  assert.equal(rita.relationshipLabel, "Maternal grandparent");
+  assert.equal(rita.relationshipLabel, "Michael's maternal grandparent");
   assert.deepEqual(
     rita.relationshipPaths[0].people.map(({ canonicalName }) => canonicalName),
     ["Michael Buquet", "Paulette Comeaux", "Rita LeBlanc"],
@@ -52,7 +52,7 @@ test("the reference person remains undated when the normalized graph has no life
   const michael = buildPersonDetailModel(familyGraph, "person-michael-buquet");
   assert.ok(michael);
 
-  assert.equal(michael.relationshipLabel, "Reference person");
+  assert.equal(michael.relationshipLabel, "Starting point for this atlas");
   assert.equal(michael.lifespan, undefined);
   assert.deepEqual(michael.relationshipPaths[0].people.map(({ id }) => id), [
     "person-michael-buquet",
@@ -61,7 +61,7 @@ test("the reference person remains undated when the normalized graph has no life
     "Aubin Buquet",
     "Paulette Comeaux",
   ]);
-  assert.match(michael.biography, /no additional biographical events are established/i);
+  assert.match(michael.biography, /haven't yet added dates, places/i);
 });
 
 test("sibling paths are graph-derived through supported shared parents", () => {
@@ -72,12 +72,12 @@ test("sibling paths are graph-derived through supported shared parents", () => {
     ["person-michael-buquet", "person-paulette-comeaux", "person-sidney-paul-roger"],
   );
   assert.deepEqual(sidney.relationshipPaths[0].provenanceKinds, ["family-confirmed"]);
-  assert.equal(sidney.relationshipLabel, "Maternal sibling through Paulette Comeaux");
+  assert.equal(sidney.relationshipLabel, "Michael's maternal sibling through Paulette Comeaux");
   assert.equal(sidney.lifespan, undefined);
 
   const gina = buildPersonDetailModel(familyGraph, "person-gina-buquet");
   assert.ok(gina);
-  assert.equal(gina.relationshipLabel, "Sibling through both recorded parents");
+  assert.equal(gina.relationshipLabel, "Michael's sibling through both recorded parents");
   assert.equal(gina.relationshipPaths.length, 2);
   assert.ok(gina.relationshipPaths.every(({ confidence }) => confidence === "verified"));
 });
@@ -87,8 +87,8 @@ test("first-cousin labels and paths are graph-derived without cousin edges", () 
   const conrad = buildPersonDetailModel(familyGraph, "person-conrad-miller");
   assert.ok(paige && conrad);
 
-  assert.equal(paige.relationshipLabel, "Paternal first cousin");
-  assert.equal(conrad.relationshipLabel, "Maternal first cousin");
+  assert.equal(paige.relationshipLabel, "Michael's paternal first cousin");
+  assert.equal(conrad.relationshipLabel, "Michael's maternal first cousin");
   assert.deepEqual(
     paige.relationshipPaths
       .map(({ people }) => people.map(({ id }) => id).join(" > "))

@@ -217,3 +217,21 @@ Durable decisions live here. New entries should state the consequence; supersede
 - **Status:** accepted
 - **Decision:** Keep the default Tree in the initial route and dynamically load Timeline, Journeys, and Patterns on first selection. Coalesce resize and zoom notifications to one React commit per animation frame, and memoize stable SVG mark layers beneath React-owned transforms. Retain SVG because the measured Tree, Timeline, and map complexity is moderate and typed D3 calculations are fast at the current graph size.
 - **Consequence:** Initial page-route JavaScript is smaller, resize storms do not repeatedly reproject map geometry, and pan/zoom does not require every stable mark to reconcile for every raw input event. D3 remains responsible for calculation and isolated gesture sampling; React still owns state, SVG elements, and rendered transforms. Canvas remains deferred until measured real-device evidence justifies the accessibility and implementation tradeoff.
+
+## D-037 — The checked-in repository is the complete application-maintenance boundary
+
+- **Status:** accepted
+- **Decision:** Treat ordinary Git, Node.js 20, npm, the public npm registry, and checked-in files as the complete application build and maintenance boundary. Original Family History chats and optional contributor tools remain historical provenance or workflow aids, never runtime, build, test, or deployment dependencies. Keep one pull-request validation workflow and one optional GitHub Pages deployment workflow.
+- **Consequence:** A clean clone can install, test, build, and run without ChatGPT, Codex, OpenAI, Sites, private packages, secrets, or machine-specific paths. The research packets and normalized graph remain usable when original-chat access is unavailable; a disputed claim whose underlying evidence is also inaccessible must retain its existing uncertainty. This supersedes the managed-environment rationale in D-009 without changing the supported Webpack build choice.
+
+## D-038 — Production deployment is single-path, main-only, and validation-gated
+
+- **Status:** accepted
+- **Decision:** Keep one GitHub Pages deployment workflow. It may publish only the `main` ref and must run the same lint, test, type-check, and production-build commands required before merge. Pull requests retain a separate read-only validation workflow; the production workflow owns only the permissions GitHub Pages requires.
+- **Consequence:** Direct pushes and manual runs cannot bypass the repository's validation contract or deploy an arbitrary branch. The obsolete duplicate Pages workflow is removed, and future hosting changes must update README and portability documentation without changing the research/application-data boundary.
+
+## D-039 — Public copy is family-first and evidence-honest
+
+- **Status:** accepted
+- **Decision:** Use a warm, specific, plainspoken family voice across Home, Explore, directories, profiles, places, search, and empty states. Lead with `our family`, named people, concrete relationships, and what is known so far. Keep `verified`, `probable`, `unresolved`, family-confirmed, and documented distinctions intact, while reserving implementation vocabulary such as `canonical graph`, `normalized application data`, and `runtime` for developer documentation.
+- **Consequence:** Public copy may make uncertainty feel approachable but cannot soften, omit, or resolve it. Sparse profiles and empty states describe information still to be found rather than internal model absence. Research and source pages retain the precision needed to explain evidence and provenance, introduced in language a family member can understand.

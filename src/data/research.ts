@@ -292,7 +292,7 @@ export const researchMethodology = [
   },
   {
     title: "Research and product data stay separate",
-    description: "The human-readable archive is reviewed into typed application data. The website never parses research prose at runtime.",
+    description: "Research notes are reviewed before they appear in Family Atlas, so working theories and rejected leads never quietly become family facts.",
   },
 ] as const
 
@@ -303,6 +303,6 @@ export const researchArchiveCoverage = {
   representedPlaces: 53,
   movementEntries: 12,
   normalizedScope: "Accepted direct ancestral graph",
-  archiveNote: "Archive totals include collateral, contextual, unresolved, unattached, and rejected research material that is intentionally absent from the accepted application graph.",
+  archiveNote: "The wider archive also includes collateral relatives, historical context, open questions, unattached people, and rejected leads that do not appear as established family connections.",
   researchFile: "research/manifest.json",
 } as const

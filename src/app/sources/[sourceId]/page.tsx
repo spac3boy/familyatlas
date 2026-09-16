@@ -23,7 +23,7 @@ export async function generateMetadata({
   return {
     title: source?.title ?? "Source not found",
     description: source
-      ? `Review the normalized Family Atlas source record for ${source.title}.`
+      ? `Review how Family Atlas uses the source ${source.title}.`
       : "The requested Family Atlas source could not be found.",
   }
 }

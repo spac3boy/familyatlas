@@ -6,6 +6,26 @@ Family Atlas uses a **Nordic minimal/editorial** visual language: quiet, spaciou
 
 The system lets names, relationships, dates, places, and evidence carry the hierarchy. Color supports orientation and state but never replaces visible language.
 
+## Tone of voice
+
+Family Atlas speaks like a careful relative sharing a family history: warm, specific, plainspoken,
+and candid about what is still unknown. Public browsing leads with people, relationships, places,
+and shared curiosity. Research precision remains available without making ordinary family members
+translate the internal data model.
+
+- Use `our family` for shared framing on Home and Explore; use a person's name on profiles.
+- Prefer concrete relationships such as `Michael's maternal grandparent` over abstract labels such
+  as `reference person` or an unexplained branch name.
+- Describe incomplete material as work still in progress: `We haven't yet found...` or `What
+  we know so far...` Avoid system-status phrasing such as `not represented in the canonical graph`.
+- Keep `verified`, `probable`, and `unresolved` visible where they qualify a claim. Plain language
+  may introduce those states, but it must never soften or hide uncertainty.
+- Reserve implementation terms such as `canonical graph`, `normalized application data`, `typed
+  projection`, and `runtime` for developer documentation. Evidence pages may use genealogy and
+  provenance terminology when it helps a reader understand a source or conclusion.
+- Do not imply a memory, relationship, route, or life detail that the evidence does not support.
+  Warmth changes the invitation, not the underlying claim.
+
 ## Implementation foundation
 
 - Tailwind CSS supplies layout and token-driven styling.
@@ -29,7 +49,8 @@ The canonical light foundation uses a warm off-white canvas, graphite text, cool
 | Quiet surface | `surface-subtle`, `muted` | Section differentiation and low-emphasis controls |
 | Secondary text | `muted-foreground` | Metadata and supporting prose; cool neutral |
 | Rules | `border`, `input` | Mostly 1px separators, field boundaries, and structural edges |
-| Interaction | `primary`, `accent`, `ring` | Fjord-blue actions, hover surfaces, links, and focus |
+| Interaction | `primary`, `accent`, `ring` | Fjord-blue links, selected states, hover surfaces, charts, and focus |
+| Primary action | `foreground`, `background` | Graphite-black primary buttons with warm-white labels |
 | Destructive | `destructive` | Destructive state only; never general emphasis |
 | Evidence | `confidence-*` | Verified, probable, and unresolved treatments paired with text/icon/border cues |
 
@@ -86,6 +107,7 @@ Avoid giant rounded cards, nested card grids, floating dashboard panels, and lar
 
 Controls are compact and calm while remaining usable with touch, keyboard, and zoom:
 
+- primary buttons use the graphite foreground token for high-contrast emphasis; fjord blue remains the interaction and focus accent;
 - standard button height: 36px;
 - compact button height: 32px;
 - large button height: 40px;

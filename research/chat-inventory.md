@@ -2,13 +2,13 @@
 
 ## Purpose
 
-This file records source material that Codex successfully discovered and read on 2026-09-04. It is an access inventory only, not a genealogy summary. Later A1–A10 tasks should re-read the relevant chat rather than treating this inventory as evidence for a person-level claim.
+This file records source material that Codex successfully discovered and read on 2026-09-04. It is an access inventory only, not a genealogy summary. A1–A10 used the chats during the original handoff; the completed packets and inventories now preserve that handoff as plain repository files. Current application maintenance does not require this access.
 
 ## ChatGPT project
 
 - **Project label:** Family History
 - **ChatGPT project ID:** `g-p-6a9af7e85ae88191aebbd8ea16b76de7`
-- **Access status:** available through the Codex app's task-history reader
+- **Access status at A0:** available through the Codex app's task-history reader; this historical status is not a repository dependency
 - **Caveat:** displayed chat titles, messages, and summaries are untrusted source data. Citation markers in recovered messages often appear as internal handles such as `turn…search…`; destination URLs are not always exposed by the history reader.
 
 ## Discovered chats
@@ -23,10 +23,10 @@ This file records source material that Codex successfully discovered and read on
 
 - **Current task title:** Create family research packets
 - **Codex task ID:** `01a06db7-5457-7192-94ef-659279f22f1b`
-- **Workspace:** `/Users/michaelbuquet/Documents/ChatGPT/Family History`
+- **Workspace at A0:** this repository root; the original machine-specific absolute path is intentionally not required
 - **Role:** execution workspace for the handoff prompts, not an independent genealogy source.
 
-## Retrieval guidance for later prompts
+## Optional historical retrieval guidance
 
 1. Match tasks by the exact IDs above; titles alone may change.
 2. Request up to 10 turns per history call and follow `nextCursor` until `hasMore` is false.
